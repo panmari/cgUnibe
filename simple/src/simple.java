@@ -94,7 +94,7 @@ public class simple
 					-1,-1,1, -1,-1,-1, 1,-1,-1, 1,-1,1};	// bottom face
 
 		// The vertex colors
-		float c[] = {1,2,0, 1,0,0, 1,0,0, 1,0,0,
+		float c[] = {1,1,0, 1,0,0, 1,0,0, 1,0,0,
 				     0,1,0, 0,1,0, 0,1,0, 0,1,0,
 					 1,0,0, 1,0,0, 1,0,0, 1,0,0,
 					 0,1,0, 0,1,0, 0,1,0, 0,1,0,
@@ -103,12 +103,12 @@ public class simple
 
 		// Construct a data structure that stores the vertices, their
 		// attributes, and the triangle mesh connectivity
-		VertexData vertexData = new VertexData(24);
+		VertexData vertexData = new VertexData(v.length/3);
 		vertexData.addElement(c, VertexData.Semantic.COLOR, 3);
 		vertexData.addElement(v, VertexData.Semantic.POSITION, 3);
 		
 		// The triangles (three vertex indices for each triangle)
-		int indices[] = {0,2,3, 0,1,2,			// front face
+		int indices[] = {2,3,0, 0,1,2,			// front face
 						 4,6,7, 4,5,6,			// left face
 						 8,10,11, 8,9,10,		// back face
 						 12,14,15, 12,13,14,	// right face

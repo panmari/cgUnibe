@@ -22,6 +22,7 @@ public class CylinderTest {
 		assertEquals(0, c.getMesh().length % 3);
 		assertEquals(c.getColors().length, c.getMesh().length);
 		assertEquals(0, c.getIndices().length % 3);
+		System.out.println(Arrays.toString(c.getIndices()));
 	}
 
 }

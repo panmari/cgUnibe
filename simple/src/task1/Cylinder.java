@@ -38,12 +38,14 @@ public class Cylinder {
 		vertexPositions = new float[vertexPositionsList.size()];
 		vertexColors = new float[vertexPositionsList.size()];
 		for (int i = 0; i < vertexPositionsList.size(); i++) {
-			if (i > 0) {
-				addToIndices(0, i, (i+1) % vertexPositionsList.size());
-			}
 			vertexPositions[i] = vertexPositionsList.get(i);
 			vertexColors[i] = i%3;
 		}
+		
+		for (int i = 0; i < vertexPositionsList.size()/3 - 1; i++) {
+			addToIndices(0, i, i + 1);
+		}
+		addToIndices(0, 1, vertexPositionsList.size()/3 - 1);
 		
 		indices = new int[indicesList.size()];
 		for (int i = 0; i < indicesList.size(); i++) {
