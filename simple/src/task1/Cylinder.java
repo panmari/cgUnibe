@@ -33,11 +33,11 @@ public class Cylinder extends AbstractShape {
 		addElement(toFloatArray(verticesList), VertexData.Semantic.POSITION, 3);
 		addElement(toFloatArray(colorsList), VertexData.Semantic.COLOR, 3);
 		for (int i = 1; i <= resolution; i++) {
-			addIndex(upperDiscCenterVertex, i, getAdjacentCircleVertex(i));
+			addIndex(upperDiscCenterVertex, i, getAdjacentDiscVertex(i));
 		}
 		
-		for (int i = lowerDiscCenterVertex + 1; i < getNumberOfVertices() - 1; i++) {
-			addIndex(lowerDiscCenterVertex, i, getAdjacentCircleVertex(i));
+		for (int i = lowerDiscCenterVertex + 1; i < getNumberOfVertices(); i++) {
+			addIndex(lowerDiscCenterVertex, i, getAdjacentDiscVertex(i));
 		}
 		addMantle();
 		addIndicesList(indicesList);
@@ -67,14 +67,23 @@ public class Cylinder extends AbstractShape {
 	
 	private void addMantle() {
 		for (int i = 1; i <= resolution; i++) {
-			addIndex(i, getAdjacentCircleVertex(i), i + lowerDiscCenterVertex);
-			addIndex(getAdjacentCircleVertex(i), getAdjacentCircleVertex(i) + lowerDiscCenterVertex, i + lowerDiscCenterVertex);
+			addIndex(i, getAdjacentDiscVertex(i), i + lowerDiscCenterVertex);
+			addIndex(getAdjacentDiscVertex(i), getAdjacentDiscVertex(i) + lowerDiscCenterVertex, i + lowerDiscCenterVertex);
 		}
 	}
 	
-	private int getAdjacentCircleVertex(int vertex) {
-		if (vertex % resolution == 0)
-			return 1;
-		else return  vertex + 1;
+	/**
+	 * TODO: Refactor this ugly method
+	 * @param vertex
+	 * @return
+	 */
+	private int getAdjacentDiscVertex(int vertex) {
+		if (vertex < lowerDiscCenterVertex)
+			if ((vertex + 1) % lowerDiscCenterVertex == 0)
+				return 1;
+			else return  vertex + 1;
+		else if ((vertex + 1) % getNumberOfVertices() == 0)
+				return lowerDiscCenterVertex + 1;
+			else return vertex + 1;
 	}
 }
