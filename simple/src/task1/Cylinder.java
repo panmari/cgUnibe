@@ -7,14 +7,9 @@ import javax.vecmath.Matrix3f;
 import javax.vecmath.Point3f;
 
 import jogamp.graph.math.MathFloat;
+import jrtr.VertexData;
 
-public class Cylinder {
-
-	// The vertex positions of the cube
-	private float[] vertexPositions;
-	private int[] indices;
-	private List<Integer> indicesList = new ArrayList<Integer>();
-	private List<Float> vertexPositionsList = new ArrayList<Float>();
+public class Cylinder extends AbstractShape {
 	// The vertex colors
 	private float vertexColors[];
 	
@@ -24,56 +19,25 @@ public class Cylinder {
 	 * @param radius
 	 */
 	public Cylinder(float height, float radius, int resolution) {
+		super(resolution + 1);
 		Point3f centerCircle = new Point3f(0, 0, height/2);
 		Matrix3f rotationMatrix = new Matrix3f();
 		rotationMatrix.rotZ(2*MathFloat.PI/resolution);
-		addToMesh(centerCircle); //center of circle is first point in mesh
+		addVertex(centerCircle); //center of circle is first point in mesh
 		Point3f p = new Point3f(radius, 0, 0); //first point of circle
 		for (int i = 0; i < resolution; i++) {
 			Point3f meshPoint = new Point3f();
 			meshPoint.add(p, centerCircle);
-			addToMesh(meshPoint);
+			addVertex(meshPoint);
 			rotationMatrix.transform(p);
 		}
-		vertexPositions = new float[vertexPositionsList.size()];
-		vertexColors = new float[vertexPositionsList.size()];
-		for (int i = 0; i < vertexPositionsList.size(); i++) {
-			vertexPositions[i] = vertexPositionsList.get(i);
-			vertexColors[i] = i%3;
-		}
 		
-		for (int i = 0; i < vertexPositionsList.size()/3 - 1; i++) {
-			addToIndices(0, i, i + 1);
-		}
-		addToIndices(0, 1, vertexPositionsList.size()/3 - 1);
+		addElement(toFloatArray(verticesList), VertexData.Semantic.POSITION, 3);
 		
-		indices = new int[indicesList.size()];
-		for (int i = 0; i < indicesList.size(); i++) {
-			indices[i] = indicesList.get(i);
+		for (int i = 0; i < verticesList.size()/3 - 1; i++) {
+			addIndex(0, i, i + 1);
 		}
-	}
-
-	private void addToMesh(Point3f meshPoint) {
-		vertexPositionsList.add(meshPoint.x);
-		vertexPositionsList.add(meshPoint.y);
-		vertexPositionsList.add(meshPoint.z);
-	}
-	
-	private void addToIndices(int k, int m, int l) {
-		indicesList.add(k);
-		indicesList.add(m);
-		indicesList.add(l);
-	}
-	
-	public float[] getMesh() {
-		return vertexPositions;
-	}
-	
-	public float[] getColors() {
-		return vertexColors;
-	}
-
-	public int[] getIndices() {
-		return indices;
+		addIndex(0, 1, verticesList.size()/3 - 1);
+		addIndicesList(indicesList);
 	}
 }

@@ -1,6 +1,7 @@
 package task1;
 
 import jrtr.*;
+
 import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -86,26 +87,10 @@ public class DrawObject
 	public static void main(String[] args)
 	{		
 		Cylinder cyl = new Cylinder(1, 1, 20);
-		
-		// The vertex positions of the cube
-		float[] v = cyl.getMesh();
-		// The vertex colors
-		float[] c = cyl.getColors();
-
-		// Construct a data structure that stores the vertices, their
-		// attributes, and the triangle mesh connectivity
-		VertexData vertexData = new VertexData(v.length/3);
-		vertexData.addElement(v, VertexData.Semantic.POSITION, 3);
-		vertexData.addElement(c, VertexData.Semantic.COLOR, 3);
-		
-		// The triangles (three vertex indices for each triangle)
-		int indices[] = cyl.getIndices();
-		
-		vertexData.addIndices(indices);
 				
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		shape = new Shape(vertexData);
+		shape = new Shape(cyl);
 		sceneManager.addShape(shape);
 
 		// Make a render panel. The init function of the renderPanel
