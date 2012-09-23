@@ -90,12 +90,7 @@ public class DrawObject
 		// The vertex positions of the cube
 		float[] v = cyl.getMesh();
 		// The vertex colors
-		float c[] = {1,0,0, 1,0,0, 1,0,0, 1,0,0,
-				     0,1,0, 0,1,0, 0,1,0, 0,1,0,
-					 1,0,0, 1,0,0, 1,0,0, 1,0,0,
-					 0,1,0, 0,1,0, 0,1,0, 0,1,0,
-					 0,0,1, 0,0,1, 0,0,1, 0,0,1,
-					 0,0,1, 0,0,1, 0,0,1, 0,0,1};
+		float c[] = cyl.getColors();
 
 		// Construct a data structure that stores the vertices, their
 		// attributes, and the triangle mesh connectivity

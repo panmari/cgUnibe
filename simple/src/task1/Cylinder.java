@@ -36,9 +36,13 @@ public class Cylinder {
 			rotationMatrix.transform(p);
 		}
 		vertexPositions = new float[vertexPositionsList.size()];
+		vertexColors = new float[vertexPositionsList.size()];
 		for (int i = 0; i < vertexPositionsList.size(); i++) {
-			addToIndices(0, i, i+1);
+			if (i > 0) {
+				addToIndices(0, i, (i+1) % vertexPositionsList.size());
+			}
 			vertexPositions[i] = vertexPositionsList.get(i);
+			vertexColors[i] = i%3;
 		}
 		
 		indices = new int[indicesList.size()];
@@ -61,6 +65,10 @@ public class Cylinder {
 	
 	public float[] getMesh() {
 		return vertexPositions;
+	}
+	
+	public float[] getColors() {
+		return vertexColors;
 	}
 
 	public int[] getIndices() {
