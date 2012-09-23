@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
 
 import jrtr.VertexData;
 
@@ -11,6 +12,7 @@ public abstract class AbstractShape extends VertexData {
 
 	protected List<Integer> indicesList = new ArrayList<Integer>();
 	protected List<Float> verticesList = new ArrayList<Float>();
+	protected List<Float> colorsList = new ArrayList<Float>();
 	
 	public AbstractShape(int n) {
 		super(n);
@@ -41,5 +43,11 @@ public abstract class AbstractShape extends VertexData {
 		indicesList.add(k);
 		indicesList.add(m);
 		indicesList.add(l);
+	}
+	
+	protected void addColor(float r, float g, float b) {
+		colorsList.add(r);
+		colorsList.add(g);
+		colorsList.add(b);
 	}
 }

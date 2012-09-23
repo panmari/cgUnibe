@@ -13,16 +13,16 @@ public class CylinderTest {
 	@Test
 	public void test() {
 		Cylinder c = new Cylinder(1, 1, 4);
-		System.out.println(Arrays.toString(c.getMesh()));
+		System.out.println(c.getElements());
 	}
 	
 	@Test
 	public void testSizeOfArrays() {
 		Cylinder c = new Cylinder(1, 1, 4);
-		assertEquals(0, c.getMesh().length % 3);
-		assertEquals(c.getColors().length, c.getMesh().length);
+		assertEquals(0, c.getElements().get(0).getNumberOfComponents() % 3);
+		assertEquals(c.getElements().get(0).getNumberOfComponents(), 
+				c.getElements().get(1).getNumberOfComponents());
 		assertEquals(0, c.getIndices().length % 3);
-		System.out.println(Arrays.toString(c.getIndices()));
 	}
 
 }
