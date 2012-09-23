@@ -86,7 +86,7 @@ public class DrawObject
 	 */
 	public static void main(String[] args)
 	{		
-		Cylinder cyl = new Cylinder(1, 1, 20);
+		Cylinder cyl = new Cylinder(1, 1, 8);
 				
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();

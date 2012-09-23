@@ -10,17 +10,40 @@ import jogamp.graph.math.MathFloat;
 import jrtr.VertexData;
 
 public class Cylinder extends AbstractShape {
-	// The vertex colors
-	private float vertexColors[];
-	
+	private float height;
+	private float radius;
+	private int resolution;
+	private int upperDiscCenterVertex;
+	private int lowerDiscCenterVertex;
 	/**
 	 * For now, the cylinder is always centered around (0,0,0)
 	 * @param height
 	 * @param radius
 	 */
 	public Cylinder(float height, float radius, int resolution) {
-		super(resolution + 1);
-		Point3f centerCircle = new Point3f(0, 0, height/2);
+		super(2*(resolution + 1));
+		this.resolution = resolution;
+		this.radius = radius;
+		this.height = height;
+		this.upperDiscCenterVertex = 0;
+		addDisc(height/2);
+		this.lowerDiscCenterVertex = verticesList.size()/3;
+		addDisc(-height/2);
+		addElement(toFloatArray(verticesList), VertexData.Semantic.POSITION, 3);
+		
+		for (int i = 1; i < resolution; i++) {
+			addIndex(upperDiscCenterVertex, i, i + 1);
+		}
+		addIndex(upperDiscCenterVertex, upperDiscCenterVertex + 1, resolution);
+		for (int i = lowerDiscCenterVertex + 1; i < getNumberOfVertices() - 1; i++) {
+			addIndex(lowerDiscCenterVertex, i, i+1);
+		}
+		addIndex(lowerDiscCenterVertex, lowerDiscCenterVertex + 1, getNumberOfVertices()-1);
+		addIndicesList(indicesList);
+	}
+	
+	private void addDisc(float zcoordinate) {
+		Point3f centerCircle = new Point3f(0, 0, zcoordinate);
 		Matrix3f rotationMatrix = new Matrix3f();
 		rotationMatrix.rotZ(2*MathFloat.PI/resolution);
 		addVertex(centerCircle); //center of circle is first point in mesh
@@ -31,13 +54,5 @@ public class Cylinder extends AbstractShape {
 			addVertex(meshPoint);
 			rotationMatrix.transform(p);
 		}
-		
-		addElement(toFloatArray(verticesList), VertexData.Semantic.POSITION, 3);
-		
-		for (int i = 0; i < verticesList.size()/3 - 1; i++) {
-			addIndex(0, i, i + 1);
-		}
-		addIndex(0, 1, verticesList.size()/3 - 1);
-		addIndicesList(indicesList);
 	}
 }
