@@ -36,7 +36,7 @@ public class FloatVertexData {
 	public float[] getFinishedArray() {
 		if (head == data.length)
 			return data;
-		else throw new RuntimeException("Not completely filled yet!");
+		else throw new RuntimeException("Not completely filled yet! " + head + " of " + data.length);
 	}
 	
 	public int getHeadPosition() {
