@@ -1,11 +1,7 @@
 package task1;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
 
 import jogamp.graph.math.MathFloat;
 import jrtr.VertexData;
@@ -32,7 +28,7 @@ public class Cylinder extends AbstractShape {
 		addDisc(-height/2);
 		addElement(toFloatArray(verticesList), VertexData.Semantic.POSITION, 3);
 		addElement(toFloatArray(colorsList), VertexData.Semantic.COLOR, 3);
-		for (int i = 1; i <= resolution; i++) {
+		for (int i = 1; i < lowerDiscCenterVertex; i++) {
 			addIndex(upperDiscCenterVertex, i, getAdjacentDiscVertex(i));
 		}
 		
