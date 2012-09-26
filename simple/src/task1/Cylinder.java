@@ -64,8 +64,8 @@ public class Cylinder extends AbstractShape {
 	
 	private void addMantle() {
 		for (int i = 1; i <= resolution; i++) {
-			addIndex(i, getAdjacentDiscVertex(i), i + lowerDiscCenterVertex);
-			addIndex(getAdjacentDiscVertex(i), getAdjacentDiscVertex(i) + lowerDiscCenterVertex, i + lowerDiscCenterVertex);
+			addQuadrangle(i, getAdjacentDiscVertex(i), 
+					getAdjacentDiscVertex(i) + lowerDiscCenterVertex, i + lowerDiscCenterVertex);
 		}
 	}
 	

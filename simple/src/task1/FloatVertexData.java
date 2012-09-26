@@ -44,6 +44,6 @@ public class FloatVertexData {
 	}
 	
 	public void printArray() {
-		System.out.println(Arrays.toString(data));
+		System.out.println("data:" + Arrays.toString(data));
 	}
 }

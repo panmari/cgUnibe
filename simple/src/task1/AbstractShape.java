@@ -33,5 +33,13 @@ public abstract class AbstractShape extends VertexData {
 		indicesList.add(m);
 		indicesList.add(l);
 	}
+	
+	/**
+	 * Cornes should be clockwise
+	 */
+	protected void addQuadrangle(int i, int j, int k, int l) {
+		addIndex(i, j, k);
+		addIndex(i, k, l);
+	}
 
 }
