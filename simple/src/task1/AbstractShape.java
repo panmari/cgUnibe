@@ -11,13 +11,13 @@ import jrtr.VertexData;
 public abstract class AbstractShape extends VertexData {
 
 	protected List<Integer> indicesList = new ArrayList<Integer>();
-	protected FloatVertexData vertices;
-	protected FloatVertexData colors;
+	protected FloatVertexElement vertices;
+	protected FloatVertexElement colors;
 	
 	public AbstractShape(int n) {
 		super(n);
-		vertices = new FloatVertexData(n);
-		colors = new FloatVertexData(n);
+		vertices = new FloatVertexElement(n);
+		colors = new FloatVertexElement(n);
 	}
 
 	protected void addIndicesList(List<Integer> indicesList) {
@@ -35,7 +35,7 @@ public abstract class AbstractShape extends VertexData {
 	}
 	
 	/**
-	 * Cornes should be clockwise
+	 * Corners should be clockwise
 	 */
 	protected void addQuadrangle(int i, int j, int k, int l) {
 		addIndex(i, j, k);

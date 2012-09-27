@@ -35,6 +35,7 @@ public class Torus extends AbstractShape {
 			}
 		}
 		
+		//add triangles
 		int n = bigResolution*smallResolution;
 		for (int k = 0; k < n; k+=smallResolution) {
 			for (int i = k; i < k + smallResolution; i++) {
@@ -60,7 +61,7 @@ public class Torus extends AbstractShape {
 			Vector3f discPoint = new Vector3f();
 			discPoint.add(discRadialVector, discCenter);
 			vertices.appendVector(discPoint);
-			colors.appendVector(new Color3f(i % 2, i % 2 , i % 2));
+			colors.appendVector(new Color3f(0, 0, 0));
 			firstCrossSection[i] = discPoint;
 			rotY.transform(discRadialVector);
 		}

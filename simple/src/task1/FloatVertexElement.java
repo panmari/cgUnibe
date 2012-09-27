@@ -5,20 +5,19 @@ import java.util.Arrays;
 import javax.vecmath.Tuple3f;
 
 /**
- * Wrapper around a float-array. Can only append value triples at the 
+ * Wrapper-class for a float-array. Can only append value triples at the 
  * head position of the array, every other mutation is not allowed.
  * @author mazzzy
  */
-public class FloatVertexData {
+public class FloatVertexElement {
 	
 	private float[] data;
 	private int head;
 
 	/**
-	 * 
-	 * @param size, number of vertices you wanna put in here
+	 * @param size, number of vertices it should contain
 	 */
-	public FloatVertexData(int size) {
+	public FloatVertexElement(int size) {
 		this.data = new float[size*3];
 		head = 0;
 	}
