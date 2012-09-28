@@ -22,5 +22,11 @@ public class CylinderTest {
 				c.getElements().get(1).getNumberOfComponents());
 		assertEquals(0, c.getIndices().length % 3);
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testAddVertices() {
+		Cylinder c = new Cylinder(1, 1, 4);
+		//TODO: add test
+	}
 
 }

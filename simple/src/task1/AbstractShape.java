@@ -3,9 +3,6 @@ package task1;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-
 import jrtr.VertexData;
 
 public abstract class AbstractShape extends VertexData {
@@ -13,11 +10,14 @@ public abstract class AbstractShape extends VertexData {
 	protected List<Integer> indicesList = new ArrayList<Integer>();
 	protected FloatVertexElement vertices;
 	protected FloatVertexElement colors;
+	private int numberOfVertices;
 	
-	public AbstractShape(int n) {
-		super(n);
-		vertices = new FloatVertexElement(n);
-		colors = new FloatVertexElement(n);
+	
+	public AbstractShape(int numberOfVertices) {
+		super(numberOfVertices);
+		this.numberOfVertices = numberOfVertices;
+		vertices = new FloatVertexElement(numberOfVertices);
+		colors = new FloatVertexElement(numberOfVertices);
 	}
 
 	protected void addIndicesList(List<Integer> indicesList) {
@@ -29,6 +29,9 @@ public abstract class AbstractShape extends VertexData {
 	}
 		
 	protected void addIndex(int k, int m, int l) {
+		if (k >= numberOfVertices || m >= numberOfVertices || l >= numberOfVertices)
+			throw new IllegalArgumentException("One of these vertices does not exist: " +
+											+ k + ", " + m + ", " + l);
 		indicesList.add(k);
 		indicesList.add(m);
 		indicesList.add(l);

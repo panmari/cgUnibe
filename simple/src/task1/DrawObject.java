@@ -1,5 +1,6 @@
 package task1;
 
+import jogamp.graph.math.MathFloat;
 import jrtr.*;
 
 import javax.swing.*;
@@ -36,7 +37,6 @@ public class DrawObject
 		{
 			renderContext = r;
 			renderContext.setSceneManager(sceneManager);
-	
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
@@ -59,7 +59,7 @@ public class DrawObject
     		Matrix4f rotY = new Matrix4f();
     		rotY.rotY(angle);
     		t.mul(rotX);
-    		t.mul(rotY);
+    		//t.mul(rotY);
     		shape.setTransformation(t);
     		
     		// Trigger redrawing of the render window
@@ -73,11 +73,19 @@ public class DrawObject
 	 */
 	public static class SimpleMouseListener implements MouseListener
 	{
-    	public void mousePressed(MouseEvent e) {}
+    	public void mousePressed(MouseEvent e) {
+    		Matrix4f t = shape.getTransformation();
+    		Matrix4f rotY = new Matrix4f();
+    		rotY.rotY(MathFloat.PI/2);
+    		t.mul(rotY);
+    		shape.setTransformation(t);
+    	}
     	public void mouseReleased(MouseEvent e) {}
     	public void mouseEntered(MouseEvent e) {}
     	public void mouseExited(MouseEvent e) {}
-    	public void mouseClicked(MouseEvent e) {}
+    	public void mouseClicked(MouseEvent e) {
+    		
+    	}
 	}
 	
 	/**
@@ -92,11 +100,9 @@ public class DrawObject
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(s);
 		sceneManager.addShape(shape);
-
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
 		renderPanel = new SimpleRenderPanel();
-		
 		// Make the main window of this application and add the renderer to it
 		JFrame jframe = new JFrame("simple");
 		jframe.setSize(500, 500);
@@ -104,8 +110,7 @@ public class DrawObject
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-	    jframe.addMouseListener(new SimpleMouseListener());
-		   	    	    
+	    renderPanel.getCanvas().addMouseListener(new SimpleMouseListener());
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
 	}

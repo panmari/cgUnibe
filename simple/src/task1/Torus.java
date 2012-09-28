@@ -15,6 +15,13 @@ public class Torus extends AbstractShape {
 	private int bigResolution;
 	private int smallResolution;
 
+	/**
+	 * Draws a torus with a zebra pattern.
+	 * @param bigR, radius to the middle of the ring
+	 * @param smallR, "thickness" of the ring
+	 * @param bigResolution, resolution in aspect to bigR
+	 * @param smallResolution, resolution aspect to smallR
+	 */
 	public Torus(float bigR, float smallR, int bigResolution, int smallResolution) {
 		super(bigResolution*smallResolution);
 		this.bigR = bigR;
