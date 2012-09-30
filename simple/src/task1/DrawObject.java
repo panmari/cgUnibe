@@ -94,11 +94,11 @@ public class DrawObject
 	 */
 	public static void main(String[] args)
 	{		
-		AbstractShape s = new Torus(2, 1, 100, 6);
+		//AbstractShape s = new Torus(2, 1, 100, 6);
 		//AbstractShape s = new Cylinder(2, 2, 4);
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		shape = new Shape(s);
+		shape = new Wheel(5, new Vector3f(1,0,0), 2);
 		sceneManager.addShape(shape);
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.

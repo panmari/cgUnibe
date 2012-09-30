@@ -13,8 +13,10 @@ public class Cylinder extends AbstractShape {
 	private int resolution;
 	private int upperDiscCenterVertex;
 	private int lowerDiscCenterVertex;
+	
 	/**
-	 * For now, the cylinder is always centered around (0,0,0)
+	 * The cylinder is centered around (0,0,0), the discs are
+	 * parallel to the x-y-plane, the center goes through the z-axis.
 	 * @param height
 	 * @param radius
 	 */

@@ -33,7 +33,7 @@ public class FloatVertexElement {
 	}
 	
 	public float[] getFinishedArray() {
-		if (head == data.length)
+		if (getHeadPosition() == data.length)
 			return data;
 		else throw new RuntimeException("Not completely filled yet! " + head + " of " + data.length);
 	}

@@ -17,6 +17,8 @@ public class Torus extends AbstractShape {
 
 	/**
 	 * Draws a torus with a zebra pattern.
+	 * Lies in the x-y-plane, z-axis piercing through the hole in the middle.
+	 * 
 	 * @param bigR, radius to the middle of the ring
 	 * @param smallR, "thickness" of the ring
 	 * @param bigResolution, resolution in aspect to bigR

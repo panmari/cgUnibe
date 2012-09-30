@@ -12,13 +12,15 @@ public class Wheel extends Shape {
 	Matrix4f rotate = new Matrix4f();
 	Matrix4f shift = new Matrix4f();
 	
-	public Wheel(int radius) {
+	public Wheel(int radius, Vector3f direction, float speed) {
 		super(new Torus(radius, 1, 5, 80));
 		Matrix4f blah = new Matrix4f();
 		blah.rotX(MathFloat.PI/2);
 		setTransformation(blah);
 		rotate.rotY(0.01f);
-		shift.setTranslation(new Vector3f(0.01f, 0, 0));
+		direction.normalize();
+		direction.scale(0.01f);
+		shift.setTranslation(direction);
 	}
 
 	
