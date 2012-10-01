@@ -19,7 +19,7 @@ public class DrawObject
 	static RenderPanel renderPanel;
 	static RenderContext renderContext;
 	static SimpleSceneManager sceneManager;
-	static Shape shape;
+	static Wheel shape;
 	static float angle;
 
 	/**
@@ -53,15 +53,7 @@ public class DrawObject
 		public void run()
 		{
 			// Update transformation
-    		Matrix4f t = shape.getTransformation();
-    		Matrix4f rotX = new Matrix4f();
-    		rotX.rotX(angle);
-    		Matrix4f rotY = new Matrix4f();
-    		rotY.rotY(angle);
-    		t.mul(rotX);
-    		//t.mul(rotY);
-    		shape.setTransformation(t);
-    		
+    		shape.roll();
     		// Trigger redrawing of the render window
     		renderPanel.getCanvas().repaint(); 
 		}
@@ -74,11 +66,7 @@ public class DrawObject
 	public static class SimpleMouseListener implements MouseListener
 	{
     	public void mousePressed(MouseEvent e) {
-    		Matrix4f t = shape.getTransformation();
-    		Matrix4f rotY = new Matrix4f();
-    		rotY.rotY(MathFloat.PI/2);
-    		t.mul(rotY);
-    		shape.setTransformation(t);
+    		shape.roll();
     	}
     	public void mouseReleased(MouseEvent e) {}
     	public void mouseEntered(MouseEvent e) {}
@@ -98,7 +86,7 @@ public class DrawObject
 		//AbstractShape s = new Cylinder(2, 2, 4);
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		shape = new Wheel(5, new Vector3f(1,0,0), 2);
+		shape = new Wheel(2, new Vector3f(0.1f,0,-1), 2);
 		sceneManager.addShape(shape);
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
