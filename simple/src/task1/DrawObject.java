@@ -86,7 +86,7 @@ public class DrawObject
 		//AbstractShape s = new Cylinder(2, 2, 4);
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		Locomotive l = new Locomotive(new Vector3f(0.2f, 0, 1));
+		Locomotive l = new Locomotive(new Vector3f(-1f, 0, 0), 1);
 		actor = l;
 		for (Shape s: l.getShapes())
 			sceneManager.addShape(s);

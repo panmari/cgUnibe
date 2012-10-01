@@ -1,5 +1,6 @@
 package task1;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.vecmath.Matrix4f;
@@ -8,7 +9,7 @@ import jrtr.Shape;
 
 public abstract class AssembledShape {
 
-	protected List<Shape> shapes;
+	protected List<Shape> shapes = new ArrayList<Shape>();
 	
 	public void transform(Matrix4f matrix) {
 		for (Shape s: shapes) {

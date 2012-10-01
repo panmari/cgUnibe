@@ -35,7 +35,6 @@ public class Wheel extends Shape implements Actable {
 		rotate.rotZ(direction.length()/radius);
 		rotate.invert();
 	}
-
 	
 	public void act() {
 		Matrix4f blah = getTransformation();
