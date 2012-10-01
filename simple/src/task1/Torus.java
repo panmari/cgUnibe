@@ -62,7 +62,7 @@ public class Torus extends AbstractShape {
 
 	private Vector3f[] createFirstCrossSection() {
 		Vector3f discCenter = new Vector3f(bigR, 0, 0);
-		Vector3f discRadialVector = new Vector3f(smallR, 0, 0);
+		Vector3f discRadialVector = new Vector3f(-smallR, 0, 0);
 		Matrix3f rotY = new Matrix3f();
 		rotY.rotY(2*MathFloat.PI/smallResolution);
 		Vector3f[] firstCrossSection = new Vector3f[smallResolution];

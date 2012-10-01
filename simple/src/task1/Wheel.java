@@ -3,11 +3,9 @@ package task1;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
-import jogamp.graph.math.MathFloat;
 import jrtr.Shape;
-import jrtr.VertexData;
 
-public class Wheel extends Shape {
+public class Wheel extends Shape implements Actable {
 
 	Matrix4f rotate = new Matrix4f();
 	Matrix4f shift = new Matrix4f();
@@ -19,11 +17,11 @@ public class Wheel extends Shape {
 	 * @param speed
 	 */
 	public Wheel(float radius, Vector3f direction, float speed) {
-		super(new Torus(radius, .5f, 80, 20));
+		super(new Torus(radius, radius/4, 120, 5));
 		if (direction.y != 0)
 			throw new IllegalArgumentException("Can only move in xz-plane!");
 		if (direction.length() == 0)
-			throw new IllegalArgumentException("can only move in xz-plane!");
+			throw new IllegalArgumentException("Can not be null vector!");
 		Matrix4f initMat = new Matrix4f();
 		float angle = new Vector3f(1, 0, 0).angle(direction);
 		if (direction.z > 0)
@@ -39,7 +37,7 @@ public class Wheel extends Shape {
 	}
 
 	
-	public void roll() {
+	public void act() {
 		Matrix4f blah = getTransformation();
 		blah.mul(rotate);
 		blah.add(shift);

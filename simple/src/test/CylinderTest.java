@@ -23,7 +23,7 @@ public class CylinderTest {
 		assertEquals(0, c.getIndices().length % 3);
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testAddVertices() {
 		Cylinder c = new Cylinder(1, 1, 4);
 		//TODO: add test
