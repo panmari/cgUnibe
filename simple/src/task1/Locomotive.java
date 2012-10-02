@@ -18,12 +18,16 @@ public class Locomotive extends AssembledShape implements Actable {
 											new Vector3f(0, 0, 1),
 											new Vector3f(1, 0, 1)};
 
+	private Matrix4f shift;
 	private Vector3f direction;
 	private float speed;
 	
 	public Locomotive(Vector3f direction, float speed) {
 		this.direction = direction;
 		this.speed = speed;
+		direction.normalize();
+		direction.scale(0.01f*speed);
+		shift.setTranslation(direction);
 		for (int i = 0; i < 4; i++) {
 			Wheel w = new Wheel(.5f, direction, speed);
 			Matrix4f t = new Matrix4f();
@@ -37,13 +41,13 @@ public class Locomotive extends AssembledShape implements Actable {
 	}
 	
 	public void act() {
-		for (Shape w: shapes)
+		for (Shape w: shapes) {
 			((Actable)w).act();
+			w.getTransformation().add(shift);
+		}
 	}
 
 	class LocomotiveBody extends Shape implements Actable {
-
-		private Matrix4f shift = new Matrix4f();
 		
 		public LocomotiveBody() {
 			super(new Cylinder(2, .5f, 60));
@@ -52,16 +56,11 @@ public class Locomotive extends AssembledShape implements Actable {
 			bodyTransf.setIdentity();
 			bodyTransf.setTranslation(new Vector3f(.5f, .5f, .5f));
 			setTransformation(bodyTransf);
-			direction.normalize();
-			direction.scale(0.01f*speed);
-			shift.setTranslation(direction);
-
 		}
+		
 		@Override
 		public void act() {
-			Matrix4f t = getTransformation();
-			t.add(shift);
-			setTransformation(t);
+
 		}
 		
 	}

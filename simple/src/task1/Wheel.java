@@ -12,6 +12,7 @@ public class Wheel extends Shape implements Actable {
 	
 	/**
 	 * A wheel class, isn't that great?
+	 * Does not move on its own, only rotate
 	 * @param radius
 	 * @param direction
 	 * @param speed
@@ -31,16 +32,11 @@ public class Wheel extends Shape implements Actable {
 		
 		direction.normalize();
 		direction.scale(0.01f*speed);
-		shift.setTranslation(direction);
 		rotate.rotZ(direction.length()/radius);
 		rotate.invert();
 	}
 	
 	public void act() {
-		Matrix4f blah = getTransformation();
-		blah.mul(rotate);
-		blah.add(shift);
-
-		setTransformation(blah);
+		getTransformation().mul(rotate);
 	}
 }
