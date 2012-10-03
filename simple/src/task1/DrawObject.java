@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import javax.vecmath.*;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,6 +21,8 @@ public class DrawObject
 	static RenderContext renderContext;
 	static SimpleSceneManager sceneManager;
 	static Actable actor;
+	static Wheel w;
+	static Locomotive l;
 	static float angle;
 
 	/**
@@ -66,7 +69,8 @@ public class DrawObject
 	public static class SimpleMouseListener implements MouseListener
 	{
     	public void mousePressed(MouseEvent e) {
-    		actor.act();
+    		//actor.act();
+    		l.setDirection(new Vector3f(e.getX(), 0, e.getY()));
     	}
     	public void mouseReleased(MouseEvent e) {}
     	public void mouseEntered(MouseEvent e) {}
@@ -86,10 +90,11 @@ public class DrawObject
 		//AbstractShape s = new Cylinder(2, 2, 4);
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		Locomotive l = new Locomotive(new Vector3f(1, 0, 1), 1);
+		l = new Locomotive(new Vector3f(1, 0, 1), 1);
 		actor = l;
 		for (Shape s: l.getShapes())
 			sceneManager.addShape(s);
+		
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
 		renderPanel = new SimpleRenderPanel();

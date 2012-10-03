@@ -13,10 +13,10 @@ public class Locomotive extends AssembledShape implements Actable {
 	 * (Even only cylinders)
 	 */
 	
-	private Vector3f[] wheelCoordinates = {	new Vector3f(0, 0, 0),
-											new Vector3f(1, 0, 0),
-											new Vector3f(0, 0, 1),
-											new Vector3f(1, 0, 1)};
+	private Vector3f[] wheelCoordinates = {	new Vector3f(.5f, 0, .5f),
+											new Vector3f(-.5f, 0, .5f),
+											new Vector3f(.5f, 0, -.5f),
+											new Vector3f(-.5f, 0, -.5f)};
 
 	private Matrix4f shift = new Matrix4f();
 	private Vector3f direction;
@@ -27,18 +27,14 @@ public class Locomotive extends AssembledShape implements Actable {
 		this.speed = speed;
 		direction.normalize();
 		direction.scale(0.01f*speed);
-		shift.setTranslation(direction);
 		for (int i = 0; i < 4; i++) {
-			Wheel w = new Wheel(.5f, direction, speed);
-			Matrix4f t = new Matrix4f();
-			t.setTranslation(wheelCoordinates[i]);
-			Matrix4f init = w.getTransformation();
-			init.add(t);
-			w.setTransformation(init);
+			Wheel w = new Wheel(.4f, direction, speed);
+			Matrix4f m = w.getTransformation();
+			m.setIdentity();
+			m.setTranslation(wheelCoordinates[i]);
 			shapes.add(w);
 		}
 		shapes.add(new LocomotiveBody());
-		setDirection(direction);
 	}
 	
 	public void act() {
@@ -53,24 +49,29 @@ public class Locomotive extends AssembledShape implements Actable {
 			throw new IllegalArgumentException("Can only move in xz-plane!");
 		if (direction.length() == 0)
 			throw new IllegalArgumentException("Can not be null vector!");
+		//shift.setTranslation(direction);
 		Matrix4f dirMat = new Matrix4f();
 		float angle = new Vector3f(1, 0, 0).angle(direction);
 		if (direction.z > 0)
 			dirMat.rotY(-angle);
 		else dirMat.rotY(angle);
 		for (Shape s: shapes) {
-			s.getTransformation().mul(dirMat);
+			Matrix4f m = s.getTransformation();
+			m.mul(dirMat, m);
 		}
 	}
+
 
 	class LocomotiveBody extends Shape implements Actable {
 		
 		public LocomotiveBody() {
 			super(new Cylinder(2, .5f, 60));
-			Matrix4f bodyTranslation = new Matrix4f();
-			bodyTranslation.rotY(-MathFloat.PI/2);
-			bodyTranslation.setTranslation(new Vector3f(.5f, .5f, .5f));
-			setTransformation(bodyTranslation);
+			Matrix4f m = getTransformation();
+			m.rotY(-MathFloat.PI/2);
+			Matrix4f helperMatrix = new Matrix4f();
+			helperMatrix.setIdentity();
+			helperMatrix.setTranslation(new Vector3f(0, .5f, 0));
+			m.mul(m, helperMatrix);
 		}
 		
 		@Override
