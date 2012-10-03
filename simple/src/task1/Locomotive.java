@@ -28,7 +28,7 @@ public class Locomotive extends AssembledShape implements Actable {
 		direction.normalize();
 		direction.scale(0.01f*speed);
 		for (int i = 0; i < 4; i++) {
-			Wheel w = new Wheel(.4f, direction, speed);
+			Wheel w = new Wheel(.4f, speed);
 			Matrix4f m = w.getTransformation();
 			m.setIdentity();
 			m.setTranslation(wheelCoordinates[i]);
@@ -49,6 +49,9 @@ public class Locomotive extends AssembledShape implements Actable {
 			throw new IllegalArgumentException("Can only move in xz-plane!");
 		if (direction.length() == 0)
 			throw new IllegalArgumentException("Can not be null vector!");
+		this.direction = direction;
+		direction.normalize();
+		direction.scale(0.01f*speed);
 		//shift.setTranslation(direction);
 		Matrix4f dirMat = new Matrix4f();
 		float angle = new Vector3f(1, 0, 0).angle(direction);

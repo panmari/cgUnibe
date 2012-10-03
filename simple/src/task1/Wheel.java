@@ -8,7 +8,6 @@ import jrtr.Shape;
 public class Wheel extends Shape implements Actable {
 
 	Matrix4f rotate = new Matrix4f();
-	Matrix4f shift = new Matrix4f();
 	
 	/**
 	 * A wheel class, isn't that great?
@@ -17,11 +16,9 @@ public class Wheel extends Shape implements Actable {
 	 * @param direction
 	 * @param speed
 	 */
-	public Wheel(float radius, Vector3f direction, float speed) {
+	public Wheel(float radius, float speed) {
 		super(new Torus(radius, radius/4, 120, 5));
-		direction.normalize();
-		direction.scale(0.01f*speed);
-		rotate.rotZ(direction.length()/radius);
+		rotate.rotZ(0.01f*speed/radius);
 		rotate.invert();
 	}
 	

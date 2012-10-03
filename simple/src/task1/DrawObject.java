@@ -94,7 +94,6 @@ public class DrawObject
 		actor = l;
 		for (Shape s: l.getShapes())
 			sceneManager.addShape(s);
-		
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
 		renderPanel = new SimpleRenderPanel();
