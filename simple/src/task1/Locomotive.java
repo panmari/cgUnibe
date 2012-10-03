@@ -25,6 +25,7 @@ public class Locomotive extends AssembledShape implements Actable {
 	public Locomotive(Vector3f direction, float speed) {
 		this.direction = direction;
 		this.speed = speed;
+		//shift.setIdentity();
 		direction.normalize();
 		direction.scale(0.01f*speed);
 		for (int i = 0; i < 4; i++) {
@@ -32,6 +33,7 @@ public class Locomotive extends AssembledShape implements Actable {
 			Matrix4f m = w.getTransformation();
 			m.setIdentity();
 			m.setTranslation(wheelCoordinates[i]);
+			w.setInit(m);
 			shapes.add(w);
 		}
 		shapes.add(new LocomotiveBody());
@@ -40,7 +42,8 @@ public class Locomotive extends AssembledShape implements Actable {
 	public void act() {
 		for (Shape s: shapes) {
 			((Actable)s).act();
-			s.getTransformation().add(shift);
+			Matrix4f m = s.getTransformation();
+			m.add(shift, m);
 		}
 	}
 	
@@ -52,20 +55,24 @@ public class Locomotive extends AssembledShape implements Actable {
 		this.direction = direction;
 		direction.normalize();
 		direction.scale(0.01f*speed);
-		//shift.setTranslation(direction);
+		shift.setTranslation(direction);
 		Matrix4f dirMat = new Matrix4f();
 		float angle = new Vector3f(1, 0, 0).angle(direction);
 		if (direction.z > 0)
 			dirMat.rotY(-angle);
 		else dirMat.rotY(angle);
-		for (Shape s: shapes) {
-			Matrix4f m = s.getTransformation();
+		for (MovingShape s: shapes) {
+			Matrix4f m = s.getInit();
 			m.mul(dirMat, m);
+			float[] trans = new float[4];
+			s.getTransformation().getColumn(3, trans);
+			m.setTranslation(new Vector3f(trans[0], trans[1], trans[2]));
+			s.setTransformation(m);
 		}
 	}
 
 
-	class LocomotiveBody extends Shape implements Actable {
+	class LocomotiveBody extends MovingShape implements Actable {
 		
 		public LocomotiveBody() {
 			super(new Cylinder(2, .5f, 60));
@@ -75,12 +82,12 @@ public class Locomotive extends AssembledShape implements Actable {
 			helperMatrix.setIdentity();
 			helperMatrix.setTranslation(new Vector3f(0, .5f, 0));
 			m.mul(m, helperMatrix);
+			init = new Matrix4f(m);
 		}
 		
 		@Override
 		public void act() {
 
 		}
-		
 	}
 }

@@ -9,7 +9,7 @@ import jrtr.Shape;
 
 public abstract class AssembledShape {
 
-	protected List<Shape> shapes = new ArrayList<Shape>();
+	protected List<MovingShape> shapes = new ArrayList<MovingShape>();
 	
 	public void transform(Matrix4f matrix) {
 		for (Shape s: shapes) {
@@ -17,7 +17,7 @@ public abstract class AssembledShape {
 		}
 	}
 	
-	public List<Shape> getShapes() {
+	public List<MovingShape> getShapes() {
 		return shapes;
 	}
 }

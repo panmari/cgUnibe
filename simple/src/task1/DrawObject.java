@@ -70,7 +70,7 @@ public class DrawObject
 	{
     	public void mousePressed(MouseEvent e) {
     		//actor.act();
-    		l.setDirection(new Vector3f(e.getX(), 0, e.getY()));
+    		l.setDirection(new Vector3f(e.getX() - 200, 0, e.getY() - 200));
     	}
     	public void mouseReleased(MouseEvent e) {}
     	public void mouseEntered(MouseEvent e) {}

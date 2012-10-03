@@ -5,7 +5,7 @@ import javax.vecmath.Vector3f;
 
 import jrtr.Shape;
 
-public class Wheel extends Shape implements Actable {
+public class Wheel extends MovingShape implements Actable {
 
 	Matrix4f rotate = new Matrix4f();
 	
