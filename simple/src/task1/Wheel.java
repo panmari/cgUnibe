@@ -19,21 +19,19 @@ public class Wheel extends Shape implements Actable {
 	 */
 	public Wheel(float radius, Vector3f direction, float speed) {
 		super(new Torus(radius, radius/4, 120, 5));
-		if (direction.y != 0)
-			throw new IllegalArgumentException("Can only move in xz-plane!");
-		if (direction.length() == 0)
-			throw new IllegalArgumentException("Can not be null vector!");
+		direction.normalize();
+		direction.scale(0.01f*speed);
+		rotate.rotZ(direction.length()/radius);
+		rotate.invert();
+	}
+	
+	public void setDirection(Vector3f direction) {
 		Matrix4f initMat = new Matrix4f();
 		float angle = new Vector3f(1, 0, 0).angle(direction);
 		if (direction.z > 0)
 			initMat.rotY(-angle);
 		else initMat.rotY(angle);
 		setTransformation(initMat);
-		
-		direction.normalize();
-		direction.scale(0.01f*speed);
-		rotate.rotZ(direction.length()/radius);
-		rotate.invert();
 	}
 	
 	public void act() {

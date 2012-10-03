@@ -18,7 +18,7 @@ public class Locomotive extends AssembledShape implements Actable {
 											new Vector3f(0, 0, 1),
 											new Vector3f(1, 0, 1)};
 
-	private Matrix4f shift;
+	private Matrix4f shift = new Matrix4f();
 	private Vector3f direction;
 	private float speed;
 	
@@ -38,12 +38,28 @@ public class Locomotive extends AssembledShape implements Actable {
 			shapes.add(w);
 		}
 		shapes.add(new LocomotiveBody());
+		setDirection(direction);
 	}
 	
 	public void act() {
-		for (Shape w: shapes) {
-			((Actable)w).act();
-			w.getTransformation().add(shift);
+		for (Shape s: shapes) {
+			((Actable)s).act();
+			s.getTransformation().add(shift);
+		}
+	}
+	
+	public void setDirection(Vector3f direction) {
+		if (direction.y != 0)
+			throw new IllegalArgumentException("Can only move in xz-plane!");
+		if (direction.length() == 0)
+			throw new IllegalArgumentException("Can not be null vector!");
+		Matrix4f dirMat = new Matrix4f();
+		float angle = new Vector3f(1, 0, 0).angle(direction);
+		if (direction.z > 0)
+			dirMat.rotY(-angle);
+		else dirMat.rotY(angle);
+		for (Shape s: shapes) {
+			s.getTransformation().mul(dirMat);
 		}
 	}
 
@@ -51,11 +67,10 @@ public class Locomotive extends AssembledShape implements Actable {
 		
 		public LocomotiveBody() {
 			super(new Cylinder(2, .5f, 60));
-			Matrix4f bodyTransf = new Matrix4f();
-			//bodyTransf.rotX(MathFloat.PI/2);
-			bodyTransf.setIdentity();
-			bodyTransf.setTranslation(new Vector3f(.5f, .5f, .5f));
-			setTransformation(bodyTransf);
+			Matrix4f bodyTranslation = new Matrix4f();
+			bodyTranslation.rotY(-MathFloat.PI/2);
+			bodyTranslation.setTranslation(new Vector3f(.5f, .5f, .5f));
+			setTransformation(bodyTranslation);
 		}
 		
 		@Override
