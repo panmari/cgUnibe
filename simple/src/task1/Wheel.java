@@ -3,12 +3,10 @@ package task1;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
-import jrtr.Shape;
-
 public class Wheel extends MovingShape implements Actable {
 
-	Matrix4f rotate = new Matrix4f();
-	
+	private Matrix4f rotate = new Matrix4f();
+	private float radius;
 	/**
 	 * A wheel class, isn't that great?
 	 * Does not move on its own, only rotate
@@ -17,7 +15,13 @@ public class Wheel extends MovingShape implements Actable {
 	 * @param speed
 	 */
 	public Wheel(float radius, float speed) {
-		super(new Torus(radius, radius/4, 120, 5));
+		super(new Torus(radius, radius/4, 60, 5));
+		this.radius = radius;
+		rotate.rotZ(0.01f*speed/radius);
+		rotate.invert();
+	}
+	
+	public void setSpeed(float speed) {
 		rotate.rotZ(0.01f*speed/radius);
 		rotate.invert();
 	}

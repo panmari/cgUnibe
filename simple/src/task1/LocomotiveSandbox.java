@@ -77,10 +77,10 @@ public class LocomotiveSandbox
     	public void mousePressed(MouseEvent e) {
     		switch (e.getButton()) {
     		case MouseEvent.BUTTON1:
-    			l.rotateLeft();
+    			//l.rotateLeft();
     			break;
     		case MouseEvent.BUTTON3:
-    			l.rotateRight();
+    			//l.rotateRight();
     			break;
     		}
     	}
@@ -98,7 +98,6 @@ public class LocomotiveSandbox
 		public void keyPressed(KeyEvent k) {
 			switch (k.getKeyCode()) {
 			case KeyEvent.VK_UP:
-				System.out.println("blah");
 				l.accelerate();
 				break;
 			case KeyEvent.VK_DOWN:

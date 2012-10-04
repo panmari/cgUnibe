@@ -18,6 +18,7 @@ public class Locomotive extends AssembledShape implements Actable {
 											new Vector3f(.5f, 0, -.5f),
 											new Vector3f(-.5f, 0, -.5f)};
 
+	private Wheel[] wheels = new Wheel[4];
 	private Matrix4f shift_per_time = new Matrix4f();
 	private Vector3f direction;
 	private Matrix4f rotateStepLeft = new Matrix4f();
@@ -29,6 +30,7 @@ public class Locomotive extends AssembledShape implements Actable {
 		rotateStepRight.invert(rotateStepLeft);
 		for (int i = 0; i < 4; i++) {
 			Wheel w = new Wheel(.4f, initialSpeed);
+			wheels[i] = w;
 			Matrix4f m = w.getTransformation();
 			m.setIdentity();
 			m.setTranslation(wheelCoordinates[i]);
@@ -76,6 +78,8 @@ public class Locomotive extends AssembledShape implements Actable {
 			m.add(s.getShift());
 			s.setTransformation(m);
 		}
+		for (Wheel w: wheels)
+			w.setSpeed(speed);
 	}
 
 	public void rotateLeft() {
@@ -108,10 +112,10 @@ public class Locomotive extends AssembledShape implements Actable {
 	}
 
 	public void accelerate() {
-		setSpeed(speed + 2);
+		setSpeed(speed + .5f);
 	}
 
 	public void decelerate() {
-		setSpeed(speed - 2);
+		setSpeed(speed - .5f);
 	}
 }
