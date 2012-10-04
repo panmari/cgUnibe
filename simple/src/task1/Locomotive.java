@@ -24,15 +24,11 @@ public class Locomotive extends AssembledShape implements Actable {
 	private Matrix4f rotateStepRight = new Matrix4f();
 	private float speed;
 	
-	public Locomotive(Vector3f initialDirection, float speed) {
-		this.speed = speed;
+	public Locomotive(Vector3f initialDirection, float initialSpeed) {
 		this.rotateStepLeft.rotY(MathFloat.PI/40);
 		rotateStepRight.invert(rotateStepLeft);
-		//shift.setIdentity();
-		initialDirection.normalize();
-		initialDirection.scale(0.01f*speed);
 		for (int i = 0; i < 4; i++) {
-			Wheel w = new Wheel(.4f, speed);
+			Wheel w = new Wheel(.4f, initialSpeed);
 			Matrix4f m = w.getTransformation();
 			m.setIdentity();
 			m.setTranslation(wheelCoordinates[i]);
@@ -40,7 +36,7 @@ public class Locomotive extends AssembledShape implements Actable {
 			shapes.add(w);
 		}
 		shapes.add(new LocomotiveBody());
-		setDirection(initialDirection);
+		setDirection(initialDirection, initialSpeed);
 	}
 	
 	public void act() {
@@ -50,12 +46,22 @@ public class Locomotive extends AssembledShape implements Actable {
 		}
 	}
 	
+	public void setSpeed(float speed) {
+		if (speed > 0)
+			setDirection(direction, speed);
+	}
+	
 	public void setDirection(Vector3f direction) {
+		setDirection(direction, speed);
+	}
+	
+	public void setDirection(Vector3f direction, float speed) {
 		if (direction.y != 0)
 			throw new IllegalArgumentException("Can only move in xz-plane!");
 		if (direction.length() == 0)
 			throw new IllegalArgumentException("Can not be null vector!");
 		this.direction = direction;
+		this.speed = speed;
 		direction.normalize();
 		direction.scale(0.01f*speed);
 		shift_per_time.setTranslation(direction);
@@ -74,12 +80,12 @@ public class Locomotive extends AssembledShape implements Actable {
 
 	public void rotateLeft() {
 		rotateStepLeft.transform(direction);
-		setDirection(direction);
+		setDirection(direction, speed);
 	}
 
 	public void rotateRight() {
 		rotateStepRight.transform(direction);
-		setDirection(direction);
+		setDirection(direction, speed);
 	}
 	
 	class LocomotiveBody extends MovingShape implements Actable {
@@ -99,5 +105,13 @@ public class Locomotive extends AssembledShape implements Actable {
 		public void act() {
 
 		}
+	}
+
+	public void accelerate() {
+		setSpeed(speed + 2);
+	}
+
+	public void decelerate() {
+		setSpeed(speed - 2);
 	}
 }

@@ -1,15 +1,21 @@
 package task1;
 
-import jogamp.graph.math.MathFloat;
-import jrtr.*;
-
-import javax.swing.*;
-import java.awt.event.MouseListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import javax.vecmath.*;
-
+import java.awt.event.MouseListener;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.JFrame;
+import javax.vecmath.Vector3f;
+
+import jrtr.GLRenderPanel;
+import jrtr.RenderContext;
+import jrtr.RenderPanel;
+import jrtr.SWRenderPanel;
+import jrtr.Shape;
+import jrtr.SimpleSceneManager;
 
 /**
  * Implements a simple application that opens a 3D rendering window and 
@@ -86,6 +92,40 @@ public class LocomotiveSandbox
     	}
 	}
 	
+	public static class SimpleKeyListener implements KeyListener {
+
+		@Override
+		public void keyPressed(KeyEvent k) {
+			switch (k.getKeyCode()) {
+			case KeyEvent.VK_UP:
+				System.out.println("blah");
+				l.accelerate();
+				break;
+			case KeyEvent.VK_DOWN:
+				l.decelerate();
+				break;
+			case KeyEvent.VK_LEFT:
+				l.rotateLeft();
+				break;
+			case KeyEvent.VK_RIGHT:
+				l.rotateRight();
+				break;
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void keyTyped(KeyEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 	/**
 	 * The main function opens a 3D rendering window, constructs a simple 3D
 	 * scene, and starts a timer task to generate an animation.
@@ -111,6 +151,7 @@ public class LocomotiveSandbox
 
 		// Add a mouse listener
 	    renderPanel.getCanvas().addMouseListener(new SimpleMouseListener());
+	    renderPanel.getCanvas().addKeyListener(new SimpleKeyListener());
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
 	}
