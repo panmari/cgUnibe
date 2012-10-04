@@ -5,6 +5,7 @@ import javax.vecmath.Vector3f;
 
 public class Wheel extends MovingShape implements Actable {
 
+	private Matrix4f rotatePerStep = new Matrix4f();
 	private Matrix4f rotate = new Matrix4f();
 	private float radius;
 	/**
@@ -17,13 +18,15 @@ public class Wheel extends MovingShape implements Actable {
 	public Wheel(float radius, float speed) {
 		super(new Torus(radius, radius/4, 60, 5));
 		this.radius = radius;
-		rotate.rotZ(0.01f*speed/radius);
-		rotate.invert();
+		rotatePerStep.rotZ(0.01f*speed/radius);
+		rotatePerStep.invert();
+		rotate.setIdentity();
 	}
 	
 	public void setSpeed(float speed) {
-		rotate.rotZ(0.01f*speed/radius);
-		rotate.invert();
+		rotatePerStep.rotZ(0.01f*speed/radius);
+		rotatePerStep.invert();
+		getTransformation().mul(rotate);
 	}
 	
 	public void setDirection(Vector3f direction) {
@@ -36,6 +39,7 @@ public class Wheel extends MovingShape implements Actable {
 	}
 	
 	public void act() {
-		getTransformation().mul(rotate);
+		rotate.mul(rotatePerStep);
+		getTransformation().mul(rotatePerStep);
 	}
 }
