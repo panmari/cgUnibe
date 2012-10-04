@@ -69,8 +69,14 @@ public class DrawObject
 	public static class SimpleMouseListener implements MouseListener
 	{
     	public void mousePressed(MouseEvent e) {
-    		//actor.act();
-    		l.setDirection(new Vector3f(e.getX() - 200, 0, e.getY() - 200));
+    		switch (e.getButton()) {
+    		case MouseEvent.BUTTON1:
+    			l.rotateLeft();
+    			break;
+    		case MouseEvent.BUTTON3:
+    			l.rotateRight();
+    			break;
+    		}
     	}
     	public void mouseReleased(MouseEvent e) {}
     	public void mouseEntered(MouseEvent e) {}

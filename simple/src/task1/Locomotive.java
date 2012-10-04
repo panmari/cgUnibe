@@ -18,13 +18,17 @@ public class Locomotive extends AssembledShape implements Actable {
 											new Vector3f(.5f, 0, -.5f),
 											new Vector3f(-.5f, 0, -.5f)};
 
-	private Matrix4f shift = new Matrix4f();
+	private Matrix4f shift_per_time = new Matrix4f();
 	private Vector3f direction;
+	private Matrix4f rotateStepLeft = new Matrix4f();
+	private Matrix4f rotateStepRight = new Matrix4f();
 	private float speed;
 	
 	public Locomotive(Vector3f direction, float speed) {
 		this.direction = direction;
 		this.speed = speed;
+		this.rotateStepLeft.rotY(MathFloat.PI/40);
+		rotateStepRight.invert(rotateStepLeft);
 		//shift.setIdentity();
 		direction.normalize();
 		direction.scale(0.01f*speed);
@@ -40,10 +44,9 @@ public class Locomotive extends AssembledShape implements Actable {
 	}
 	
 	public void act() {
-		for (Shape s: shapes) {
+		for (MovingShape s: shapes) {
 			((Actable)s).act();
-			Matrix4f m = s.getTransformation();
-			m.add(shift, m);
+			s.addShift(shift_per_time);
 		}
 	}
 	
@@ -55,7 +58,7 @@ public class Locomotive extends AssembledShape implements Actable {
 		this.direction = direction;
 		direction.normalize();
 		direction.scale(0.01f*speed);
-		shift.setTranslation(direction);
+		shift_per_time.setTranslation(direction);
 		Matrix4f dirMat = new Matrix4f();
 		float angle = new Vector3f(1, 0, 0).angle(direction);
 		if (direction.z > 0)
@@ -64,9 +67,7 @@ public class Locomotive extends AssembledShape implements Actable {
 		for (MovingShape s: shapes) {
 			Matrix4f m = s.getInit();
 			m.mul(dirMat, m);
-			float[] trans = new float[4];
-			s.getTransformation().getColumn(3, trans);
-			m.setTranslation(new Vector3f(trans[0], trans[1], trans[2]));
+			m.add(s.getShift());
 			s.setTransformation(m);
 		}
 	}
@@ -89,5 +90,16 @@ public class Locomotive extends AssembledShape implements Actable {
 		public void act() {
 
 		}
+	}
+
+
+	public void rotateLeft() {
+		rotateStepLeft.transform(direction);
+		setDirection(direction);
+	}
+
+	public void rotateRight() {
+		rotateStepRight.transform(direction);
+		setDirection(direction);
 	}
 }
