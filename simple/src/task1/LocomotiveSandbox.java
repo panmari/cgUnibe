@@ -15,7 +15,7 @@ import java.util.TimerTask;
  * Implements a simple application that opens a 3D rendering window and 
  * shows a rotating cube.
  */
-public class DrawObject
+public class LocomotiveSandbox
 {	
 	static RenderPanel renderPanel;
 	static RenderContext renderContext;

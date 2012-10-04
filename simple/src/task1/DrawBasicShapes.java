@@ -1,14 +1,9 @@
+package task1;
 import jrtr.*;
 import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import javax.vecmath.*;
-
-import task1.Cylinder;
-import task1.Torus;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,12 +11,12 @@ import java.util.TimerTask;
  * Implements a simple application that opens a 3D rendering window and 
  * shows a rotating cube.
  */
-public class simple
+public class DrawBasicShapes
 {	
 	static RenderPanel renderPanel;
 	static RenderContext renderContext;
 	static SimpleSceneManager sceneManager;
-	static List<Shape> shapes = new ArrayList<Shape>();
+	static Shape shape;
 	static float angle;
 
 	/**
@@ -55,16 +50,16 @@ public class simple
 	{
 		public void run()
 		{
-			for (Shape shape: shapes) {
-	    		Matrix4f t = shape.getTransformation();
-	    		Matrix4f rotX = new Matrix4f();
-	    		rotX.rotX(angle);
-	    		Matrix4f rotY = new Matrix4f();
-	    		rotY.rotY(angle);
-	    		t.mul(rotX);
-	    		t.mul(rotY);
-	    		shape.setTransformation(t);
-			}
+			// Update transformation
+    		Matrix4f t = shape.getTransformation();
+    		Matrix4f rotX = new Matrix4f();
+    		rotX.rotX(angle);
+    		Matrix4f rotY = new Matrix4f();
+    		rotY.rotY(angle);
+    		t.mul(rotX);
+    		t.mul(rotY);
+    		shape.setTransformation(t);
+    		
     		// Trigger redrawing of the render window
     		renderPanel.getCanvas().repaint(); 
 		}
@@ -89,16 +84,45 @@ public class simple
 	 */
 	public static void main(String[] args)
 	{		
+		// Make a simple geometric object: a cube
 		
+		// The vertex positions of the cube
+		float v[] = {-1,-1,1, 1,-1,1, 1,1,1, -1,1,1,		// front face
+			         -1,-1,-1, -1,-1,1, -1,1,1, -1,1,-1,	// left face
+				  	 1,-1,-1,-1,-1,-1, -1,1,-1, 1,1,-1,		// back face
+					 1,-1,1, 1,-1,-1, 1,1,-1, 1,1,1,		// right face
+					 1,1,1, 1,1,-1, -1,1,-1, -1,1,1,		// top face
+					-1,-1,1, -1,-1,-1, 1,-1,-1, 1,-1,1};	// bottom face
+
+		// The vertex colors
+		float c[] = {1,0,0, 1,0,0, 1,0,0, 1,0,0,
+				     0,1,0, 0,1,0, 0,1,0, 0,1,0,
+					 1,0,0, 1,0,0, 1,0,0, 1,0,0,
+					 0,1,0, 0,1,0, 0,1,0, 0,1,0,
+					 0,0,1, 0,0,1, 0,0,1, 0,0,1,
+					 0,0,1, 0,0,1, 0,0,1, 0,0,1};
+
+		// Construct a data structure that stores the vertices, their
+		// attributes, and the triangle mesh connectivity
+		VertexData vertexData = new VertexData(24);
+		vertexData.addElement(c, VertexData.Semantic.COLOR, 3);
+		vertexData.addElement(v, VertexData.Semantic.POSITION, 3);
+		
+		// The triangles (three vertex indices for each triangle)
+		int indices[] = {0,2,3, 0,1,2,			// front face
+						 4,6,7, 4,5,6,			// left face
+						 8,10,11, 8,9,10,		// back face
+						 12,14,15, 12,13,14,	// right face
+						 16,18,19, 16,17,18,	// top face
+						 20,22,23, 20,21,22};	// bottom face
+
+		vertexData.addIndices(indices);
 				
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		Shape c = new Shape(new Cylinder(1, 1, 20));
-		c.getTransformation().setTranslation(new Vector3f(3, 0, 0));
-		shapes.add(c);
-		shapes.add(new Shape(new Torus(1, .3f, 6, 4)));
-		for (Shape shape: shapes)
-			sceneManager.addShape(shape);
+		shape = new Shape(vertexData);
+		sceneManager.addShape(shape);
+
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
 		renderPanel = new SimpleRenderPanel();
