@@ -9,9 +9,9 @@ import java.util.Iterator;
  */
 public class SimpleSceneManager implements SceneManagerInterface {
 
-	private LinkedList<Shape> shapes;
-	private Camera camera;
-	private Frustum frustum;
+	protected LinkedList<Shape> shapes;
+	protected Camera camera;
+	protected Frustum frustum;
 	
 	public SimpleSceneManager()
 	{
