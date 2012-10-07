@@ -19,28 +19,11 @@ public class Camera {
 	private Vector3f upVector;
 
 	public Camera(Point3f centerOfProjection, Point3f lookAtPoint, Vector3f upVector) {
+		cameraMatrix = new Matrix4f();
 		this.centerOfProjection = centerOfProjection;
 		this.lookAtPoint = lookAtPoint;
-		this.upVector = upVector; //is the new y axis
-		cameraMatrix = new Matrix4f();
-		cameraMatrix.setIdentity();
-		Vector3f z = new Vector3f(lookAtPoint);
-		Vector4f trans = new Vector4f(centerOfProjection);
-		z.sub(centerOfProjection); // new direction of the z-axis!
-		trans.negate();
-		trans.setW(1);
-		Vector3f y = upVector; // new direction of the y-axis!
-		Vector3f x = new Vector3f();
-		x.cross(y, z);
-		
-		x.normalize();
-		y.normalize();
-		z.normalize();
-		
-		cameraMatrix.setColumn(0, new Vector4f(x));
-		cameraMatrix.setColumn(1, new Vector4f(y));
-		cameraMatrix.setColumn(2, new Vector4f(z));
-		cameraMatrix.setColumn(3, trans);
+		this.upVector = upVector;
+		update();
 	}
 	/**
 	 * Construct a camera with a default camera matrix. The camera
@@ -67,5 +50,48 @@ public class Camera {
 	public Matrix4f getCameraMatrix()
 	{
 		return cameraMatrix;
+	}
+	
+	public void setCenterOfProjection(Point3f centerOfProjection) {
+		this.centerOfProjection = centerOfProjection;
+		update();
+	}
+	
+	public void update() {
+		Vector3f z = new Vector3f(lookAtPoint);
+		Vector4f trans = new Vector4f(centerOfProjection);
+		z.sub(centerOfProjection); // new direction of the z-axis!
+		trans.negate();
+		trans.setW(1);
+		Vector3f y = upVector; // new direction of the y-axis!
+		Vector3f x = new Vector3f();
+		x.cross(y, z);
+		
+		x.normalize();
+		y.normalize();
+		z.normalize();
+		
+		cameraMatrix.setColumn(0, new Vector4f(x));
+		cameraMatrix.setColumn(1, new Vector4f(y));
+		cameraMatrix.setColumn(2, new Vector4f(z));
+		cameraMatrix.setColumn(3, trans);
+	}
+	
+	public Point3f getCenterOfProjection() {
+		return centerOfProjection;
+	}
+	public void setLookAtPoint(Point3f lookAtPoint) {
+		this.lookAtPoint = lookAtPoint;
+		update();
+	}
+	public Point3f getLookAtPoint() {
+		return lookAtPoint;
+	}
+	public void setUpVector(Vector3f upVector) {
+		this.upVector = upVector;
+		update();
+	}
+	public Vector3f getUpVector() {
+		return upVector;
 	}
 }

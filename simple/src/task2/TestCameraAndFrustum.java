@@ -1,12 +1,15 @@
 package task2;
 
+import jogamp.graph.math.MathFloat;
 import jrtr.*;
+
 import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import javax.vecmath.*;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,6 +24,11 @@ public class TestCameraAndFrustum
 	static SimpleSceneManager sceneManager;
 	static Shape shape;
 	static float angle;
+	private static Point3f cop;
+	private static Point3f lap;
+	private static Vector3f up;
+	private static Camera c;
+	private static Matrix4f trans;
 
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -41,7 +49,7 @@ public class TestCameraAndFrustum
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
-		    //timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
+		    timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
 		}
 	}
 
@@ -53,18 +61,9 @@ public class TestCameraAndFrustum
 	{
 		public void run()
 		{
-			// Update transformation
-    		Matrix4f t = shape.getTransformation();
-    		Matrix4f rotX = new Matrix4f();
-    		rotX.rotX(angle);
-    		Matrix4f rotY = new Matrix4f();
-    		rotY.rotY(angle);
-    		t.mul(rotX);
-    		t.mul(rotY);
-    		shape.setTransformation(t);
-    		
-    		// Trigger redrawing of the render window
-    		renderPanel.getCanvas().repaint(); 
+			trans.transform(cop);
+			c.update();
+			renderPanel.getCanvas().repaint(); 
 		}
 	}
 
@@ -90,7 +89,12 @@ public class TestCameraAndFrustum
 	{		
 		
 		// Make a scene manager and add the object
-		Camera c = new Camera(new Point3f(5, 0, 30), new Point3f(0, 0, 0), new Vector3f(0, 1, 0));
+		trans = new Matrix4f();
+		trans.rotY(MathFloat.PI/60);
+		cop = new Point3f(0, 0, 40);
+		lap = new Point3f(-5, 0, 0);
+		up = new Vector3f(0, 1, 0);
+		c = new Camera(cop, lap, up);
 		sceneManager = new SimpleSceneManager(c, new Frustum());
 		shape = makeHouse();
 		sceneManager.addShape(shape);
