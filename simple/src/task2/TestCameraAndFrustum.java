@@ -90,7 +90,7 @@ public class TestCameraAndFrustum
 	{		
 		
 		// Make a scene manager and add the object
-		sceneManager = new SimpleSceneManager();
+		sceneManager = new SimpleSceneManager(new Camera(new Vector3f(0, 0, 30), null, null), new Frustum());
 		shape = makeHouse();
 		sceneManager.addShape(shape);
 

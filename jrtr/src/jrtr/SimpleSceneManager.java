@@ -13,6 +13,13 @@ public class SimpleSceneManager implements SceneManagerInterface {
 	protected Camera camera;
 	protected Frustum frustum;
 	
+	public SimpleSceneManager(Camera c, Frustum f)
+	{
+		shapes = new LinkedList<Shape>();
+		camera = c;
+		frustum = f;
+	}
+	
 	public SimpleSceneManager()
 	{
 		shapes = new LinkedList<Shape>();

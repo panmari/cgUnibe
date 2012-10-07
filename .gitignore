@@ -61,3 +61,6 @@ Desktop.ini
 
 # KDE
 .directory
+
+#jogamp files on windows:
+jogamp-all-platforms/

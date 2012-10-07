@@ -14,6 +14,19 @@ public class Camera {
 
 	private Matrix4f cameraMatrix;
 	
+	private Vector3f centerOfProjection;
+	private Point3f lookAtPoint;
+	private Vector3f upVector;
+
+	public Camera(Vector3f centerOfProjection, Point3f lookAtPoint, Vector3f upVector) {
+		this.centerOfProjection = centerOfProjection;
+		this.lookAtPoint = lookAtPoint;
+		this.upVector = upVector;
+		cameraMatrix = new Matrix4f();
+		cameraMatrix.setIdentity();
+		this.centerOfProjection.scale(-1);
+		cameraMatrix.setTranslation(this.centerOfProjection);
+	}
 	/**
 	 * Construct a camera with a default camera matrix. The camera
 	 * matrix corresponds to the world-to-camera transform. This default
