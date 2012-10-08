@@ -58,23 +58,25 @@ public class Camera {
 	}
 	
 	public void update() {
-		Vector3f z = new Vector3f(lookAtPoint);
+		Vector3f z = new Vector3f(centerOfProjection);
 		Vector4f trans = new Vector4f(centerOfProjection);
-		z.sub(centerOfProjection); // new direction of the z-axis!
-		trans.negate();
-		trans.setW(1);
-		Vector3f y = upVector; // new direction of the y-axis!
-		Vector3f x = new Vector3f();
-		x.cross(y, z);
-		
-		x.normalize();
-		y.normalize();
+		z.sub(lookAtPoint); // new direction of the z-axis!
 		z.normalize();
+		
+		trans.setW(1);
+		Vector3f x = new Vector3f();
+		x.cross(upVector, z);
+		x.normalize();
+		
+		Vector3f y = new Vector3f(); // new direction of the y-axis!
+		y.cross(z, x);
+		y.normalize();
 		
 		cameraMatrix.setColumn(0, new Vector4f(x));
 		cameraMatrix.setColumn(1, new Vector4f(y));
 		cameraMatrix.setColumn(2, new Vector4f(z));
 		cameraMatrix.setColumn(3, trans);
+		cameraMatrix.invert();
 	}
 	
 	public Point3f getCenterOfProjection() {

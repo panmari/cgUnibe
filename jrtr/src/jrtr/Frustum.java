@@ -16,23 +16,30 @@ import jogamp.graph.math.MathFloat;
 public class Frustum {
 
 	private Matrix4f projectionMatrix;
-	private float nearPlane, farPlane, aspectRatio, VerticalFieldOfView;
-	
-	public Frustum(float nearPlane, float farPlane, float aspectRatio, float VerticalFieldOfView) {
+	private float nearPlane, farPlane, aspectRatio, verticalFieldOfView;
+	/**
+	 * 
+	 * @param nearPlane
+	 * @param farPlane
+	 * @param aspectRatio 
+	 * @param VerticalFieldOfView in radian!
+	 */
+	public Frustum(float nearPlane, float farPlane, float aspectRatio, float verticalFieldOfView) {
 		this.nearPlane = nearPlane;
 		this.farPlane = farPlane;
 		this.aspectRatio = aspectRatio;
+		this.verticalFieldOfView = verticalFieldOfView;
 		update();
 	}
 	
 	/**
-	 * Copied from skript
+	 * Copied from script
 	 */
 	private void update() {
-		projectionMatrix = new Matrix4f();
-		projectionMatrix.setM00(1/(aspectRatio*tan(VerticalFieldOfView/2)));
-		projectionMatrix.setM11(1/(tan(VerticalFieldOfView/2)));
-		projectionMatrix.setM11(1/(tan(VerticalFieldOfView/2)));
+		projectionMatrix = new Matrix4f(); //throw away old matrix (may contain nasty stuff)
+		projectionMatrix.setM00(1/(aspectRatio*tan(verticalFieldOfView/2)));
+		projectionMatrix.setM11(1/(tan(verticalFieldOfView/2)));
+		projectionMatrix.setM11(1/(tan(verticalFieldOfView/2)));
 		projectionMatrix.setM22((nearPlane + farPlane)/(nearPlane - farPlane));
 		projectionMatrix.setM32(-1);
 		projectionMatrix.setM23(2 * nearPlane * farPlane/(nearPlane - farPlane));
@@ -72,6 +79,7 @@ public class Frustum {
 
 	public void setNearPlane(float nearPlane) {
 		this.nearPlane = nearPlane;
+		update();
 	}
 
 	public float getFarPlane() {
@@ -80,6 +88,7 @@ public class Frustum {
 
 	public void setFarPlane(float farPlane) {
 		this.farPlane = farPlane;
+		update();
 	}
 
 	public float getAspectRatio() {
@@ -88,13 +97,15 @@ public class Frustum {
 
 	public void setAspectRatio(float aspectRatio) {
 		this.aspectRatio = aspectRatio;
+		update();
 	}
 
 	public float getVerticalFieldOfView() {
-		return VerticalFieldOfView;
+		return verticalFieldOfView;
 	}
 
 	public void setVerticalFieldOfView(float verticalFieldOfView) {
-		VerticalFieldOfView = verticalFieldOfView;
+		this.verticalFieldOfView = verticalFieldOfView;
+		update();
 	}
 }
