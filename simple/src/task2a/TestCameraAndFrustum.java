@@ -10,6 +10,8 @@ import java.io.IOException;
 
 import javax.vecmath.*;
 
+import com.jogamp.graph.math.Quaternion;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -49,7 +51,7 @@ public class TestCameraAndFrustum
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
-		    timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
+		    //timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
 		}
 	}
 
@@ -61,7 +63,7 @@ public class TestCameraAndFrustum
 	{
 		public void run()
 		{
-			renderPanel.getCanvas().repaint(); 
+			
 		}
 	}
 
@@ -71,11 +73,38 @@ public class TestCameraAndFrustum
 	 */
 	public static class SimpleMouseListener implements MouseListener
 	{
-    	public void mousePressed(MouseEvent e) {}
-    	public void mouseReleased(MouseEvent e) {}
+    	
+		
+		private Vector3f initialPoint;
+		
+		public void mousePressed(MouseEvent e) {
+    		
+    	}
+    	public void mouseReleased(MouseEvent e) {
+    		Vector3f newPoint = convertToSphere(e);
+    		Vector3f axis = new Vector3f();
+    		axis.cross(initialPoint, newPoint);
+    		float theta = initialPoint.angle(newPoint);
+    		Matrix4f m = shape.getTransformation();
+    		Matrix4f rot = new Matrix4f();
+    		rot.setRotation(new AxisAngle4f(axis.x, axis.y, axis.z, theta));
+    		m.mul(rot, m);
+    		renderPanel.getCanvas().repaint(); 
+    	}
     	public void mouseEntered(MouseEvent e) {}
     	public void mouseExited(MouseEvent e) {}
-    	public void mouseClicked(MouseEvent e) {}
+    	public void mouseClicked(MouseEvent e) {
+    		initialPoint = convertToSphere(e);
+    	}
+    	
+    	private Vector3f convertToSphere(MouseEvent e) {
+    		int x = 2*e.getX()/renderPanel.getCanvas().getWidth() - 1;
+    		int y = 1 - 2*e.getY()/renderPanel.getCanvas().getHeight();
+    		float z = MathFloat.sqrt(1 - x*x - y*y);
+    		Vector3f p = new Vector3f(x, y, z);
+    		p.normalize(); //is this really necessary?
+    		return p;
+    	}
 	}
 	
 	/**
