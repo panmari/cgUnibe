@@ -78,7 +78,8 @@ public class VirtualTrackball
 		private Vector3f initialPoint;
 		
 		public void mousePressed(MouseEvent e) {
-    		
+			if (initialPoint == null)
+				initialPoint = convertToSphere(e);
     	}
     	public void mouseReleased(MouseEvent e) {
     		Vector3f newPoint = convertToSphere(e);
@@ -87,19 +88,21 @@ public class VirtualTrackball
     		float theta = initialPoint.angle(newPoint);
     		Matrix4f m = shape.getTransformation();
     		Matrix4f rot = new Matrix4f();
+    		rot.setIdentity();
     		rot.setRotation(new AxisAngle4f(axis.x, axis.y, axis.z, theta));
     		m.mul(rot, m);
     		renderPanel.getCanvas().repaint(); 
+    		initialPoint = null;
     	}
     	public void mouseEntered(MouseEvent e) {}
     	public void mouseExited(MouseEvent e) {}
     	public void mouseClicked(MouseEvent e) {
-    		initialPoint = convertToSphere(e);
+    		
     	}
     	
     	private Vector3f convertToSphere(MouseEvent e) {
-    		int x = 2*e.getX()/renderPanel.getCanvas().getWidth() - 1;
-    		int y = 1 - 2*e.getY()/renderPanel.getCanvas().getHeight();
+    		float x = (float) 2*e.getX()/renderPanel.getCanvas().getWidth() - 1;
+    		float y = 1 - (float)2*e.getY()/renderPanel.getCanvas().getHeight();
     		float z = MathFloat.sqrt(1 - x*x - y*y);
     		Vector3f p = new Vector3f(x, y, z);
     		p.normalize(); //is this really necessary?
@@ -131,7 +134,7 @@ public class VirtualTrackball
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-	    jframe.addMouseListener(new SimpleMouseListener());
+	    renderPanel.getCanvas().addMouseListener(new SimpleMouseListener());
 		   	    	    
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
