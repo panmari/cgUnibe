@@ -76,12 +76,15 @@ public class VirtualTrackball
     	
 		
 		private Vector3f initialPoint;
+		private boolean exited;
 		
 		public void mousePressed(MouseEvent e) {
 			if (initialPoint == null)
 				initialPoint = convertToSphere(e);
     	}
     	public void mouseReleased(MouseEvent e) {
+    		if (exited)
+    			return;
     		Vector3f newPoint = convertToSphere(e);
     		Vector3f axis = new Vector3f();
     		axis.cross(initialPoint, newPoint);
@@ -94,8 +97,12 @@ public class VirtualTrackball
     		renderPanel.getCanvas().repaint(); 
     		initialPoint = null;
     	}
-    	public void mouseEntered(MouseEvent e) {}
-    	public void mouseExited(MouseEvent e) {}
+    	public void mouseEntered(MouseEvent e) {
+    		exited = false;
+    	}
+    	public void mouseExited(MouseEvent e) {
+    		exited = true;
+    	}
     	public void mouseClicked(MouseEvent e) {
     		
     	}
