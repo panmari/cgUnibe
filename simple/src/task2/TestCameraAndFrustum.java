@@ -61,7 +61,7 @@ public class TestCameraAndFrustum
 	{
 		public void run()
 		{
-			trans.transform(cop);
+			//trans.transform(c.getCenterOfProjection());
 			c.update();
 			renderPanel.getCanvas().repaint(); 
 		}
@@ -91,8 +91,8 @@ public class TestCameraAndFrustum
 		// Make a scene manager and add the object
 		trans = new Matrix4f();
 		trans.rotY(MathFloat.PI/60);
-		cop = new Point3f(0, 0, 40);
-		lap = new Point3f(-5, 0, 0);
+		cop = new Point3f(0, 20, 40);
+		lap = new Point3f(0, 8, 4);
 		up = new Vector3f(0, 1, 0);
 		c = new Camera(cop, lap, up);
 		sceneManager = new SimpleSceneManager(c, new Frustum());

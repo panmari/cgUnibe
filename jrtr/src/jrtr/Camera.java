@@ -58,9 +58,9 @@ public class Camera {
 	}
 	
 	public void update() {
-		Vector3f z = new Vector3f(centerOfProjection);
+		Vector3f z = new Vector3f(lookAtPoint);
 		Vector4f trans = new Vector4f(centerOfProjection);
-		z.sub(lookAtPoint); // new direction of the z-axis!
+		z.sub(centerOfProjection); // new direction of the z-axis!
 		trans.negate();
 		trans.setW(1);
 		Vector3f y = upVector; // new direction of the y-axis!
