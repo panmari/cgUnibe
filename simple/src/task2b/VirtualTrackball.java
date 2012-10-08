@@ -6,9 +6,12 @@ import jrtr.*;
 import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 
 import javax.vecmath.*;
+
+import task2b.VirtualTrackball.TrackballMouseListener;
 
 import com.jogamp.graph.math.Quaternion;
 
@@ -71,37 +74,26 @@ public class VirtualTrackball
 	 * A mouse listener for the main window of this application. This can be
 	 * used to process mouse events.
 	 */
-	public static class SimpleMouseListener implements MouseListener
+	public static class TrackballMouseListener implements MouseListener, MouseMotionListener
 	{
-    	
-		
 		private Vector3f initialPoint;
 		private boolean exited;
 		
 		public void mousePressed(MouseEvent e) {
+			if (e.getButton() == MouseEvent.BUTTON3) {
+				shape.getTransformation().setIdentity();
+				renderPanel.getCanvas().repaint();
+				return;
+			}
 			if (initialPoint == null)
 				initialPoint = convertToSphere(e);
     	}
     	public void mouseReleased(MouseEvent e) {
-    		if (exited)
-    			return;
-    		Vector3f newPoint = convertToSphere(e);
-    		Vector3f axis = new Vector3f();
-    		axis.cross(initialPoint, newPoint);
-    		float theta = initialPoint.angle(newPoint);
-    		Matrix4f m = shape.getTransformation();
-    		Matrix4f rot = new Matrix4f();
-    		rot.setIdentity();
-    		rot.setRotation(new AxisAngle4f(axis.x, axis.y, axis.z, theta));
-    		m.mul(rot, m);
-    		renderPanel.getCanvas().repaint(); 
     		initialPoint = null;
     	}
     	public void mouseEntered(MouseEvent e) {
-    		exited = false;
     	}
     	public void mouseExited(MouseEvent e) {
-    		exited = true;
     	}
     	public void mouseClicked(MouseEvent e) {
     		
@@ -115,6 +107,36 @@ public class VirtualTrackball
     		p.normalize(); //is this really necessary?
     		return p;
     	}
+		@Override
+		public void mouseDragged(MouseEvent e) {
+    		Vector3f newPoint = convertToSphere(e);
+    		if (containsNan(newPoint)) //if out of window
+    			return;
+    		Vector3f axis = new Vector3f();
+    		axis.cross(initialPoint, newPoint);
+    		float theta = initialPoint.angle(newPoint);
+    		Matrix4f m = shape.getTransformation();
+    		Matrix4f rot = new Matrix4f();
+    		rot.setIdentity();
+    		rot.setRotation(new AxisAngle4f(axis.x, axis.y, axis.z, theta));
+    		m.mul(rot, m);
+    		renderPanel.getCanvas().repaint(); 
+    		initialPoint = newPoint;
+		}
+		private boolean containsNan(Vector3f newPoint) {
+			float p[] = new float[3];
+			newPoint.get(p);
+			for (float f: p) {
+				if (new Float(f).isNaN())
+					return true;
+			}
+			return false;
+		}
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 	
 	/**
@@ -141,8 +163,9 @@ public class VirtualTrackball
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-	    renderPanel.getCanvas().addMouseListener(new SimpleMouseListener());
-		   	    	    
+		TrackballMouseListener l = new TrackballMouseListener();
+	    renderPanel.getCanvas().addMouseListener(l);
+		renderPanel.getCanvas().addMouseMotionListener(l);
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
 	}
