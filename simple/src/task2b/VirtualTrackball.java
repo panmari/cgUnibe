@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 
 import javax.vecmath.*;
@@ -29,11 +31,6 @@ public class VirtualTrackball
 	static SimpleSceneManager sceneManager;
 	static Shape shape;
 	static float angle;
-	private static Point3f cop;
-	private static Point3f lap;
-	private static Vector3f up;
-	private static Camera c;
-	private static Matrix4f trans;
 
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -74,10 +71,9 @@ public class VirtualTrackball
 	 * A mouse listener for the main window of this application. This can be
 	 * used to process mouse events.
 	 */
-	public static class TrackballMouseListener implements MouseListener, MouseMotionListener
+	public static class TrackballMouseListener implements MouseListener, MouseMotionListener, MouseWheelListener
 	{
 		private Vector3f initialPoint;
-		private boolean exited;
 		
 		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON3) {
@@ -100,6 +96,8 @@ public class VirtualTrackball
     	}
     	
     	private Vector3f convertToSphere(MouseEvent e) {
+    		float uniformScale = Math.min(renderPanel.getCanvas().getWidth(), renderPanel.getCanvas().getHeight());
+    		//TODO: use uniform scale
     		float x = (float) 2*e.getX()/renderPanel.getCanvas().getWidth() - 1;
     		float y = 1 - (float)2*e.getY()/renderPanel.getCanvas().getHeight();
     		float z = MathFloat.sqrt(1 - x*x - y*y);
@@ -137,6 +135,14 @@ public class VirtualTrackball
 			// TODO Auto-generated method stub
 			
 		}
+		@Override
+		/**
+		 * Simulates zooming by mouse wheel
+		 */
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			Matrix4f m = shape.getTransformation();
+			m.setScale(m.getScale() + 0.1f*e.getWheelRotation());
+		}
 	}
 	
 	/**
@@ -166,6 +172,7 @@ public class VirtualTrackball
 		TrackballMouseListener l = new TrackballMouseListener();
 	    renderPanel.getCanvas().addMouseListener(l);
 		renderPanel.getCanvas().addMouseMotionListener(l);
+		renderPanel.getCanvas().addMouseWheelListener(l);
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
 	}
