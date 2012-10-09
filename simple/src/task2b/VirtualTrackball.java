@@ -96,10 +96,14 @@ public class VirtualTrackball
     	}
     	
     	private Vector3f convertToSphere(MouseEvent e) {
-    		float uniformScale = Math.min(renderPanel.getCanvas().getWidth(), renderPanel.getCanvas().getHeight());
+    		int width = renderPanel.getCanvas().getWidth();
+    		int height = renderPanel.getCanvas().getHeight();
+    		float uniformScale = Math.min(width, height);
+    		float uniformTranslationX = width/uniformScale;
+    		float uniformTranslationY = height/uniformScale;
     		//TODO: use uniform scale
-    		float x = (float) 2*e.getX()/renderPanel.getCanvas().getWidth() - 1;
-    		float y = 1 - (float)2*e.getY()/renderPanel.getCanvas().getHeight();
+    		float x = (float) 2*e.getX()/uniformScale - uniformTranslationX;
+    		float y = uniformTranslationY - (float)2*e.getY()/uniformScale;
     		float z = MathFloat.sqrt(1 - x*x - y*y);
     		Vector3f p = new Vector3f(x, y, z);
     		p.normalize(); //is this really necessary?
