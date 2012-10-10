@@ -10,6 +10,7 @@ public abstract class AbstractShape extends VertexData {
 	protected List<Integer> indicesList = new ArrayList<Integer>();
 	protected FloatVertexElement vertices;
 	protected FloatVertexElement colors;
+	protected FloatVertexElement normals;
 	private int numberOfVertices;
 	
 	

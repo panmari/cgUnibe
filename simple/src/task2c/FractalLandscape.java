@@ -22,29 +22,35 @@ public class FractalLandscape extends AbstractShape {
 		rot.rotY(MathFloat.PI/2);
 		List<Vector3f> corners = new ArrayList<Vector3f>();
 		Vector3f corner = new Vector3f(edge, Float.NaN, edge);
-		for (int i = 0; i <4; i++) {
+		for (int i = 0; i < 4; i++) {
 			float height = (float) Math.random()*initialMaxHeight;
 			corner.setY(height);
 			vertices.appendVector(corner);
-			corners.add(corner);
+			corners.add(new Vector3f(corner));
 			rot.transform(corner);
 		}
-		while (true) { //this is bullshit... I'll go to bed now >.<
-			Iterator<Vector3f> iter = corners.iterator();
-			Vector3f prev = iter.next();
-			while (iter.hasNext()){
-				Vector3f current = iter.next();
-				Vector3f v = new Vector3f(prev);
-				v.add(current.scale(.5f));
-				
-			}
-		}
+		//if (n > 0) //TODO: should make a condition inside square step
+		squareStep(corners);
+		
 		this.addElement(vertices.getFinishedArray(), Semantic.POSITION, 3);
 	}
 
-	private void addCorners(int i, int j) {
-		
-		
+	private void squareStep(List<Vector3f> corners) {
+		Vector3f a = corners.get(2), b = corners.get(0);
+		Vector3f squarePoint = new Vector3f();
+		squarePoint.sub(a, b);
+		squarePoint.scale(.5f);
+		squarePoint.add(b);
+		squarePoint.setY(calculateHeight(corners));
+		System.out.println(squarePoint);
+	}
+
+	private float calculateHeight(List<Vector3f> corners) {
+		float sumOfHeights = 0;
+		for (Vector3f v: corners) {
+			sumOfHeights += v.getY();
+		}
+		return sumOfHeights/4 + (float) Math.random()*20;
 	}
 
 }
