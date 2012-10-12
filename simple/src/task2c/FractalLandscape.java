@@ -1,6 +1,7 @@
 package task2c;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,9 +27,8 @@ public class FractalLandscape extends AbstractShape {
 		grid[0][edge - 1] = initHeight();
 		grid[edge - 1][0] = initHeight();
 		grid[edge - 1][edge - 1] = initHeight();
-		
 		squareStep(0, edge - 1);
-		this.addElement(vertices.getFinishedArray(), Semantic.POSITION, 3);
+		//this.addElement(vertices.getFinishedArray(), Semantic.POSITION, 3);
 	}
 
 	private float initHeight() {
@@ -36,31 +36,50 @@ public class FractalLandscape extends AbstractShape {
 	}
 
 	private void squareStep(int topLeft, int bottomRight) {
+		if (topLeft >= bottomRight - 1 )
+			return;
 		int middle = (bottomRight - topLeft)/2 + topLeft;
 		grid[middle][middle] = calculateHeight(topLeft, bottomRight);
 		diamondStep(topLeft, bottomRight, middle);
 	}
 
 	private void diamondStep(int topLeft, int bottomRight, int middle) {
-		grid[topLeft][middle] = calculateHeightDiamond(topLeft, middle, middle - topLeft);
-		grid[middle][topLeft];
-		grid[bottomRight][middle];
-		grid[middle][bottomRight];
+		grid[topLeft][middle] = calculateHeightDiamond(topLeft, middle);
+		grid[middle][topLeft] = calculateHeightDiamond(middle, topLeft);
+		grid[bottomRight][middle] = calculateHeightDiamond(bottomRight, middle);
+		grid[middle][bottomRight] = calculateHeightDiamond(middle, bottomRight);
 		//call squareStep on every newly created square
-		squareStep();
-		squareStep();
-		squareStep();
-		squareStep();
+		squareStep(topLeft, middle);
+		squareStep(middle, bottomRight);
+		squareStep(middle, bottomRight);
+		squareStep(bottomRight, middle);
 	}
 
-	private float calculateHeightDiamond(int x, int y, int distance) {
+	private float calculateHeightDiamond(int x, int y) {
+		int distance = Math.abs(x-y);
 		float sumOfHeights = 0;
-		if (x - distance < 0)
+		int divider = 0;
+		if (x - distance >= 0) {
+			sumOfHeights += grid[x - distance][y];
+			divider++;
+		}
+		
+		if (x + distance < edge) {
 			sumOfHeights += grid[x + distance][y];
-		if (x + distance >= edge)
-			sumOfHeights += grid[x + distance][y];
-		return sumOfHeights/4 + (float) Math.random()*randomness - randomness/2;
-		return 0;
+			divider++;
+		}
+		
+		if (y - distance >= 0) {
+			sumOfHeights += grid[x][y - distance];
+			divider++;
+		}
+		if (y + distance < edge) {
+			sumOfHeights += grid[x][y + distance];
+			divider++;
+		}
+		if (divider < 3)
+			throw new RuntimeException("Not possible");
+		return sumOfHeights/divider + (float) Math.random()*randomness - randomness/2;
 	}
 
 	private float calculateHeight(int topLeft, int bottomRight) {
@@ -72,4 +91,10 @@ public class FractalLandscape extends AbstractShape {
 		return sumOfHeights/4 + (float) Math.random()*randomness - randomness/2;
 	}
 
+	public String toString() {
+		String result = "";
+		for (int i = 0; i < edge; i++)
+			result += Arrays.toString(grid[i]) + "\n";
+		return result;
+	}
 }
