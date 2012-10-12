@@ -157,9 +157,9 @@ public class TestFractalLandscape
 	public static void main(String[] args) throws IOException
 	{		
 		
-		// Make a scene manager and add the object
-		sceneManager = new SimpleSceneManager(new Camera(), new Frustum());
-		shape = new Shape(ObjReader.read("teapot.obj", 2));
+		Camera c = new Camera(new Point3f(100, 1000, 100), new Point3f(0,0,0), new Vector3f(0,1,0));
+		sceneManager = new SimpleSceneManager(c, new Frustum());
+		shape = new Shape(new FractalLandscape(0));
 		sceneManager.addShape(shape);
 
 		// Make a render panel. The init function of the renderPanel

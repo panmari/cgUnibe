@@ -14,25 +14,23 @@ import task1.AbstractShape;
 public class FractalLandscape extends AbstractShape {
 
 	int initialMaxHeight = 500;
-	Matrix3f rot = new Matrix3f();
+	float[][] grid;
+	private int edge;
 	
 	public FractalLandscape(int n) {
 		super((int) Math.pow((Math.pow(2, n) + 1), 2));
-		float edge = MathFloat.pow(2, n) + 1;
+		edge = (int) MathFloat.pow(2, n) + 1;
+		grid = new float[edge][edge];
 		rot.rotY(MathFloat.PI/2);
 		List<Vector3f> corners = new ArrayList<Vector3f>();
-		Vector3f corner = new Vector3f(edge, Float.NaN, edge);
-		for (int i = 0; i < 4; i++) {
-			float height = (float) Math.random()*initialMaxHeight;
-			corner.setY(height);
-			vertices.appendVector(corner);
-			corners.add(new Vector3f(corner));
-			rot.transform(corner);
-		}
-		//if (n > 0) //TODO: should make a condition inside square step
+		grid[0][0] = (float) Math.random()*initialMaxHeight;
 		squareStep(corners);
 		
 		this.addElement(vertices.getFinishedArray(), Semantic.POSITION, 3);
+	}
+
+	private int gridPos(float f) {
+		return Math.round(f) + (edge - 1)/2 ;
 	}
 
 	private void squareStep(List<Vector3f> corners) {
@@ -43,6 +41,24 @@ public class FractalLandscape extends AbstractShape {
 		squarePoint.add(b);
 		squarePoint.setY(calculateHeight(corners));
 		System.out.println(squarePoint);
+		diamondStep(corners, squarePoint);
+	}
+
+	private void diamondStep(List<Vector3f> corners, Vector3f squarePoint) {
+		Vector3f diamondPoint = new Vector3f(corners.get(0));
+		List<Vector3f> diamondCorners = new ArrayList<Vector3f>();
+		diamondPoint.scale(.5f);
+		diamondPoint.scaleAdd(.5f, corners.get(1));
+		for (int i = 0; i < 4; i++) {
+			diamondPoint.setZ(calculateHeight(corners)); //these are not the correct corners
+			diamondCorners.add(new Vector3f(diamondPoint));
+			rot.transform(diamondPoint);
+		}
+		//call squareStep on every newly created square
+		squareStep();
+		squareStep();
+		squareStep();
+		squareStep();
 	}
 
 	private float calculateHeight(List<Vector3f> corners) {
