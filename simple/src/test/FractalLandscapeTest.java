@@ -31,4 +31,10 @@ public class FractalLandscapeTest {
 		System.out.println(fl);
 	}
 	
+	@Test
+	public void shouldInitiateBiggerLSValidly() {
+		FractalLandscape fl = new FractalLandscape(3);
+		System.out.println(fl);
+	}
+	
 }
