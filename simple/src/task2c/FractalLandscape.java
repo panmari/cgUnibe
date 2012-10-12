@@ -13,47 +13,39 @@ import task1.AbstractShape;
 
 public class FractalLandscape extends AbstractShape {
 
-	int initialMaxHeight = 500;
+	int initialMaxHeight = 10;
 	float[][] grid;
 	private int edge;
+	private float randomness = 1;
 	
 	public FractalLandscape(int n) {
 		super((int) Math.pow((Math.pow(2, n) + 1), 2));
 		edge = (int) MathFloat.pow(2, n) + 1;
 		grid = new float[edge][edge];
-		rot.rotY(MathFloat.PI/2);
-		List<Vector3f> corners = new ArrayList<Vector3f>();
-		grid[0][0] = (float) Math.random()*initialMaxHeight;
-		squareStep(corners);
+		grid[0][0] = initHeight();
+		grid[0][edge - 1] = initHeight();
+		grid[edge - 1][0] = initHeight();
+		grid[edge - 1][edge - 1] = initHeight();
 		
+		squareStep(0, edge - 1);
 		this.addElement(vertices.getFinishedArray(), Semantic.POSITION, 3);
 	}
 
-	private int gridPos(float f) {
-		return Math.round(f) + (edge - 1)/2 ;
+	private float initHeight() {
+		return (float) (initialMaxHeight*Math.random());
 	}
 
-	private void squareStep(List<Vector3f> corners) {
-		Vector3f a = corners.get(2), b = corners.get(0);
-		Vector3f squarePoint = new Vector3f();
-		squarePoint.sub(a, b);
-		squarePoint.scale(.5f);
-		squarePoint.add(b);
-		squarePoint.setY(calculateHeight(corners));
-		System.out.println(squarePoint);
-		diamondStep(corners, squarePoint);
+	private void squareStep(int topLeft, int bottomRight) {
+		int middle = (bottomRight - topLeft)/2 + topLeft;
+		grid[middle][middle] = calculateHeight(topLeft, bottomRight);
+		diamondStep(topLeft, bottomRight, middle);
 	}
 
-	private void diamondStep(List<Vector3f> corners, Vector3f squarePoint) {
-		Vector3f diamondPoint = new Vector3f(corners.get(0));
-		List<Vector3f> diamondCorners = new ArrayList<Vector3f>();
-		diamondPoint.scale(.5f);
-		diamondPoint.scaleAdd(.5f, corners.get(1));
-		for (int i = 0; i < 4; i++) {
-			diamondPoint.setZ(calculateHeight(corners)); //these are not the correct corners
-			diamondCorners.add(new Vector3f(diamondPoint));
-			rot.transform(diamondPoint);
-		}
+	private void diamondStep(int topLeft, int bottomRight, int middle) {
+		grid[topLeft][middle] = calculateHeightDiamond(topLeft, middle, middle - topLeft);
+		grid[middle][topLeft];
+		grid[bottomRight][middle];
+		grid[middle][bottomRight];
 		//call squareStep on every newly created square
 		squareStep();
 		squareStep();
@@ -61,12 +53,23 @@ public class FractalLandscape extends AbstractShape {
 		squareStep();
 	}
 
-	private float calculateHeight(List<Vector3f> corners) {
+	private float calculateHeightDiamond(int x, int y, int distance) {
 		float sumOfHeights = 0;
-		for (Vector3f v: corners) {
-			sumOfHeights += v.getY();
-		}
-		return sumOfHeights/4 + (float) Math.random()*20;
+		if (x - distance < 0)
+			sumOfHeights += grid[x + distance][y];
+		if (x + distance >= edge)
+			sumOfHeights += grid[x + distance][y];
+		return sumOfHeights/4 + (float) Math.random()*randomness - randomness/2;
+		return 0;
+	}
+
+	private float calculateHeight(int topLeft, int bottomRight) {
+		float sumOfHeights = 0;
+		sumOfHeights += grid[topLeft][topLeft];
+		sumOfHeights += grid[topLeft][bottomRight];
+		sumOfHeights += grid[bottomRight][topLeft];
+		sumOfHeights += grid[bottomRight][bottomRight];
+		return sumOfHeights/4 + (float) Math.random()*randomness - randomness/2;
 	}
 
 }
