@@ -29,7 +29,18 @@ public class FractalLandscape extends AbstractShape {
 		grid[edge - 1][0] = initHeight();
 		grid[edge - 1][edge - 1] = initHeight();
 		squareStep(new Point(0,0), new Point(edge - 1, edge -1));
-		//this.addElement(vertices.getFinishedArray(), Semantic.POSITION, 3);
+		
+		int counter = 0;
+		for (int x = 0; x < edge; x++) {
+			for (int y = 0; y < edge; y++) {
+				vertices.appendTuple(x - edge/2f, grid[x][y], y - edge/2f);
+				if (x < edge - 1 && y < edge - 1)
+					addQuadrangle(counter, counter + 1, counter + edge + 1, counter + edge);
+				counter++;
+			}
+		}
+		this.addElement(vertices.getFinishedArray(), Semantic.POSITION, 3);
+		this.addIndicesList(indicesList);
 	}
 
 	private float initHeight() {

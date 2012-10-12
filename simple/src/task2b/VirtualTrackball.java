@@ -123,8 +123,8 @@ public class VirtualTrackball
     		rot.setIdentity();
     		rot.setRotation(new AxisAngle4f(axis.x, axis.y, axis.z, theta));
     		m.mul(rot, m);
-    		renderPanel.getCanvas().repaint(); 
     		initialPoint = newPoint;
+    		renderPanel.getCanvas().repaint(); 
 		}
 		private boolean containsNan(Vector3f newPoint) {
 			float p[] = new float[3];
@@ -147,6 +147,7 @@ public class VirtualTrackball
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			Matrix4f m = shape.getTransformation();
 			m.setScale(m.getScale() + 0.1f*e.getWheelRotation());
+			renderPanel.getCanvas().repaint(); 
 		}
 	}
 	

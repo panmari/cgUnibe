@@ -157,9 +157,9 @@ public class TestFractalLandscape
 	public static void main(String[] args) throws IOException
 	{		
 		
-		Camera c = new Camera(new Point3f(100, 1000, 100), new Point3f(0,0,0), new Vector3f(0,1,0));
+		Camera c = new Camera(new Point3f(10, 10, 10), new Point3f(0,0,0), new Vector3f(0,1,0));
 		sceneManager = new SimpleSceneManager(c, new Frustum());
-		shape = new Shape(new FractalLandscape(0));
+		shape = new Shape(new FractalLandscape(10));
 		sceneManager.addShape(shape);
 
 		// Make a render panel. The init function of the renderPanel
