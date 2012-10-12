@@ -18,7 +18,7 @@ public class FractalLandscape extends AbstractShape {
 	int initialMaxHeight;
 	float[][] grid;
 	private int edge;
-	private float randomness = 1;
+	private float randomness = .01f;
 	
 	public FractalLandscape(int n) {
 		super((int) Math.pow((Math.pow(2, n) + 1), 2));

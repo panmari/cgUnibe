@@ -28,9 +28,11 @@ public class FractalLandscapeTest {
 	public void shouldInitiateMediumLSValidly() {
 		FractalLandscape fl = new FractalLandscape(2);
 		String indicesStr = Arrays.toString(fl.getIndices());
-		float[] vertices = fl.getElements().getFirst().getData();
+		float[] normals = fl.getElements().getFirst().getData();
 		System.out.println(fl);
 		System.out.println(indicesStr);
+		System.out.println(Arrays.toString(normals));
+		float[] vertices = fl.getElements().getLast().getData();
 		System.out.println(Arrays.toString(vertices));
 	}
 	
@@ -49,6 +51,7 @@ public class FractalLandscapeTest {
 	@Test
 	public void shouldFillInPointsCorrectly() {
 		FractalLandscape fl = new FractalLandscape(6);
+		System.out.println(fl);
 	}
 	
 }
