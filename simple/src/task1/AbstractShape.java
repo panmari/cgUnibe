@@ -19,6 +19,7 @@ public abstract class AbstractShape extends VertexData {
 		this.numberOfVertices = numberOfVertices;
 		vertices = new FloatVertexElement(numberOfVertices);
 		colors = new FloatVertexElement(numberOfVertices);
+		normals = new FloatVertexElement(numberOfVertices);
 	}
 
 	protected void addIndicesList(List<Integer> indicesList) {

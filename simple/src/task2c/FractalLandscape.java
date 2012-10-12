@@ -15,7 +15,7 @@ import task1.AbstractShape;
 
 public class FractalLandscape extends AbstractShape {
 
-	int initialMaxHeight = 10;
+	int initialMaxHeight;
 	float[][] grid;
 	private int edge;
 	private float randomness = 1;
@@ -23,6 +23,7 @@ public class FractalLandscape extends AbstractShape {
 	public FractalLandscape(int n) {
 		super((int) Math.pow((Math.pow(2, n) + 1), 2));
 		edge = (int) MathFloat.pow(2, n) + 1;
+		initialMaxHeight = edge;
 		grid = new float[edge][edge];
 		grid[0][0] = initHeight();
 		grid[0][edge - 1] = initHeight();
@@ -33,6 +34,7 @@ public class FractalLandscape extends AbstractShape {
 		int counter = 0;
 		for (int x = 0; x < edge; x++) {
 			for (int y = 0; y < edge; y++) {
+				computeNormal(x, y);
 				vertices.appendTuple(x - edge/2f, grid[x][y], y - edge/2f);
 				if (x < edge - 1 && y < edge - 1)
 					addQuadrangle(counter, counter + 1, counter + edge + 1, counter + edge);
@@ -40,7 +42,24 @@ public class FractalLandscape extends AbstractShape {
 			}
 		}
 		this.addElement(vertices.getFinishedArray(), Semantic.POSITION, 3);
+		this.addElement(normals.getFinishedArray(), Semantic.NORMAL, 3);
 		this.addIndicesList(indicesList);
+	}
+
+	private void computeNormal(int x, int y) {
+		try {
+		Vector3f v = new Vector3f(x, grid[x][y], y);
+		Vector3f down = new Vector3f(x + 1, grid[x][y + 1], y + 1);
+		Vector3f right = new Vector3f(x + 1, grid[x + 1][y], y);
+		down.sub(v);
+		right.sub(v);
+		Vector3f cross = new Vector3f();
+		cross.cross(down, right);
+		normals.appendVector(cross);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			//i dont even...
+			normals.appendTuple(0, 1, 0);
+		}
 	}
 
 	private float initHeight() {
