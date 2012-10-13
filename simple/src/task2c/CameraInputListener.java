@@ -3,6 +3,7 @@ package task2c;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.vecmath.Matrix4f;
@@ -11,28 +12,34 @@ import javax.vecmath.Vector3f;
 import jogamp.graph.math.MathFloat;
 import jrtr.Camera;
 
-public class CameraInputListener implements KeyListener, MouseMotionListener {
+public class CameraInputListener implements KeyListener, MouseMotionListener, MouseListener {
 
 	private Camera c;
-	private Matrix4f rotLeft, rotRight;
+	private Matrix4f rot;
+	private MouseEvent prevEvent;
+	private final float factor = 0.0001f;
 	CameraInputListener(Camera c) {
 		this.c = c;
-		rotLeft = new Matrix4f();
-		rotLeft.rotY(MathFloat.PI/2); //by 90 degrees
-		rotRight = new Matrix4f();
-		rotRight.invert(rotLeft);
+		rot = new Matrix4f();
 	}
 	
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
+	public void mouseDragged(MouseEvent e) {
+		if (prevEvent == null)
+			prevEvent = e;
+		int diffX = e.getX() - prevEvent.getX();
+		rot.rotY(0.01f * diffX);
+		rot.transform(c.getCenterOfProjection());
+		int diffY = e.getY() - prevEvent.getY();
+		//todo implement rotation around camera x axis
+		//idea: move change look-at-point?
+		c.update();
+		prevEvent = e;
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
+	public void mouseMoved(MouseEvent e) {
+		
 	}
 
 	@Override
@@ -64,7 +71,6 @@ public class CameraInputListener implements KeyListener, MouseMotionListener {
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -72,6 +78,35 @@ public class CameraInputListener implements KeyListener, MouseMotionListener {
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		prevEvent = null;
 	}
 
 }
