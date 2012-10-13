@@ -8,6 +8,7 @@ import java.awt.event.MouseMotionListener;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
+import jogamp.graph.math.MathFloat;
 import jrtr.Camera;
 
 public class CameraInputListener implements KeyListener, MouseMotionListener {
@@ -17,7 +18,7 @@ public class CameraInputListener implements KeyListener, MouseMotionListener {
 	CameraInputListener(Camera c) {
 		this.c = c;
 		rotLeft = new Matrix4f();
-		rotLeft.rotY(-0.03f);
+		rotLeft.rotY(MathFloat.PI/2); //by 90 degrees
 		rotRight = new Matrix4f();
 		rotRight.invert(rotLeft);
 	}
@@ -36,21 +37,26 @@ public class CameraInputListener implements KeyListener, MouseMotionListener {
 
 	@Override
 	public void keyPressed(KeyEvent k) {
-		Vector3f dir = new Vector3f();
-		dir.sub(c.getLookAtPoint(), c.getCenterOfProjection());
-		dir.normalize();
+		Vector3f aheadStep = new Vector3f();
+		aheadStep.sub(c.getLookAtPoint(), c.getCenterOfProjection());
+		aheadStep.normalize();
+		Vector3f leftStep = new Vector3f();
+		leftStep.cross(c.getUpVector(), aheadStep);
+		leftStep.normalize();
 		switch (k.getKeyCode()) {
 			case KeyEvent.VK_UP:
-				c.getCenterOfProjection().add(dir);
+				c.getCenterOfProjection().add(aheadStep);
 				break;
 			case KeyEvent.VK_DOWN:
-				c.getCenterOfProjection().sub(dir);
+				c.getCenterOfProjection().sub(aheadStep);
 				break;
 			case KeyEvent.VK_LEFT:
-				rotLeft.transform(c.getCenterOfProjection());
+				c.getCenterOfProjection().add(leftStep);
+				c.getLookAtPoint().add(leftStep);
 				break;
 			case KeyEvent.VK_RIGHT:
-				rotRight.transform(c.getCenterOfProjection());
+				c.getCenterOfProjection().sub(leftStep);
+				c.getLookAtPoint().sub(leftStep);
 				break;
 			}
 		c.update();
