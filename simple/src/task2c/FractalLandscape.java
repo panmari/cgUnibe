@@ -18,7 +18,7 @@ public class FractalLandscape extends AbstractShape {
 	int initialMaxHeight;
 	float[][] grid;
 	private int edge;
-	private float randomness = .01f;
+	private float randomness = 1f;
 	
 	public FractalLandscape(int n) {
 		super((int) Math.pow((Math.pow(2, n) + 1), 2));
@@ -82,6 +82,7 @@ public class FractalLandscape extends AbstractShape {
 		setHeightDiamond(middle.x, topLeft.y, distance);
 		setHeightDiamond(bottomRight.x, middle.y, distance);
 		setHeightDiamond(middle.x, bottomRight.y, distance);
+		randomness = randomness/2;
 		//call squareStep on every newly created square
 		squareStep(topLeft, middle);
 		squareStep(new Point(middle.x, topLeft.y), new Point(bottomRight.x, middle.y));
@@ -92,21 +93,21 @@ public class FractalLandscape extends AbstractShape {
 	private void setHeightDiamond(int x, int y, int distance) {
 		float sumOfHeights = 0;
 		int divider = 0;
-		if (x - distance >= 0) {
+		if (x - distance >= 0 && grid[x - distance][y] != 0) {
 			sumOfHeights += grid[x - distance][y];
 			divider++;
 		}
 		
-		if (x + distance < edge) {
+		if (x + distance < edge && grid[x + distance][y] != 0) {
 			sumOfHeights += grid[x + distance][y];
 			divider++;
 		}
 		
-		if (y - distance >= 0) {
+		if (y - distance >= 0 && grid[x][y - distance] != 0) {
 			sumOfHeights += grid[x][y - distance];
 			divider++;
 		}
-		if (y + distance < edge) {
+		if (y + distance < edge && grid[x][y + distance] != 0) {
 			sumOfHeights += grid[x][y + distance];
 			divider++;
 		}
