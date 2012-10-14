@@ -75,7 +75,7 @@ public class TestFractalLandscape
 		
 		Camera c = new Camera(new Point3f(0, 20, 20), new Point3f(0,0,0), new Vector3f(0,1,0));
 		sceneManager = new SimpleSceneManager(c, new Frustum());
-		shape = new Shape(new FractalLandscape(4));
+		shape = new Shape(new FractalLandscape(5));
 		sceneManager.addShape(shape);
 
 		// Make a render panel. The init function of the renderPanel
@@ -92,6 +92,7 @@ public class TestFractalLandscape
 		CameraInputListener l = new CameraInputListener(c);
 	    renderPanel.getCanvas().addKeyListener(l);
 		renderPanel.getCanvas().addMouseMotionListener(l);
+		renderPanel.getCanvas().addMouseListener(l);
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
 	}

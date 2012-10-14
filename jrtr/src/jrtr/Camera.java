@@ -12,14 +12,22 @@ import javax.vecmath.*;
  */
 public class Camera {
 
-	private Matrix4f cameraMatrix;
+	private Matrix4f cameraMatrix, cameraRot;
 	
 	private Point3f centerOfProjection;
 	private Point3f lookAtPoint;
 	private Vector3f upVector;
 
+	private Vector3f z;
+
+	private Vector3f x;
+
+	private Vector3f y;
+
 	public Camera(Point3f centerOfProjection, Point3f lookAtPoint, Vector3f upVector) {
 		cameraMatrix = new Matrix4f();
+		cameraRot = new Matrix4f();
+		cameraRot.setIdentity();
 		this.centerOfProjection = centerOfProjection;
 		this.lookAtPoint = lookAtPoint;
 		this.upVector = upVector;
@@ -58,17 +66,17 @@ public class Camera {
 	}
 	
 	public void update() {
-		Vector3f z = new Vector3f(centerOfProjection);
+		z = new Vector3f(centerOfProjection);
 		Vector4f trans = new Vector4f(centerOfProjection);
 		z.sub(lookAtPoint); // new direction of the z-axis!
 		z.normalize();
 		
 		trans.setW(1);
-		Vector3f x = new Vector3f();
+		x = new Vector3f();
 		x.cross(upVector, z);
 		x.normalize();
 		
-		Vector3f y = new Vector3f(); // new direction of the y-axis!
+		y = new Vector3f(); // new direction of the y-axis!
 		y.cross(z, x);
 		y.normalize();
 		
@@ -77,6 +85,7 @@ public class Camera {
 		cameraMatrix.setColumn(2, new Vector4f(z));
 		cameraMatrix.setColumn(3, trans);
 		cameraMatrix.invert();
+		cameraMatrix.mul(cameraRot, cameraMatrix);
 	}
 	
 	public Point3f getCenterOfProjection() {
@@ -95,5 +104,24 @@ public class Camera {
 	}
 	public Vector3f getUpVector() {
 		return upVector;
+	}
+	
+	public Vector3f getCameraXAxis() {
+		return x;
+	}
+	
+	public Vector3f getCameraYAxis() {
+		return y;
+	}
+	
+	public Vector3f getCameraZAxis() {
+		return z;
+	}
+	public Matrix4f getCameraRotation() {
+		return cameraRot;
+	}
+	public void setCameraRotation(Matrix4f m) {
+		cameraRot = m;
+		update();
 	}
 }

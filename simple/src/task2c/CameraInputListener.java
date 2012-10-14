@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
@@ -31,8 +32,9 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 		rot.rotY(0.01f * diffX);
 		rot.transform(c.getCenterOfProjection());
 		int diffY = e.getY() - prevEvent.getY();
-		//todo implement rotation around camera x axis
-		//idea: move change look-at-point?
+		System.out.println(c.getCameraXAxis());
+		rot.set(new AxisAngle4f(c.getCameraXAxis(), 0.01f * diffY));
+		c.getCameraRotation().mul(rot);
 		c.update();
 		prevEvent = e;
 	}
@@ -44,26 +46,22 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 
 	@Override
 	public void keyPressed(KeyEvent k) {
-		Vector3f aheadStep = new Vector3f();
-		aheadStep.sub(c.getLookAtPoint(), c.getCenterOfProjection());
-		aheadStep.normalize();
-		Vector3f leftStep = new Vector3f();
-		leftStep.cross(c.getUpVector(), aheadStep);
-		leftStep.normalize();
+		Vector3f backStep = new Vector3f(c.getCameraZAxis());
+		Vector3f rightStep = new Vector3f(c.getCameraXAxis());
 		switch (k.getKeyCode()) {
 			case KeyEvent.VK_UP:
-				c.getCenterOfProjection().add(aheadStep);
+				c.getCenterOfProjection().sub(backStep);
 				break;
 			case KeyEvent.VK_DOWN:
-				c.getCenterOfProjection().sub(aheadStep);
+				c.getCenterOfProjection().add(backStep);
 				break;
 			case KeyEvent.VK_LEFT:
-				c.getCenterOfProjection().add(leftStep);
-				c.getLookAtPoint().add(leftStep);
+				c.getCenterOfProjection().sub(rightStep);
+				c.getLookAtPoint().sub(rightStep);
 				break;
 			case KeyEvent.VK_RIGHT:
-				c.getCenterOfProjection().sub(leftStep);
-				c.getLookAtPoint().sub(leftStep);
+				c.getCenterOfProjection().add(rightStep);
+				c.getLookAtPoint().add(rightStep);
 				break;
 			}
 		c.update();
