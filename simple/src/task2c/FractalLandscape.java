@@ -20,14 +20,17 @@ public class FractalLandscape extends AbstractShape {
 	private int edge;
 	private float randomness;
 	private HeightMap map;
+	float initialMaxHeight;
 	
 	public FractalLandscape(int n) {
 		super((int) Math.pow((Math.pow(2, n) + 1), 2));
 		edge = (int) MathFloat.pow(2, n) + 1;
 		randomness = edge/4f;
-		this.map = new HeightMap(edge, edge/2f);
+		this.map = new HeightMap(edge);
+		this.initialMaxHeight = edge/2;
+		initCorners();
 		
-		int resolution = (edge - 1) / 2;
+		int resolution = edge - 1;
 		
 		while (resolution > 1) {
 			LinkedList<Point> mids = new LinkedList<Point>();
@@ -125,5 +128,15 @@ public class FractalLandscape extends AbstractShape {
 		sumOfHeights += map.getHeightFor(bottomRight.x, bottomRight.y);
 		return sumOfHeights/4 + (float) Math.random()*randomness - randomness/2;
 	}
-
+	
+	private void initCorners() {
+		map.setHeightFor(0, 0, initHeight());
+		map.setHeightFor(edge - 1, 0, initHeight());
+		map.setHeightFor(0, edge - 1 , initHeight());
+		map.setHeightFor(edge - 1, edge - 1, initHeight());
+	}
+	
+	private float initHeight() {
+		return (float) (initialMaxHeight*Math.random());
+	}
 }

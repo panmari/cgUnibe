@@ -75,7 +75,7 @@ public class DrawFractalLandscape
 		
 		Camera c = new Camera(new Point3f(0, 20, 20), new Point3f(0,0,0), new Vector3f(0,1,0));
 		sceneManager = new SimpleSceneManager(c, new Frustum());
-		shape = new Shape(new FractalLandscape(5));
+		shape = new Shape(new FractalLandscape(2));
 		sceneManager.addShape(shape);
 
 		// Make a render panel. The init function of the renderPanel

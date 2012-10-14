@@ -8,22 +8,9 @@ public class HeightMap {
 	private int initialMaxHeight;
 	private int edge;
 	
-	public HeightMap(int edge, float initialMaxHeight) {
+	public HeightMap(int edge) {
 		grid = new float[edge][edge];
 		this.edge = edge;
-		initialMaxHeight = edge;
-		initCorners();
-	}
-
-	private void initCorners() {
-		grid[0][0] = initHeight();
-		grid[0][edge - 1] = initHeight();
-		grid[edge - 1][0] = initHeight();
-		grid[edge - 1][edge - 1] = initHeight();
-	}
-	
-	private float initHeight() {
-		return (float) (initialMaxHeight*Math.random());
 	}
 	
 	public void setHeightFor(int x, int y, float height) {
