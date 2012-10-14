@@ -18,7 +18,7 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 	private Camera c;
 	private Matrix4f rot;
 	private MouseEvent prevEvent;
-	private final float factor = 0.0001f;
+	private final float factor = 0.01f;
 	CameraInputListener(Camera c) {
 		this.c = c;
 		rot = new Matrix4f();
@@ -29,11 +29,10 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 		if (prevEvent == null)
 			prevEvent = e;
 		int diffX = e.getX() - prevEvent.getX();
-		rot.rotY(0.01f * diffX);
+		rot.rotY(factor * diffX);
 		rot.transform(c.getCenterOfProjection());
 		int diffY = e.getY() - prevEvent.getY();
-		System.out.println(c.getCameraXAxis());
-		rot.set(new AxisAngle4f(c.getCameraXAxis(), 0.01f * diffY));
+		rot.rotX(factor/5 * diffY);
 		c.getCameraRotation().mul(rot);
 		c.update();
 		prevEvent = e;
