@@ -12,7 +12,7 @@ import javax.vecmath.*;
  */
 public class Camera {
 
-	private Matrix4f cameraMatrix, cameraRot;
+	private Matrix4f cameraMatrix;
 	
 	private Point3f centerOfProjection;
 	private Point3f lookAtPoint;
@@ -26,8 +26,6 @@ public class Camera {
 
 	public Camera(Point3f centerOfProjection, Point3f lookAtPoint, Vector3f upVector) {
 		cameraMatrix = new Matrix4f();
-		cameraRot = new Matrix4f();
-		cameraRot.setIdentity();
 		this.centerOfProjection = centerOfProjection;
 		this.lookAtPoint = lookAtPoint;
 		this.upVector = upVector;
@@ -85,7 +83,6 @@ public class Camera {
 		cameraMatrix.setColumn(2, new Vector4f(z));
 		cameraMatrix.setColumn(3, trans);
 		cameraMatrix.invert();
-		cameraMatrix.mul(cameraRot, cameraMatrix);
 	}
 	
 	public Point3f getCenterOfProjection() {
@@ -116,12 +113,5 @@ public class Camera {
 	
 	public Vector3f getCameraZAxis() {
 		return z;
-	}
-	public Matrix4f getCameraRotation() {
-		return cameraRot;
-	}
-	public void setCameraRotation(Matrix4f m) {
-		cameraRot = m;
-		update();
 	}
 }

@@ -10,9 +10,9 @@ import java.awt.event.MouseWheelListener;
 
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
-import jogamp.graph.math.MathFloat;
 import jrtr.Camera;
 
 public class CameraInputListener implements KeyListener, MouseMotionListener, MouseListener, MouseWheelListener {
@@ -34,8 +34,11 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 		rot.rotY(factor * diffX);
 		rot.transform(c.getCenterOfProjection());
 		int diffY = e.getY() - prevEvent.getY();
-		rot.rotX(factor/5 * diffY);
-		c.getCameraRotation().mul(rot);
+		rot.set(new AxisAngle4f(c.getCameraXAxis(), factor * diffY));
+		Point3f lap = c.getLookAtPoint();
+		lap.sub(c.getCenterOfProjection()); 
+		rot.transform(lap);
+		lap.add(c.getCenterOfProjection());
 		c.update();
 		prevEvent = e;
 	}
@@ -50,16 +53,20 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 		Vector3f rightStep = new Vector3f(c.getCameraXAxis());
 		switch (k.getKeyCode()) {
 			case KeyEvent.VK_UP:
+			case KeyEvent.VK_W:
 				step(-1);
 				break;
 			case KeyEvent.VK_DOWN:
+			case KeyEvent.VK_S:
 				step(1);
 				break;
 			case KeyEvent.VK_LEFT:
+			case KeyEvent.VK_A:
 				c.getCenterOfProjection().sub(rightStep);
 				c.getLookAtPoint().sub(rightStep);
 				break;
 			case KeyEvent.VK_RIGHT:
+			case KeyEvent.VK_D:
 				c.getCenterOfProjection().add(rightStep);
 				c.getLookAtPoint().add(rightStep);
 				break;
@@ -109,7 +116,7 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		step(e.getWheelRotation());
+		step(e.getWheelRotation()*e.getScrollAmount());
 	}
 
 	/**
