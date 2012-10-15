@@ -29,6 +29,7 @@ public class Cylinder extends AbstractShape {
 		this.lowerDiscCenterVertex = vertices.getHeadPosition()/3;
 		addDisc(-height/2);
 		addElement(vertices.getFinishedArray(), VertexData.Semantic.POSITION, 3);
+		addElement(normals.getFinishedArray(), VertexData.Semantic.NORMAL, 3);
 		addElement(colors.getFinishedArray(), VertexData.Semantic.COLOR, 3);
 		for (int i = 1; i < lowerDiscCenterVertex; i++) {
 			addIndex(upperDiscCenterVertex, i, getAdjacentDiscVertex(i));

@@ -27,7 +27,7 @@ public class FractalLandscape extends AbstractShape {
 	public FractalLandscape(int n) {
 		super((int) Math.pow((Math.pow(2, n) + 1), 2));
 		edge = (int) MathFloat.pow(2, n) + 1;
-		randomness = edge/4f;
+		randomness = edge/2f;
 		this.map = new HeightMap(edge);
 		this.initialMaxHeight = edge/2;
 		initCorners();
@@ -70,8 +70,8 @@ public class FractalLandscape extends AbstractShape {
 			float whitish = (float) (Math.random()/5 + 4f/5);
 			colors.appendTuple(whitish, whitish, whitish);
 		} else {
-			float greenish = (float) (Math.random()/5);
-			colors.appendTuple(greenish, 1, greenish);
+			float greenish = (float) (Math.random()/3);
+			colors.appendTuple(greenish, 1 - greenish, greenish);
 		}
 	}
 

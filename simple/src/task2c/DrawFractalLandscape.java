@@ -93,6 +93,7 @@ public class DrawFractalLandscape
 	    renderPanel.getCanvas().addKeyListener(l);
 		renderPanel.getCanvas().addMouseMotionListener(l);
 		renderPanel.getCanvas().addMouseListener(l);
+		renderPanel.getCanvas().addMouseWheelListener(l);
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
 	}

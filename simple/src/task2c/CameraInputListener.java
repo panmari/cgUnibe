@@ -5,6 +5,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
@@ -13,7 +15,7 @@ import javax.vecmath.Vector3f;
 import jogamp.graph.math.MathFloat;
 import jrtr.Camera;
 
-public class CameraInputListener implements KeyListener, MouseMotionListener, MouseListener {
+public class CameraInputListener implements KeyListener, MouseMotionListener, MouseListener, MouseWheelListener {
 
 	private Camera c;
 	private Matrix4f rot;
@@ -45,14 +47,13 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 
 	@Override
 	public void keyPressed(KeyEvent k) {
-		Vector3f backStep = new Vector3f(c.getCameraZAxis());
 		Vector3f rightStep = new Vector3f(c.getCameraXAxis());
 		switch (k.getKeyCode()) {
 			case KeyEvent.VK_UP:
-				c.getCenterOfProjection().sub(backStep);
+				step(-1);
 				break;
 			case KeyEvent.VK_DOWN:
-				c.getCenterOfProjection().add(backStep);
+				step(1);
 				break;
 			case KeyEvent.VK_LEFT:
 				c.getCenterOfProjection().sub(rightStep);
@@ -104,6 +105,22 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		prevEvent = null;
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		step(e.getWheelRotation());
+	}
+
+	/**
+	 * positive value means backward, negative forward
+	 * @param amount
+	 */
+	private void step(int amount) {
+		Vector3f backStep = new Vector3f(c.getCameraZAxis());
+		backStep.scale(amount);
+		c.getCenterOfProjection().add(backStep);
+		c.update();
 	}
 
 }
