@@ -44,22 +44,6 @@ public class VirtualTrackball
 			renderContext = r;
 			renderContext.setSceneManager(sceneManager);
 	
-			// Register a timer task
-		    Timer timer = new Timer();
-		    angle = 0.01f;
-		    //timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
-		}
-	}
-
-	/**
-	 * A timer task that generates an animation. This task triggers
-	 * the redrawing of the 3D scene every time it is executed.
-	 */
-	public static class AnimationTask extends TimerTask
-	{
-		public void run()
-		{
-			
 		}
 	}
 	

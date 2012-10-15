@@ -3,6 +3,7 @@ package task1;
 import java.util.Arrays;
 
 import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
 
 /**
  * Wrapper-class for a float-array. Can only append value triples at the 
@@ -44,5 +45,11 @@ public class FloatVertexElement {
 	
 	public void printArray() {
 		System.out.println("data:" + Arrays.toString(data));
+	}
+	
+	public Vector3f get(int v) {
+		if (v*3 >= head)
+			throw new RuntimeException("Not filled until there: " + v + "/" + head);
+		else return new Vector3f(data[v*3], data[v*3 + 1], data[v*3 + 2]);
 	}
 }

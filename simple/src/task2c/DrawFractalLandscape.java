@@ -1,24 +1,22 @@
 package task2c;
 
-import jogamp.graph.math.MathFloat;
-import jrtr.*;
-
-import javax.swing.*;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.io.IOException;
-
-import javax.vecmath.*;
-
-import task2b.VirtualTrackball.TrackballMouseListener;
-
-import com.jogamp.graph.math.Quaternion;
-
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.JFrame;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
+import jogamp.graph.math.MathFloat;
+import jrtr.Camera;
+import jrtr.Frustum;
+import jrtr.GLRenderPanel;
+import jrtr.RenderContext;
+import jrtr.RenderPanel;
+import jrtr.SWRenderPanel;
+import jrtr.Shape;
+import jrtr.SimpleSceneManager;
 
 /**
  * Implements a simple application that opens a 3D rendering window and 

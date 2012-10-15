@@ -157,7 +157,7 @@ public class TestCameraAndFrustum
 						  0,0,1, 0,0,1, 0,0,1,							// roof
 						  1,0,0, 1,0,0, 1,0,0, 1,0,0,
 						  0,1,0, 0,1,0, 0,1,0, 0,1,0,
-						  0,0,1, 0,0,1, 0,0,1,};
+						  0,0,1, 0,0,1, 0,0,1 };
 	
 		// Set up the vertex data
 		VertexData vertexData = new VertexData(42);
