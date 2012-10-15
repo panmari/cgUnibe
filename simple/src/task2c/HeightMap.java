@@ -20,6 +20,10 @@ public class HeightMap {
 		grid[x][y] = height;
 	}
 	
+	public void setHeightFor(Point p, float height) {
+		setHeightFor(p.x, p.y, height);
+	}
+	
 	public float getHeightFor(int x, int y) {
 		if (grid[x][y] == 0)
 			throw new NoHeightPresentException();
@@ -41,4 +45,5 @@ public class HeightMap {
 	class NoHeightPresentException extends RuntimeException {
 		
 	}
+
 }

@@ -72,10 +72,10 @@ public class DrawFractalLandscape
 	 */
 	public static void main(String[] args) throws IOException
 	{		
-		
-		Camera c = new Camera(new Point3f(0, 20, 20), new Point3f(0,0,0), new Vector3f(0,1,0));
-		sceneManager = new SimpleSceneManager(c, new Frustum());
-		shape = new Shape(new FractalLandscape(5));
+		int size = 7;
+		Camera c = new Camera(new Point3f(0, 100, 100), new Point3f(0,0,0), new Vector3f(0,1,0));
+		sceneManager = new SimpleSceneManager(c, new Frustum(1, 1000, 1,  MathFloat.PI/3));
+		shape = new Shape(new FractalLandscape(size));
 		sceneManager.addShape(shape);
 
 		// Make a render panel. The init function of the renderPanel

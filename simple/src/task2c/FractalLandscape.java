@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.vecmath.Color3f;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Vector3f;
 
@@ -20,7 +21,8 @@ public class FractalLandscape extends AbstractShape {
 	private int edge;
 	private float randomness;
 	private HeightMap map;
-	float initialMaxHeight;
+	private final float initialMaxHeight;
+	private float maxCornerHeight;
 	
 	public FractalLandscape(int n) {
 		super((int) Math.pow((Math.pow(2, n) + 1), 2));
@@ -37,7 +39,7 @@ public class FractalLandscape extends AbstractShape {
 			for (int x = 0; x < edge - 1; x += resolution)
 				for (int y = 0; y < edge - 1; y += resolution)
 					mids.add(squareStep(new Point(x, y), new Point(x + resolution, y + resolution)));
-			System.out.println(mids);
+			
 			for (Point p: mids) {
 				diamondStep(p, resolution/2);
 			}
@@ -49,6 +51,7 @@ public class FractalLandscape extends AbstractShape {
 		for (int x = 0; x < edge; x++) {
 			for (int y = 0; y < edge; y++) {
 				computeNormal(x, y);
+				computeColor(x, y);
 				vertices.appendTuple(x - edge/2f, map.getHeightFor(x, y), y - edge/2f);
 				if (x < edge - 1 && y < edge - 1)
 					addQuadrangle(counter, counter + 1, counter + edge + 1, counter + edge);
@@ -57,7 +60,19 @@ public class FractalLandscape extends AbstractShape {
 		}
 		this.addElement(vertices.getFinishedArray(), Semantic.POSITION, 3);
 		this.addElement(normals.getFinishedArray(), Semantic.NORMAL, 3);
+		this.addElement(colors.getFinishedArray(), Semantic.COLOR, 3);
 		this.addIndicesList(indicesList);
+	}
+
+	private void computeColor(int x, int y) {
+		float threshold = maxCornerHeight*3f/4;
+		if (map.getHeightFor(x, y) > threshold + Math.random() * 5) {
+			float whitish = (float) (Math.random()/5 + 4f/5);
+			colors.appendTuple(whitish, whitish, whitish);
+		} else {
+			float greenish = (float) (Math.random()/5);
+			colors.appendTuple(greenish, 1, greenish);
+		}
 	}
 
 	private void computeNormal(int x, int y) {
@@ -132,13 +147,16 @@ public class FractalLandscape extends AbstractShape {
 	}
 	
 	private void initCorners() {
-		map.setHeightFor(0, 0, initHeight());
-		map.setHeightFor(edge - 1, 0, initHeight());
-		map.setHeightFor(0, edge - 1 , initHeight());
-		map.setHeightFor(edge - 1, edge - 1, initHeight());
+		Point[] corners = { new Point(0, 0),
+				new Point(edge - 1, 0),
+				new Point(0, edge - 1),
+				new Point(edge -1, edge - 1) };
+		for (Point p: corners) {
+			float randomCornerHeight = (float) (initialMaxHeight*Math.random());
+			maxCornerHeight = Math.max(maxCornerHeight, randomCornerHeight);
+			map.setHeightFor(p, randomCornerHeight);
+		}
+		
 	}
-	
-	private float initHeight() {
-		return (float) (initialMaxHeight*Math.random());
-	}
+
 }
