@@ -1,5 +1,6 @@
 package task2c;
 
+import java.awt.Point;
 import java.util.Arrays;
 
 public class HeightMap {
@@ -20,13 +21,13 @@ public class HeightMap {
 	}
 	
 	public float getHeightFor(int x, int y) {
-		try {
-			if (grid[x][y] != 0)
-				throw new NoHeightPresentException();
-		} catch (ArrayIndexOutOfBoundsException e) {
+		if (grid[x][y] == 0)
 			throw new NoHeightPresentException();
-		}
 		return grid[x][y];
+	}
+	
+	public float getHeightFor(Point p) {
+		return getHeightFor(p.x, p.y);
 	}
 	
 	public String toString() {

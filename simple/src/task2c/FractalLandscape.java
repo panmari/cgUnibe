@@ -34,12 +34,12 @@ public class FractalLandscape extends AbstractShape {
 		
 		while (resolution > 1) {
 			LinkedList<Point> mids = new LinkedList<Point>();
-			for (int x = 0; x < edge; x += resolution)
-				for (int y = 0; y < edge; y += resolution)
+			for (int x = 0; x < edge - 1; x += resolution)
+				for (int y = 0; y < edge - 1; y += resolution)
 					mids.add(squareStep(new Point(x, y), new Point(x + resolution, y + resolution)));
-			
+			System.out.println(mids);
 			for (Point p: mids) {
-				diamondStep(p, resolution);
+				diamondStep(p, resolution/2);
 			}
 			randomness = randomness/2;
 			resolution = resolution/2;
@@ -84,7 +84,7 @@ public class FractalLandscape extends AbstractShape {
 			return null;
 		int x = (bottomRight.x - topLeft.x)/2 + topLeft.x;
 		int y = (bottomRight.y - topLeft.y)/2 + topLeft.y;
-		map.setHeightFor(x, y, calculateHeight(topLeft, bottomRight));
+		map.setHeightFor(x, y, calculateHeightSquare(topLeft, bottomRight));
 		return new Point(x, y);
 	}
 
@@ -104,7 +104,7 @@ public class FractalLandscape extends AbstractShape {
 			try {
 				sumOfHeights += map.getHeightFor(p.x, p.y);
 				divider++;
-			} catch (NoHeightPresentException e) {
+			} catch (ArrayIndexOutOfBoundsException e) {
 				//nothing is added, divider is not increased
 			}
 		}
@@ -120,12 +120,14 @@ public class FractalLandscape extends AbstractShape {
 		return points;
 	}
 
-	private float calculateHeight(Point topLeft, Point bottomRight) {
+	private float calculateHeightSquare(Point topLeft, Point bottomRight) {
 		float sumOfHeights = 0;
-		sumOfHeights += map.getHeightFor(topLeft.x,topLeft.y);
-		sumOfHeights += map.getHeightFor(topLeft.x, bottomRight.y );
-		sumOfHeights += map.getHeightFor(bottomRight.x, topLeft.y);
-		sumOfHeights += map.getHeightFor(bottomRight.x, bottomRight.y);
+		Point[] points = { new Point(topLeft.x,topLeft.y),
+				new Point(topLeft.x, bottomRight.y),
+				new Point(bottomRight.x, topLeft.y),
+				new Point(bottomRight.x, bottomRight.y)};
+		for (Point p: points)
+			sumOfHeights += map.getHeightFor(p);
 		return sumOfHeights/4 + (float) Math.random()*randomness - randomness/2;
 	}
 	
