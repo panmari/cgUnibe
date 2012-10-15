@@ -18,11 +18,7 @@ public class Camera {
 	private Point3f lookAtPoint;
 	private Vector3f upVector;
 
-	private Vector3f z;
-
-	private Vector3f x;
-
-	private Vector3f y;
+	private Vector3f x, y, z;
 
 	public Camera(Point3f centerOfProjection, Point3f lookAtPoint, Vector3f upVector) {
 		cameraMatrix = new Matrix4f();

@@ -34,7 +34,7 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 		rot.rotY(factor * diffX);
 		rot.transform(c.getCenterOfProjection());
 		int diffY = e.getY() - prevEvent.getY();
-		rot.set(new AxisAngle4f(c.getCameraXAxis(), factor * diffY));
+		rot.set(new AxisAngle4f(c.getCameraXAxis(), - factor/5 * diffY));
 		Point3f lap = c.getLookAtPoint();
 		lap.sub(c.getCenterOfProjection()); 
 		rot.transform(lap);

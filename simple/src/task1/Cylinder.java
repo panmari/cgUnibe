@@ -29,8 +29,8 @@ public class Cylinder extends AbstractShape {
 		this.lowerDiscCenterVertex = vertices.getHeadPosition()/3;
 		addDisc(-height/2);
 		addElement(vertices.getFinishedArray(), VertexData.Semantic.POSITION, 3);
-		addElement(normals.getFinishedArray(), VertexData.Semantic.NORMAL, 3);
 		addElement(colors.getFinishedArray(), VertexData.Semantic.COLOR, 3);
+		addElement(normals.getFinishedArray(), VertexData.Semantic.NORMAL, 3);
 		for (int i = 1; i < lowerDiscCenterVertex; i++) {
 			addIndex(upperDiscCenterVertex, i, getAdjacentDiscVertex(i));
 		}
@@ -58,7 +58,8 @@ public class Cylinder extends AbstractShape {
 		vertices.appendVector(centerCircle); //center of circle is first point in mesh
 		colors.appendTuple(0, 0, 0);
 		Vector3f p = new Vector3f(radius, 0, 0); //first point of circle
-		Vector3f pNormal = firstNormal(p, centerCircle, rotationMatrix);
+		Vector3f pNormal = new Vector3f(0, 0, 0);
+		pNormal.normalize();
 		
 		for (int i = 0; i < resolution; i++) {
 			Vector3f meshPoint = new Vector3f();
@@ -78,11 +79,11 @@ public class Cylinder extends AbstractShape {
 		rotationMatrix.transform(nextP);
 		Vector3f diffP = new Vector3f(p);
 		diffP.sub(nextP);
-		upNormal.cross(p, diffP);
+		upNormal.cross(diffP, p);
 		upNormal.normalize();
 		Vector3f downVector = new Vector3f(centerCircle);
 		downVector.scale(-1);
-		downNormal.cross(downVector, p);
+		downNormal.cross(p, downVector);
 		downNormal.normalize();
 		
 		upNormal.add(downNormal); //take mean of both

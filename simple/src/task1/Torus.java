@@ -56,7 +56,6 @@ public class Torus extends AbstractShape {
 			}
 		}
 		
-		normals.appendTuple(1, 0, 0);
 		addIndicesList(indicesList);
 		addElement(vertices.getFinishedArray(), VertexData.Semantic.POSITION, 3);
 		addElement(colors.getFinishedArray(), VertexData.Semantic.COLOR, 3);
