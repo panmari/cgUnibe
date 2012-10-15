@@ -49,20 +49,46 @@ public class Cylinder extends AbstractShape {
 	 */
 	private void addDisc(float zcoordinate) {
 		Vector3f centerCircle = new Vector3f(0, 0, zcoordinate);
+		Vector3f normal = new Vector3f(centerCircle);
+		normal.normalize();
 		Matrix3f rotationMatrix = new Matrix3f();
 		rotationMatrix.rotZ(2*MathFloat.PI/resolution);
+		normals.appendVector(normal);
 		vertices.appendVector(centerCircle); //center of circle is first point in mesh
 		colors.appendTuple(0, 0, 0);
 		Vector3f p = new Vector3f(radius, 0, 0); //first point of circle
+		Vector3f pNormal = firstNormal(p, centerCircle, rotationMatrix);
+		
 		for (int i = 0; i < resolution; i++) {
 			Vector3f meshPoint = new Vector3f();
 			meshPoint.add(p, centerCircle);
+			normals.appendVector(pNormal);
 			vertices.appendVector(meshPoint);
 			colors.appendTuple(i % 2, i % 2, i % 2);
 			rotationMatrix.transform(p);
+			rotationMatrix.transform(pNormal);
 		}
 	}
 	
+	private Vector3f firstNormal(Vector3f p, Vector3f centerCircle, Matrix3f rotationMatrix) {
+		Vector3f upNormal = new Vector3f();
+		Vector3f downNormal = new Vector3f();
+		Vector3f nextP = new Vector3f(p);
+		rotationMatrix.transform(nextP);
+		Vector3f diffP = new Vector3f(p);
+		diffP.sub(nextP);
+		upNormal.cross(p, diffP);
+		upNormal.normalize();
+		Vector3f downVector = new Vector3f(centerCircle);
+		downVector.scale(-1);
+		downNormal.cross(downVector, p);
+		downNormal.normalize();
+		
+		upNormal.add(downNormal); //take mean of both
+		upNormal.normalize();
+		return upNormal;
+	}
+
 	private void addMantle() {
 		for (int i = 1; i <= resolution; i++) {
 			addQuadrangle(i, getAdjacentDiscVertex(i), 
