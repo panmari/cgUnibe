@@ -6,7 +6,6 @@ import java.util.Arrays;
 public class HeightMap {
 
 	private float[][] grid;
-	private int initialMaxHeight;
 	private int edge;
 	
 	public HeightMap(int edge) {

@@ -87,7 +87,7 @@ public class DrawFractalLandscape
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-		CameraInputListener l = new CameraInputListener(c);
+		FlyingCameraInputListener l = new FlyingCameraInputListener(c);
 	    renderPanel.getCanvas().addKeyListener(l);
 		renderPanel.getCanvas().addMouseMotionListener(l);
 		renderPanel.getCanvas().addMouseListener(l);
