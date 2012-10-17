@@ -1,20 +1,12 @@
 package task2c;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
-import javax.vecmath.Color3f;
-import javax.vecmath.Matrix3f;
 import javax.vecmath.Vector3f;
 
 import jogamp.graph.math.MathFloat;
-
 import task1.AbstractShape;
-import task2c.HeightMap.NoHeightPresentException;
 
 public class FractalLandscape extends AbstractShape {
 
@@ -48,11 +40,13 @@ public class FractalLandscape extends AbstractShape {
 			resolution = resolution/2;
 		}
 		
+		for (int x = 0; x < edge; x++)
+			for (int y = 0; y < edge; y++)
+				computeColor(x, y);
 		int counter = 0;
 		for (int x = 0; x < edge; x++) {
 			for (int y = 0; y < edge; y++) {
 				computeNormal(x, y);
-				computeColor(x, y);
 				vertices.appendTuple(x - edge/2f, map.getHeightFor(x, y), y - edge/2f);
 				if (x < edge - 1 && y < edge - 1)
 					addQuadrangle(counter, counter + 1, counter + edge + 1, counter + edge);
@@ -66,13 +60,12 @@ public class FractalLandscape extends AbstractShape {
 	}
 
 	private void computeColor(int x, int y) {
-		float thresholdHi = maxCornerHeight*3f/4;
-		float thresholdLo = minCornerHeight + 10;
+		float thresholdHi = maxCornerHeight*3.5f/4;
+		float thresholdLo = minCornerHeight + 7;
 		float variation = (float) (Math.random()/3);
 		if (map.getHeightFor(x, y) < thresholdLo) {
 			map.setHeightFor(x, y, thresholdLo, true);
-			colors.appendTuple(variation, variation, 1 - variation);
-			
+			colors.appendTuple(variation/2, variation/2, 1 - variation/2);
 		}
 		else if (map.getHeightFor(x, y) > thresholdHi + Math.random() * 5) {
 			float whitish = (float) (Math.random()/5 + 4f/5);
