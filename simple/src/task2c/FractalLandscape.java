@@ -23,6 +23,7 @@ public class FractalLandscape extends AbstractShape {
 	private HeightMap map;
 	private final float initialMaxHeight;
 	private float maxCornerHeight;
+	private float minCornerHeight = Float.MAX_VALUE;
 	
 	public FractalLandscape(int n) {
 		super((int) Math.pow((Math.pow(2, n) + 1), 2));
@@ -65,13 +66,19 @@ public class FractalLandscape extends AbstractShape {
 	}
 
 	private void computeColor(int x, int y) {
-		float threshold = maxCornerHeight*3f/4;
-		if (map.getHeightFor(x, y) > threshold + Math.random() * 5) {
+		float thresholdHi = maxCornerHeight*3f/4;
+		float thresholdLo = minCornerHeight + 10;
+		float variation = (float) (Math.random()/3);
+		if (map.getHeightFor(x, y) < thresholdLo) {
+			map.setHeightFor(x, y, thresholdLo, true);
+			colors.appendTuple(variation, variation, 1 - variation);
+			
+		}
+		else if (map.getHeightFor(x, y) > thresholdHi + Math.random() * 5) {
 			float whitish = (float) (Math.random()/5 + 4f/5);
 			colors.appendTuple(whitish, whitish, whitish);
 		} else {
-			float greenish = (float) (Math.random()/3);
-			colors.appendTuple(greenish, 1 - greenish, greenish);
+			colors.appendTuple(variation, 1 - variation, variation);
 		}
 	}
 
@@ -154,6 +161,7 @@ public class FractalLandscape extends AbstractShape {
 		for (Point p: corners) {
 			float randomCornerHeight = (float) (initialMaxHeight*Math.random());
 			maxCornerHeight = Math.max(maxCornerHeight, randomCornerHeight);
+			minCornerHeight  = Math.min(minCornerHeight, randomCornerHeight);
 			map.setHeightFor(p, randomCornerHeight);
 		}
 		

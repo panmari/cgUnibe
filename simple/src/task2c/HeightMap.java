@@ -15,7 +15,11 @@ public class HeightMap {
 	}
 	
 	public void setHeightFor(int x, int y, float height) {
-		if (grid[x][y] != 0)
+		setHeightFor(x, y, height, false);
+	}
+	
+	public void setHeightFor(int x, int y, float height, boolean force) {
+		if (grid[x][y] != 0 && !force)
 			return;
 		grid[x][y] = height;
 	}
