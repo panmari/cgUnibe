@@ -71,7 +71,7 @@ public class DrawFractalLandscape
 	public static void main(String[] args) throws IOException
 	{		
 		int size = 8;
-		Camera c = new Camera(new Point3f(0, 100, 100), new Point3f(0,0,0), new Vector3f(0,1,0));
+		Camera c = new Camera(new Point3f(0, 200, 200), new Point3f(0,0,0), new Vector3f(0,1,0));
 		sceneManager = new SimpleSceneManager(c, new Frustum(1, 1000, 1,  MathFloat.PI/3));
 		shape = new Shape(new FractalLandscape(size));
 		sceneManager.addShape(shape);

@@ -43,6 +43,7 @@ public class FractalLandscape extends AbstractShape {
 		for (int x = 0; x < edge; x++)
 			for (int y = 0; y < edge; y++)
 				computeColor(x, y);
+		
 		int counter = 0;
 		for (int x = 0; x < edge; x++) {
 			for (int y = 0; y < edge; y++) {
@@ -84,6 +85,7 @@ public class FractalLandscape extends AbstractShape {
 			right.sub(v);
 			Vector3f cross = new Vector3f();
 			cross.cross(down, right);
+			cross.normalize();
 			normals.appendVector(cross);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			//i dont even...
