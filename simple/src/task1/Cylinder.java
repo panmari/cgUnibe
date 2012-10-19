@@ -1,5 +1,7 @@
 package task1;
 
+import java.util.Arrays;
+
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Vector3f;
 
@@ -40,6 +42,7 @@ public class Cylinder extends AbstractShape {
 		}
 		addMantle();
 		addIndicesList(indicesList);
+		System.out.println(Arrays.toString(normals.getFinishedArray()));
 		addElement(normals.getFinishedArray(), VertexData.Semantic.NORMAL, 3);
 	}
 	
@@ -55,7 +58,7 @@ public class Cylinder extends AbstractShape {
 		normal.normalize();
 		Matrix3f rotationMatrix = new Matrix3f();
 		rotationMatrix.rotZ(2*MathFloat.PI/resolution);
-		//normals.appendVector(normal);
+		normals.appendVector(normal);
 		vertices.appendVector(centerCircle); //center of circle is first point in mesh
 		colors.appendTuple(0, 0, 0);
 		Vector3f p = new Vector3f(radius, 0, 0); //first point of circle
@@ -65,7 +68,7 @@ public class Cylinder extends AbstractShape {
 		for (int i = 0; i < resolution; i++) {
 			Vector3f meshPoint = new Vector3f();
 			meshPoint.add(p, centerCircle);
-			//normals.appendVector(pNormal);
+			normals.appendVector(pNormal);
 			vertices.appendVector(meshPoint);
 			colors.appendTuple(i % 2, i % 2, i % 2);
 			rotationMatrix.transform(p);

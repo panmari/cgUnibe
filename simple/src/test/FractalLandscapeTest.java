@@ -1,14 +1,15 @@
 package test;
 
-import static org.junit.Assert.*;
-
 import java.util.Arrays;
 
 import org.junit.Test;
 
 import task2c.FractalLandscape;
 
-
+/**
+ * This is not much of a test class, sadly. Only some print statements thrown together.
+ *
+ */
 public class FractalLandscapeTest {
 
 	float e = 0.00001f;

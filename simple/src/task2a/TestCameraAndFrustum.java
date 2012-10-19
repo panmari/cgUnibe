@@ -29,7 +29,8 @@ public class TestCameraAndFrustum
 	private static Vector3f up;
 	private static Camera c;
 	private static Matrix4f trans;
-
+	private static boolean move;
+	
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
 	 * provide a call-back function for initialization. 
@@ -51,7 +52,7 @@ public class TestCameraAndFrustum
 		    angle = 0.01f;
 		    trans = new Matrix4f();
 			trans.rotY(angle);
-		    timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
+			timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
 		}
 	}
 
@@ -61,11 +62,14 @@ public class TestCameraAndFrustum
 	 */
 	public static class AnimationTask extends TimerTask
 	{
+
 		public void run()
 		{
-			trans.transform(c.getCenterOfProjection());
-			c.update();
-			renderPanel.getCanvas().repaint(); 
+			if (move) {
+				trans.transform(c.getCenterOfProjection());
+				c.update();
+				renderPanel.getCanvas().repaint(); 
+			}
 		}
 	}
 
@@ -79,7 +83,9 @@ public class TestCameraAndFrustum
     	public void mouseReleased(MouseEvent e) {}
     	public void mouseEntered(MouseEvent e) {}
     	public void mouseExited(MouseEvent e) {}
-    	public void mouseClicked(MouseEvent e) {}
+    	public void mouseClicked(MouseEvent e) {
+    		move = !move;
+    	}
 	}
 	
 	/**
@@ -111,7 +117,7 @@ public class TestCameraAndFrustum
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-	    jframe.addMouseListener(new SimpleMouseListener());
+	    renderPanel.getCanvas().addMouseListener(new SimpleMouseListener());
 		   	    	    
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
