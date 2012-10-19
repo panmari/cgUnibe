@@ -24,7 +24,7 @@ public class simple
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
 	 * provide a call-back function for initialization. 
 	 */ 
-	public final static class SimpleRenderPanel extends SWRenderPanel
+	public final static class SimpleRenderPanel extends GLRenderPanel
 	{
 		/**
 		 * Initialization call-back. We initialize our renderer here.
@@ -52,13 +52,13 @@ public class simple
 		public void run()
 		{
 			// Update transformation
-//    		Matrix4f t = shape.getTransformation();
-//    		Matrix4f rotX = new Matrix4f();
-//    		rotX.rotX(angle);
-//    		Matrix4f rotY = new Matrix4f();
-//    		rotY.rotY(angle);
-//    		t.mul(rotX);
-//    		t.mul(rotY);
+    		Matrix4f t = shape.getTransformation();
+    		Matrix4f rotX = new Matrix4f();
+    		rotX.rotX(angle);
+    		Matrix4f rotY = new Matrix4f();
+    		rotY.rotY(angle);
+    		t.mul(rotX);
+    		t.mul(rotY);
     		
     		// Trigger redrawing of the render window
     		renderPanel.getCanvas().repaint(); 

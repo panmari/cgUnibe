@@ -25,6 +25,7 @@ public class SWRenderContext implements RenderContext {
 	private SceneManagerInterface sceneManager;
 	private BufferedImage colorBuffer;
 	private Matrix4f viewPortMatrix;
+	private BufferedImage clearBuffer;
 		
 	public void setSceneManager(SceneManagerInterface sceneManager)
 	{
@@ -71,6 +72,7 @@ public class SWRenderContext implements RenderContext {
 		viewPortMatrix.setM22(1/2f);
 		viewPortMatrix.setColumn(3, width/2f, height/2f, 1/2f, 1);
 		colorBuffer = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+		clearBuffer = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 	}
 		
 	/**
@@ -78,6 +80,8 @@ public class SWRenderContext implements RenderContext {
 	 */
 	private void beginFrame()
 	{
+		colorBuffer.setData( clearBuffer.getRaster() );
+
 	}
 	
 	private void endFrame()
