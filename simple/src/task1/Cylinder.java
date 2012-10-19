@@ -92,7 +92,7 @@ public class Cylinder extends AbstractShape {
 		
 		upNormal.add(downNormal); //take mean of both
 		upNormal.normalize();
-		return upNormal;
+		return new Vector3f(centerCircle);
 	}
 
 	private void addMantle() {

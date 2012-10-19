@@ -1,8 +1,15 @@
 package jrtr;
 
 import jrtr.RenderContext;
+import jrtr.VertexData.VertexElement;
 
+import java.awt.Color;
 import java.awt.image.*;
+
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3f;
+import javax.vecmath.Point4f;
+import javax.vecmath.Vector3f;
 
 
 /**
@@ -17,6 +24,7 @@ public class SWRenderContext implements RenderContext {
 
 	private SceneManagerInterface sceneManager;
 	private BufferedImage colorBuffer;
+	private Matrix4f viewPortMatrix;
 		
 	public void setSceneManager(SceneManagerInterface sceneManager)
 	{
@@ -57,6 +65,11 @@ public class SWRenderContext implements RenderContext {
 	 */
 	public void setViewportSize(int width, int height)
 	{
+		viewPortMatrix = new Matrix4f();
+		viewPortMatrix.setM00(width/2f);
+		viewPortMatrix.setM11(height/2f);
+		viewPortMatrix.setM22(1/2f);
+		viewPortMatrix.setColumn(3, width/2f, height/2f, 1/2f, 1);
 		colorBuffer = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 	}
 		
@@ -75,8 +88,28 @@ public class SWRenderContext implements RenderContext {
 	 * The main rendering method. You will need to implement this to draw
 	 * 3D objects.
 	 */
-	private void draw(RenderItem renderItem)
+	private void draw(RenderItem renderItem)	
 	{
+		Matrix4f cam = sceneManager.getCamera().getCameraMatrix();
+		Matrix4f frust = sceneManager.getFrustum().getProjectionMatrix();
+		SceneManagerIterator iter = sceneManager.iterator();
+		Color white = new Color(255, 255, 255);
+		while(iter.hasNext()) {
+			RenderItem toRender = iter.next();
+			float[] points = toRender.getShape().getVertexData().getElements().getLast().getData();
+			for (int i = 0; i < points.length; i+=3) {
+				Point4f v = new Point4f(points[i], points[i + 1], points[i + 2], 1);
+				toRender.getT().transform(v);
+				cam.transform(v);
+				frust.transform(v);
+				viewPortMatrix.transform(v);
+				int x = Math.round(v.x / v.w);
+				int y = Math.round(v.y / v.w);
+				colorBuffer.setRGB(x, y, white.getRGB());
+			}
+				
+		}
+			
 	}
 	
 	/**
