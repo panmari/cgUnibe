@@ -8,6 +8,7 @@ import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Point4f;
+import javax.vecmath.Vector3f;
 
 import jrtr.VertexData.VertexElement;
 
@@ -98,14 +99,10 @@ public class SWRenderContext implements RenderContext {
 	 */
 	private void draw(RenderItem renderItem)	
 	{
-		SceneManagerIterator iter = sceneManager.iterator();
-		while(iter.hasNext()) {
-			RenderItem toRender = iter.next();
-			Matrix4f t = new Matrix4f(mergedDisplayMatrix);
-			t.mul(toRender.getT());
-			//gatherItems(toRender.getShape(), t);
-			drawDotty(toRender.getShape(), t);	
-		}
+		Matrix4f t = new Matrix4f(mergedDisplayMatrix);
+		t.mul(renderItem.getT());
+		//drawTrianglesSeparately(renderItem.getShape(), t);
+		drawDotty(renderItem.getShape(), t);
 			
 	}
 	/**
@@ -132,22 +129,23 @@ public class SWRenderContext implements RenderContext {
 		Point4f[] colors = new Point4f[3];
 		Point4f[] normals = new Point4f[3];
 		int k = 0; //keeps track of triangle
-		for (int i = 0; i < vertexData.getIndices().length; i++) {
+		int[] indices = vertexData.getIndices();
+		for (int i = 0; i < indices.length; i++) {
 			for(VertexElement ve: vertexData.getElements()) {
 				Point4f p;
 				switch (ve.getSemantic()) {
 					case POSITION:
-						p = getPointAt(ve, i);
+						p = getPointAt(ve, indices[i]);
 						t.transform(p);
 						positions[k] = p;
 						k++; //increment k here, bc color and normal might be missing
 						break;
 					case COLOR:
-						colors[k] = getPointAt(ve, i);;
+						colors[k] = getPointAt(ve, indices[i]);;
 						break;
 					case NORMAL:
 						//dont care
-						normals[k] = getPointAt(ve, i);;
+						normals[k] = getPointAt(ve, indices[i]);;
 						break;
 				
 				}
@@ -164,6 +162,7 @@ public class SWRenderContext implements RenderContext {
 
 	private void rasterizeTriangle(Point4f[] positions, Point4f[] colors, Point4f[] normals) {
 		Matrix3f alphabetagamma = new Matrix3f();
+		Color white = new Color(255, 255, 255);
 		Point topLeft = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
 		Point botRight = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
 		for (int i = 0; i < 3; i++) {
@@ -178,8 +177,21 @@ public class SWRenderContext implements RenderContext {
 		
 		for (int y = topLeft.y; y >= botRight.y; y--) {
 			for (int x = topLeft.x; x <= botRight.x; x++) {
+				if (isInsideTriangle(x, y, alphabetagamma)) {
+					colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, white.getRGB());
+				}
 			}
 		}
+	}
+
+	private boolean isInsideTriangle(int x, int y, Matrix3f alphabetagamma) {
+		Vector3f abgVector = new Vector3f();
+		for (int i = 0; i < 3; i++) {
+			alphabetagamma.getColumn(0, abgVector);
+			if (abgVector.dot(new Vector3f(x, y, 1)) < 0)
+				return false;
+		}
+		return true;
 	}
 
 	public Point4f getPointAt(VertexElement ve, int index) {
