@@ -1,15 +1,12 @@
 package jrtr;
 
-import jrtr.RenderContext;
-import jrtr.VertexData.VertexElement;
-
 import java.awt.Color;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3f;
 import javax.vecmath.Point4f;
-import javax.vecmath.Vector3f;
+
+import jrtr.VertexData.VertexElement;
 
 
 /**
@@ -99,25 +96,77 @@ public class SWRenderContext implements RenderContext {
 	private void draw(RenderItem renderItem)	
 	{
 		SceneManagerIterator iter = sceneManager.iterator();
-		Color white = new Color(255, 255, 255);
 		while(iter.hasNext()) {
 			RenderItem toRender = iter.next();
 			Matrix4f t = new Matrix4f(mergedDisplayMatrix);
 			t.mul(toRender.getT());
-			float[] points = toRender.getShape().getVertexData().getElements().getLast().getData();
-			for (int i = 0; i < points.length; i+=3) {
-				Point4f v = new Point4f(points[i], points[i + 1], points[i + 2], 1);
-				t.transform(v);
-				int x = Math.round(v.x / v.w);
-				int y = Math.round(v.y / v.w);
-				if (x >= 0 && y >= 0 && y < colorBuffer.getHeight() && x < colorBuffer.getWidth())
-					colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, white.getRGB());
-			}
-				
+			//gatherItems(toRender.getShape(), t);
+			drawDotty(toRender.getShape(), t);	
 		}
 			
 	}
-	
+	/**
+	 * Draws only the vertices of the shapes as dots. Normals and indices are ignored.
+	 * @param shape
+	 * @param t
+	 */
+	private void drawDotty(Shape shape, Matrix4f t) {
+		float[] points = shape.getVertexData().getElements().getLast().getData();
+		Color white = new Color(255, 255, 255);
+		for (int i = 0; i < points.length; i+=3) {
+			Point4f v = new Point4f(points[i], points[i + 1], points[i + 2], 1);
+			t.transform(v);
+			int x = Math.round(v.x / v.w);
+			int y = Math.round(v.y / v.w);
+			if (x >= 0 && y >= 0 && y < colorBuffer.getHeight() && x < colorBuffer.getWidth())
+				colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, white.getRGB());
+		}
+	}
+
+	private void drawTrianglesSeparately(Shape toRender, Matrix4f t) {
+		VertexData vertexData = toRender.getVertexData();
+		Point4f[] positions = new Point4f[3];
+		Point4f[] colors = new Point4f[3];
+		Point4f[] normals = new Point4f[3];
+		int k = 0; //keeps track of triangle
+		for (int i = 0; i < vertexData.getIndices().length; i++) {
+			for(VertexElement ve: vertexData.getElements()) {
+				Point4f p;
+				switch (ve.getSemantic()) {
+					case POSITION:
+						p = getPointAt(ve, i);
+						t.transform(p);
+						positions[k] = p;
+						k++; //increment k here, bc color and normal might be missing
+						break;
+					case COLOR:
+						colors[k] = getPointAt(ve, i);;
+						break;
+					case NORMAL:
+						//dont care
+						normals[k] = getPointAt(ve, i);;
+						break;
+				
+				}
+			}
+			if (k == 3) {
+				rasterizeTriangle(positions, colors, normals);
+				positions = new Point4f[3];
+				colors = new Point4f[3];
+				normals = new Point4f[3];
+				k = 0;
+			}
+		}
+	}
+
+	private void rasterizeTriangle(Point4f[] positions, Point4f[] colors, Point4f[] normals) {
+		
+		
+	}
+
+	public Point4f getPointAt(VertexElement ve, int index) {
+		return new Point4f(ve.getData()[index*3], ve.getData()[index*3 + 1], ve.getData()[index*3 + 2], 1);
+	}
 	/**
 	 * Does nothing. We will not implement shaders for the software renderer.
 	 */
