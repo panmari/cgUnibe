@@ -25,6 +25,7 @@ public class SWRenderContext implements RenderContext {
 	private SceneManagerInterface sceneManager;
 	private BufferedImage colorBuffer;
 	private Matrix4f viewPortMatrix;
+	private Matrix4f mergedDisplayMatrix;
 	private BufferedImage clearBuffer;
 		
 	public void setSceneManager(SceneManagerInterface sceneManager)
@@ -80,6 +81,9 @@ public class SWRenderContext implements RenderContext {
 	 */
 	private void beginFrame()
 	{
+		mergedDisplayMatrix = new Matrix4f(viewPortMatrix);
+		mergedDisplayMatrix.mul(sceneManager.getFrustum().getProjectionMatrix());
+		mergedDisplayMatrix.mul(sceneManager.getCamera().getCameraMatrix());
 		colorBuffer.setData( clearBuffer.getRaster() );
 
 	}
@@ -94,19 +98,16 @@ public class SWRenderContext implements RenderContext {
 	 */
 	private void draw(RenderItem renderItem)	
 	{
-		Matrix4f cam = sceneManager.getCamera().getCameraMatrix();
-		Matrix4f frust = sceneManager.getFrustum().getProjectionMatrix();
 		SceneManagerIterator iter = sceneManager.iterator();
 		Color white = new Color(255, 255, 255);
 		while(iter.hasNext()) {
 			RenderItem toRender = iter.next();
+			Matrix4f t = new Matrix4f(mergedDisplayMatrix);
+			t.mul(toRender.getT());
 			float[] points = toRender.getShape().getVertexData().getElements().getLast().getData();
 			for (int i = 0; i < points.length; i+=3) {
 				Point4f v = new Point4f(points[i], points[i + 1], points[i + 2], 1);
-				toRender.getT().transform(v);
-				cam.transform(v);
-				frust.transform(v);
-				viewPortMatrix.transform(v);
+				t.transform(v);
 				int x = Math.round(v.x / v.w);
 				int y = Math.round(v.y / v.w);
 				if (x >= 0 && y >= 0 && y < colorBuffer.getHeight() && x < colorBuffer.getWidth())
