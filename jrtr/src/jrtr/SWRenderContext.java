@@ -1,9 +1,12 @@
 package jrtr;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3f;
 import javax.vecmath.Point4f;
 
 import jrtr.VertexData.VertexElement;
@@ -160,8 +163,23 @@ public class SWRenderContext implements RenderContext {
 	}
 
 	private void rasterizeTriangle(Point4f[] positions, Point4f[] colors, Point4f[] normals) {
+		Matrix3f alphabetagamma = new Matrix3f();
+		Point topLeft = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
+		Point botRight = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
+		for (int i = 0; i < 3; i++) {
+			topLeft.x = (int) Math.min(topLeft.x, positions[i].x/positions[i].w);
+			topLeft.y = (int) Math.min(topLeft.y, positions[i].y/positions[i].w);
+			botRight.x = (int) Math.min(botRight.x, positions[i].x/positions[i].w) + 1;
+			botRight.y = (int) Math.min(botRight.y, positions[i].y/positions[i].w) + 1;
+			float[] column = { positions[i].x, positions[i].y, positions[i].w };
+			alphabetagamma.setColumn(i, column);
+		}
+		alphabetagamma.invert();
 		
-		
+		for (int y = topLeft.y; y >= botRight.y; y--) {
+			for (int x = topLeft.x; x <= botRight.x; x++) {
+			}
+		}
 	}
 
 	public Point4f getPointAt(VertexElement ve, int index) {
