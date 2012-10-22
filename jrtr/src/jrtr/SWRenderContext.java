@@ -28,6 +28,8 @@ public class SWRenderContext implements RenderContext {
 	private Matrix4f viewPortMatrix;
 	private Matrix4f mergedDisplayMatrix;
 	private BufferedImage clearBuffer;
+	private int width;
+	private int height;
 		
 	public void setSceneManager(SceneManagerInterface sceneManager)
 	{
@@ -68,6 +70,8 @@ public class SWRenderContext implements RenderContext {
 	 */
 	public void setViewportSize(int width, int height)
 	{
+		this.width = width;
+		this.height = height;
 		viewPortMatrix = new Matrix4f();
 		viewPortMatrix.setM00(width/2f);
 		viewPortMatrix.setM11(height/2f);
@@ -163,15 +167,15 @@ public class SWRenderContext implements RenderContext {
 	private void rasterizeTriangle(Point4f[] positions, Point4f[] colors, Point4f[] normals) {
 		Matrix3f alphabetagamma = new Matrix3f();
 		Color white = new Color(255, 255, 255);
-		Point topLeft = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
-		Point botRight = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
+		Point topLeft = new Point(0, 0);
+		Point botRight = new Point(width - 1, height - 1);
 		for (int i = 0; i < 3; i++) {
 			topLeft.x = (int) Math.min(topLeft.x, positions[i].x/positions[i].w);
 			topLeft.y = (int) Math.min(topLeft.y, positions[i].y/positions[i].w);
 			botRight.x = (int) Math.max(botRight.x, positions[i].x/positions[i].w) + 1;
 			botRight.y = (int) Math.max(botRight.y, positions[i].y/positions[i].w) + 1;
-			float[] column = { positions[i].x, positions[i].y, positions[i].w };
-			alphabetagamma.setColumn(i, column);
+			float[] row = { positions[i].x, positions[i].y, positions[i].w };
+			alphabetagamma.setRow(i, row);
 		}
 		alphabetagamma.invert();
 		
@@ -187,7 +191,7 @@ public class SWRenderContext implements RenderContext {
 	private boolean isInsideTriangle(int x, int y, Matrix3f alphabetagamma) {
 		Vector3f abgVector = new Vector3f();
 		for (int i = 0; i < 3; i++) {
-			alphabetagamma.getColumn(0, abgVector);
+			alphabetagamma.getColumn(i, abgVector);
 			if (abgVector.dot(new Vector3f(x, y, 1)) < 0)
 				return false;
 		}
