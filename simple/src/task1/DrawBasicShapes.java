@@ -44,7 +44,7 @@ public class DrawBasicShapes
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
-		    timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
+		    //timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
 		}
 	}
 

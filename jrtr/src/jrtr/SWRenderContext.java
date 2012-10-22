@@ -101,8 +101,8 @@ public class SWRenderContext implements RenderContext {
 	{
 		Matrix4f t = new Matrix4f(mergedDisplayMatrix);
 		t.mul(renderItem.getT());
-		//drawTrianglesSeparately(renderItem.getShape(), t);
-		drawDotty(renderItem.getShape(), t);
+		drawTrianglesSeparately(renderItem.getShape(), t);
+		//drawDotty(renderItem.getShape(), t);
 			
 	}
 	/**
@@ -168,14 +168,14 @@ public class SWRenderContext implements RenderContext {
 		for (int i = 0; i < 3; i++) {
 			topLeft.x = (int) Math.min(topLeft.x, positions[i].x/positions[i].w);
 			topLeft.y = (int) Math.min(topLeft.y, positions[i].y/positions[i].w);
-			botRight.x = (int) Math.min(botRight.x, positions[i].x/positions[i].w) + 1;
-			botRight.y = (int) Math.min(botRight.y, positions[i].y/positions[i].w) + 1;
+			botRight.x = (int) Math.max(botRight.x, positions[i].x/positions[i].w) + 1;
+			botRight.y = (int) Math.max(botRight.y, positions[i].y/positions[i].w) + 1;
 			float[] column = { positions[i].x, positions[i].y, positions[i].w };
 			alphabetagamma.setColumn(i, column);
 		}
 		alphabetagamma.invert();
 		
-		for (int y = topLeft.y; y >= botRight.y; y--) {
+		for (int y = topLeft.y; y <= botRight.y; y++) {
 			for (int x = topLeft.x; x <= botRight.x; x++) {
 				if (isInsideTriangle(x, y, alphabetagamma)) {
 					colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, white.getRGB());
