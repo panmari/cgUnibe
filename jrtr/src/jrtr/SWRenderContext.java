@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import javax.vecmath.Color3f;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3f;
 import javax.vecmath.Point4f;
 import javax.vecmath.Vector3f;
 
@@ -24,6 +24,7 @@ import jrtr.VertexData.VertexElement;
 public class SWRenderContext implements RenderContext {
 
 	private SceneManagerInterface sceneManager;
+	private float[][] zBuffer;
 	private BufferedImage colorBuffer;
 	private Matrix4f viewPortMatrix;
 	private Matrix4f mergedDisplayMatrix;
@@ -86,6 +87,7 @@ public class SWRenderContext implements RenderContext {
 	 */
 	private void beginFrame()
 	{
+		zBuffer = new float[width][height];
 		mergedDisplayMatrix = new Matrix4f(viewPortMatrix);
 		mergedDisplayMatrix.mul(sceneManager.getFrustum().getProjectionMatrix());
 		mergedDisplayMatrix.mul(sceneManager.getCamera().getCameraMatrix());
@@ -130,7 +132,7 @@ public class SWRenderContext implements RenderContext {
 	private void drawTrianglesSeparately(Shape toRender, Matrix4f t) {
 		VertexData vertexData = toRender.getVertexData();
 		Point4f[] positions = new Point4f[3];
-		Point4f[] colors = new Point4f[3];
+		Color3f[] colors = new Color3f[3];
 		Point4f[] normals = new Point4f[3];
 		int k = 0; //keeps track of triangle
 		int[] indices = vertexData.getIndices();
@@ -145,7 +147,7 @@ public class SWRenderContext implements RenderContext {
 						k++; //increment k here, bc color and normal might be missing
 						break;
 					case COLOR:
-						colors[k] = getPointAt(ve, indices[i]);;
+						colors[k] = getColorAt(ve, indices[i]);;
 						break;
 					case NORMAL:
 						//dont care
@@ -157,23 +159,22 @@ public class SWRenderContext implements RenderContext {
 			if (k == 3) {
 				rasterizeTriangle(positions, colors, normals);
 				positions = new Point4f[3];
-				colors = new Point4f[3];
+				colors = new Color3f[3];
 				normals = new Point4f[3];
 				k = 0;
 			}
 		}
 	}
 
-	private void rasterizeTriangle(Point4f[] positions, Point4f[] colors, Point4f[] normals) {
+	private void rasterizeTriangle(Point4f[] positions, Color3f[] colors, Point4f[] normals) {
 		Matrix3f alphabetagamma = new Matrix3f();
-		Color white = new Color(255, 255, 255);
 		Point topLeft = new Point(0, 0);
 		Point botRight = new Point(width - 1, height - 1);
 		for (int i = 0; i < 3; i++) {
 			topLeft.x = (int) Math.min(topLeft.x, positions[i].x/positions[i].w);
 			topLeft.y = (int) Math.min(topLeft.y, positions[i].y/positions[i].w);
-			botRight.x = (int) Math.max(botRight.x, positions[i].x/positions[i].w) + 1;
-			botRight.y = (int) Math.max(botRight.y, positions[i].y/positions[i].w) + 1;
+			botRight.x = (int) Math.max(botRight.x, positions[i].x/positions[i].w);
+			botRight.y = (int) Math.max(botRight.y, positions[i].y/positions[i].w);
 			float[] row = { positions[i].x, positions[i].y, positions[i].w };
 			alphabetagamma.setRow(i, row);
 		}
@@ -182,10 +183,14 @@ public class SWRenderContext implements RenderContext {
 		for (int y = topLeft.y; y <= botRight.y; y++) {
 			for (int x = topLeft.x; x <= botRight.x; x++) {
 				if (isInsideTriangle(x, y, alphabetagamma)) {
-					colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, white.getRGB());
+					colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, getRGBof(colors[0]));
 				}
 			}
 		}
+	}
+
+	private int getRGBof(Color3f color3f) {
+		return new Color(color3f.x, color3f.y, color3f.z).getRGB();
 	}
 
 	private boolean isInsideTriangle(int x, int y, Matrix3f alphabetagamma) {
@@ -201,6 +206,11 @@ public class SWRenderContext implements RenderContext {
 	public Point4f getPointAt(VertexElement ve, int index) {
 		return new Point4f(ve.getData()[index*3], ve.getData()[index*3 + 1], ve.getData()[index*3 + 2], 1);
 	}
+	
+	public Color3f getColorAt(VertexElement ve, int index) {
+		return new Color3f(ve.getData()[index*3], ve.getData()[index*3 + 1], ve.getData()[index*3 + 2]);
+	}
+	
 	/**
 	 * Does nothing. We will not implement shaders for the software renderer.
 	 */

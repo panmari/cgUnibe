@@ -97,7 +97,7 @@ public class DrawBasicShapes
 		Shape c = new Shape(new Cylinder(1, 1, 3));
 		c.getTransformation().setTranslation(new Vector3f(3, 0, 0));
 		shapes.add(c);
-		shapes.add(new Shape(new Torus(1, .3f, 6, 4)));
+		shapes.add(new Shape(new Torus(1, .3f, 3, 3)));
 		for (Shape shape: shapes)
 			sceneManager.addShape(shape);
 		// Make a render panel. The init function of the renderPanel
