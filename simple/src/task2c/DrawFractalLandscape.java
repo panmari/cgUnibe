@@ -88,7 +88,7 @@ public class DrawFractalLandscape
 
 		// Add a mouse listener
 		FlyingCameraInputListener l = new FlyingCameraInputListener(c);
-	    renderPanel.getCanvas().addKeyListener(l);
+	    jframe.addKeyListener(l);
 		renderPanel.getCanvas().addMouseMotionListener(l);
 		renderPanel.getCanvas().addMouseListener(l);
 		renderPanel.getCanvas().addMouseWheelListener(l);

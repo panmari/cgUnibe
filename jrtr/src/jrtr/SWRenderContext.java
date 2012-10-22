@@ -110,7 +110,7 @@ public class SWRenderContext implements RenderContext {
 				int x = Math.round(v.x / v.w);
 				int y = Math.round(v.y / v.w);
 				if (x >= 0 && y >= 0 && y < colorBuffer.getHeight() && x < colorBuffer.getWidth())
-					colorBuffer.setRGB(colorBuffer.getWidth() - x - 1, colorBuffer.getHeight() - y - 1, white.getRGB());
+					colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, white.getRGB());
 			}
 				
 		}
