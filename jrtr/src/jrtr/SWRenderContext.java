@@ -171,6 +171,8 @@ public class SWRenderContext implements RenderContext {
 		Point topLeft = new Point(width - 1, height - 1);
 		Point botRight = new Point(0, 0);
 		for (int i = 0; i < 3; i++) {
+			//TODO: do I really need/want to make this division?
+			//this defeats the fckin purpose of ... everything!
 			topLeft.x = (int) Math.min(topLeft.x, positions[i].x/positions[i].w);
 			topLeft.y = (int) Math.min(topLeft.y, positions[i].y/positions[i].w);
 			botRight.x = (int) Math.max(botRight.x, positions[i].x/positions[i].w);
@@ -180,10 +182,7 @@ public class SWRenderContext implements RenderContext {
 		}
 		alphabetagamma.invert();
 		
-		topLeft.x = Math.max(0, topLeft.x);
-		topLeft.y = Math.max(0, topLeft.y);
-		botRight.x = Math.min(width - 1, botRight.x);
-		botRight.y = Math.min(height - 1, botRight.y);
+		validifyBoundingRectangle(topLeft, botRight);
 		
 		for (int y = topLeft.y; y <= botRight.y; y++) {
 			for (int x = topLeft.x; x <= botRight.x; x++) {
@@ -192,6 +191,13 @@ public class SWRenderContext implements RenderContext {
 				}
 			}
 		}
+	}
+
+	private void validifyBoundingRectangle(Point topLeft, Point botRight) {
+		topLeft.x = Math.max(0, topLeft.x);
+		topLeft.y = Math.max(0, topLeft.y);
+		botRight.x = Math.min(width - 1, botRight.x);
+		botRight.y = Math.min(height - 1, botRight.y);
 	}
 
 	private int getRGBof(Color3f color3f) {
