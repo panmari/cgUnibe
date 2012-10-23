@@ -168,8 +168,8 @@ public class SWRenderContext implements RenderContext {
 
 	private void rasterizeTriangle(Point4f[] positions, Color3f[] colors, Point4f[] normals) {
 		Matrix3f alphabetagamma = new Matrix3f();
-		Point topLeft = new Point(0, 0);
-		Point botRight = new Point(width - 1, height - 1);
+		Point topLeft = new Point(width - 1, height - 1);
+		Point botRight = new Point(0, 0);
 		for (int i = 0; i < 3; i++) {
 			topLeft.x = (int) Math.min(topLeft.x, positions[i].x/positions[i].w);
 			topLeft.y = (int) Math.min(topLeft.y, positions[i].y/positions[i].w);
@@ -179,6 +179,11 @@ public class SWRenderContext implements RenderContext {
 			alphabetagamma.setRow(i, row);
 		}
 		alphabetagamma.invert();
+		
+		topLeft.x = Math.max(0, topLeft.x);
+		topLeft.y = Math.max(0, topLeft.y);
+		botRight.x = Math.min(width - 1, botRight.x);
+		botRight.y = Math.min(height - 1, botRight.y);
 		
 		for (int y = topLeft.y; y <= botRight.y; y++) {
 			for (int x = topLeft.x; x <= botRight.x; x++) {
