@@ -170,6 +170,7 @@ public class SWRenderContext implements RenderContext {
 		Matrix3f alphabetagamma = new Matrix3f();
 		Point topLeft = new Point(width - 1, height - 1);
 		Point botRight = new Point(0, 0);
+		float[] oneOverWarray = new float[3];
 		for (int i = 0; i < 3; i++) {
 			//TODO: do I really need/want to make this division?
 			//this defeats the fckin purpose of ... everything!
@@ -179,6 +180,7 @@ public class SWRenderContext implements RenderContext {
 			botRight.y = (int) Math.max(botRight.y, positions[i].y/positions[i].w);
 			float[] row = { positions[i].x, positions[i].y, positions[i].w };
 			alphabetagamma.setRow(i, row);
+			oneOverWarray[i] = 1/positions[i].w;
 		}
 		alphabetagamma.invert();
 		
@@ -186,12 +188,43 @@ public class SWRenderContext implements RenderContext {
 		
 		for (int y = topLeft.y; y <= botRight.y; y++) {
 			for (int x = topLeft.x; x <= botRight.x; x++) {
-				Color3f c = getColorIfInTriangle(x, y, alphabetagamma, colors);
-				if (c != null) {
-					colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, getRGBof(c));
+				Vector3f edgeCoefficients = getEdgeCoefficients(x, y, alphabetagamma);
+				if (edgeCoefficients != null) {
+					float zvalue = new Vector3f(oneOverWarray).dot(edgeCoefficients);
+					if (betterZvalue(x, y, zvalue)) {
+						zBuffer[x][y] = zvalue;
+						Color c = makeColor(edgeCoefficients, colors, zvalue);
+						colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, c.getRGB());
+					}
 				}
 			}
 		}
+	}
+
+	private Color makeColor(Vector3f edgeCoefficients, Color3f[] colors, float zvalue) {
+		float[] resultingColor = new float[3];
+		float[][] channelSplitColors = new float[3][3];
+		for (int i = 0; i < 3; i++) {
+			float[] channels = new float[3];
+			colors[i].get(channels);
+			channelSplitColors[i] = channels;
+		}
+		for (int i = 0; i < 3; i++) {
+			Vector3f channel = new Vector3f(channelSplitColors[0][i], 
+					channelSplitColors[1][i], 
+					channelSplitColors[2][i]);
+			resultingColor[i] += edgeCoefficients.dot(channel);
+		}
+		Color3f c = new Color3f(resultingColor);
+		c.scale(1/(edgeCoefficients.x + edgeCoefficients.y + edgeCoefficients.z));
+		//c.scale(zvalue);
+		return c.get();
+	}
+
+	private boolean betterZvalue(int x, int y, float zvalue) {
+		if (zBuffer[x][y] == 0)
+			return true;
+		else return zBuffer[x][y] < zvalue;
 	}
 
 	private void validifyBoundingRectangle(Point topLeft, Point botRight) {
@@ -201,22 +234,17 @@ public class SWRenderContext implements RenderContext {
 		botRight.y = Math.min(height - 1, botRight.y);
 	}
 
-	private int getRGBof(Color3f color3f) {
-		return new Color(color3f.x, color3f.y, color3f.z).getRGB();
-	}
-
-	private Color3f getColorIfInTriangle(int x, int y, Matrix3f alphabetagamma, Color3f[] colors) {
+	private Vector3f getEdgeCoefficients(int x, int y, Matrix3f alphabetagamma) {
 		Vector3f abgVector = new Vector3f();
-		Color3f c = new Color3f();
+		float[] coeffs = new float[3];
 		for (int i = 0; i < 3; i++) {
 			alphabetagamma.getColumn(i, abgVector);
 			float coeff = abgVector.dot(new Vector3f(x, y, 1));
 			if (coeff < 0)
 				return null;
-			else c.scaleAdd(coeff, colors[2 - i]);
+			else coeffs[i] = coeff;
 		}
-		c.clampMax(1);
-		return c;
+		return new Vector3f(coeffs);
 	}
 
 	public Point4f getPointAt(VertexElement ve, int index) {
