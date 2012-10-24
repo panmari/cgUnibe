@@ -186,8 +186,9 @@ public class SWRenderContext implements RenderContext {
 		
 		for (int y = topLeft.y; y <= botRight.y; y++) {
 			for (int x = topLeft.x; x <= botRight.x; x++) {
-				if (isInsideTriangle(x, y, alphabetagamma)) {
-					colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, getRGBof(colors[0]));
+				Color3f c = getColorIfInTriangle(x, y, alphabetagamma, colors);
+				if (c != null) {
+					colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, getRGBof(c));
 				}
 			}
 		}
@@ -204,14 +205,18 @@ public class SWRenderContext implements RenderContext {
 		return new Color(color3f.x, color3f.y, color3f.z).getRGB();
 	}
 
-	private boolean isInsideTriangle(int x, int y, Matrix3f alphabetagamma) {
+	private Color3f getColorIfInTriangle(int x, int y, Matrix3f alphabetagamma, Color3f[] colors) {
 		Vector3f abgVector = new Vector3f();
+		Color3f c = new Color3f();
 		for (int i = 0; i < 3; i++) {
 			alphabetagamma.getColumn(i, abgVector);
-			if (abgVector.dot(new Vector3f(x, y, 1)) < 0)
-				return false;
+			float coeff = abgVector.dot(new Vector3f(x, y, 1));
+			if (coeff < 0)
+				return null;
+			else c.scaleAdd(coeff, colors[2 - i]);
 		}
-		return true;
+		c.clampMax(1);
+		return c;
 	}
 
 	public Point4f getPointAt(VertexElement ve, int index) {
