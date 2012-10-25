@@ -2,6 +2,7 @@ package jrtr;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
 import javax.vecmath.Color3f;
@@ -245,7 +246,6 @@ public class SWRenderContext implements RenderContext {
 
 	/**
 	 * Interpolates the color by splitting the colors of the 3 vertices into its channels.
-	 * The first coordinate of <code>channelSplitColors</code> represent the different vertices,
 	 * the second coordinate represents the channel.
 	 * 
 	 * Each channel is weighted by the given edge coefficient and then put together to a color again.
@@ -255,22 +255,16 @@ public class SWRenderContext implements RenderContext {
 	 */
 	private Color interpolateColor(Vector3f edgeCoefficients, Color3f[] colors) {
 		float[] resultingColor = new float[3];
-		float[][] channelSplitColors = new float[3][];
-		for (int vertexNr = 0; vertexNr < 3; vertexNr++) {
-			float[] channels = new float[3];
-			colors[vertexNr].get(channels);
-			channelSplitColors[vertexNr] = channels;
+		float[] coeffs = new float[3];
+		edgeCoefficients.get(coeffs);
+		for (int i = 0; i < 3; i++) {
+			resultingColor[0] += coeffs[i]*colors[i].getX();
+			resultingColor[1] += coeffs[i]*colors[i].getY();
+			resultingColor[2] += coeffs[i]*colors[i].getZ();
 		}
-		//iterate over channels (not colors!)
-		for (int channelNr = 0; channelNr < 3; channelNr++) {
-			resultingColor[channelNr] += edgeCoefficients.x*channelSplitColors[0][channelNr];
-			resultingColor[channelNr] += edgeCoefficients.y*channelSplitColors[1][channelNr];
-			resultingColor[channelNr] += edgeCoefficients.z*channelSplitColors[2][channelNr];
-		}
-		Color3f c = new Color3f(resultingColor);
 		//rescale (don't really know why XD)
-		c.scale(1/(edgeCoefficients.x + edgeCoefficients.y + edgeCoefficients.z));
-		return c.get();
+		float divisor = edgeCoefficients.x + edgeCoefficients.y + edgeCoefficients.z;
+		return new Color(resultingColor[0]/divisor, resultingColor[1]/divisor, resultingColor[2]/divisor);
 	}
 
 	private boolean betterZvalue(int x, int y, float zvalue) {
