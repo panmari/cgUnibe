@@ -169,19 +169,20 @@ public class SWRenderContext implements RenderContext {
 		}
 	}
 
+	/**
+	 * Draws the triangle defined through the given values on the renderPanel.
+	 * @param positions
+	 * @param colors
+	 * @param normals
+	 */
 	private void rasterizeTriangle(Point4f[] positions, Color3f[] colors, Point4f[] normals) {
 		Matrix3f alphabetagamma = new Matrix3f();
-		 //start with smallest possible bounding rectangle
+		 //start with smallest "possible" bounding rectangle
 		Point topLeft = new Point(width - 1, height - 1);
 		Point botRight = new Point(0, 0);
 		float[] oneOverWarray = new float[3];
 		for (int i = 0; i < 3; i++) {
-			//TODO: do I really need/want to make this division?
-			//this defeats the fckin purpose of ... everything!
-			topLeft.x = (int) Math.min(topLeft.x, positions[i].x/positions[i].w);
-			topLeft.y = (int) Math.min(topLeft.y, positions[i].y/positions[i].w);
-			botRight.x = (int) Math.max(botRight.x, positions[i].x/positions[i].w);
-			botRight.y = (int) Math.max(botRight.y, positions[i].y/positions[i].w);
+			minimizeBoundingRectangle(topLeft, botRight, positions[i]);
 			float[] row = { positions[i].x, positions[i].y, positions[i].w };
 			alphabetagamma.setRow(i, row);
 			oneOverWarray[i] = 1/positions[i].w;
@@ -197,7 +198,7 @@ public class SWRenderContext implements RenderContext {
 					float zvalue = new Vector3f(oneOverWarray).dot(edgeCoefficients);
 					if (betterZvalue(x, y, zvalue)) {
 						zBuffer[x][y] = zvalue;
-						Color c = makeColor(edgeCoefficients, colors, zvalue);
+						Color c = interpolateColor(edgeCoefficients, colors);
 						colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, c.getRGB());
 					}
 				}
@@ -205,28 +206,54 @@ public class SWRenderContext implements RenderContext {
 		}
 	}
 
-	private Color makeColor(Vector3f edgeCoefficients, Color3f[] colors, float zvalue) {
+	/**
+	 * Adapts the given bounding rectangle so it includes the given vertex with as little
+	 * extra pixels as possible.
+	 * @param topLeft point unfinished bounding rectangle
+	 * @param botRight point unfinished bounding rectangle
+	 * @param vertex of a triangle
+	 */
+	private void minimizeBoundingRectangle(Point topLeft, Point botRight, Point4f vertex) {
+		int x = (int) (vertex.x/vertex.w);
+		int y = (int) (vertex.y/vertex.w);
+		topLeft.x = (int) Math.min(topLeft.x, x);
+		topLeft.y = (int) Math.min(topLeft.y, y);
+		botRight.x = (int) Math.max(botRight.x, x);
+		botRight.y = (int) Math.max(botRight.y, y);
+	}
+
+	/**
+	 * Interpolates the color by splitting the colors of the 3 vertices into its channels.
+	 * The first coordinate of <code>channelSplitColors</code> represent the different vertices,
+	 * the second coordinate represents the channel.
+	 * 
+	 * Each channel is weighted by the given edge coefficient and then put together to a color again.
+	 * @param edgeCoefficients
+	 * @param colors
+	 * @return a java.awt.Color, that can be put on ImageBuffer by calling .getRGB()
+	 */
+	private Color interpolateColor(Vector3f edgeCoefficients, Color3f[] colors) {
 		float[] resultingColor = new float[3];
-		float[][] channelSplitColors = new float[3][3];
-		for (int i = 0; i < 3; i++) {
+		float[][] channelSplitColors = new float[3][];
+		for (int vertexNr = 0; vertexNr < 3; vertexNr++) {
 			float[] channels = new float[3];
-			colors[i].get(channels);
-			channelSplitColors[i] = channels;
+			colors[vertexNr].get(channels);
+			channelSplitColors[vertexNr] = channels;
 		}
-		for (int i = 0; i < 3; i++) {
-			Vector3f channel = new Vector3f(channelSplitColors[0][i], 
-					channelSplitColors[1][i], 
-					channelSplitColors[2][i]);
-			resultingColor[i] += edgeCoefficients.dot(channel);
+		//iterate over channels (not colors!)
+		for (int channelNr = 0; channelNr < 3; channelNr++) {
+			resultingColor[channelNr] += edgeCoefficients.x*channelSplitColors[0][channelNr];
+			resultingColor[channelNr] += edgeCoefficients.y*channelSplitColors[1][channelNr];
+			resultingColor[channelNr] += edgeCoefficients.z*channelSplitColors[2][channelNr];
 		}
 		Color3f c = new Color3f(resultingColor);
+		//rescale (don't really know why XD)
 		c.scale(1/(edgeCoefficients.x + edgeCoefficients.y + edgeCoefficients.z));
-		//c.scale(zvalue);
 		return c.get();
 	}
 
 	private boolean betterZvalue(int x, int y, float zvalue) {
-		if (zBuffer[x][y] == 0)
+		if (zBuffer[x][y] == 0) //array is initialized to 0 => no point present
 			return true;
 		else return zBuffer[x][y] < zvalue;
 	}
@@ -238,6 +265,13 @@ public class SWRenderContext implements RenderContext {
 		botRight.y = Math.min(height - 1, botRight.y);
 	}
 
+	/**
+	 * Returns a vector of the edge coefficients or null if one of them is smaller than 0
+	 * @param x
+	 * @param y
+	 * @param alphabetagamma
+	 * @return
+	 */
 	private Vector3f getEdgeCoefficients(int x, int y, Matrix3f alphabetagamma) {
 		Vector3f abgVector = new Vector3f();
 		float[] coeffs = new float[3];
