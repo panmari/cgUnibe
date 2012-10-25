@@ -112,7 +112,7 @@ public class SWRenderContext implements RenderContext {
 			
 	}
 	/**
-	 * Draws only the vertices of the shapes as dots. Normals and indices are ignored.
+	 * Draws only the vertices of the given shape in white. Normals and indices are ignored.
 	 * @param shape
 	 * @param t
 	 */
@@ -129,8 +129,14 @@ public class SWRenderContext implements RenderContext {
 		}
 	}
 
-	private void drawTrianglesSeparately(Shape toRender, Matrix4f t) {
-		VertexData vertexData = toRender.getVertexData();
+	/**
+	 * Draws all triangles given in <code>indices</code> of the given shape.
+	 * Ignores normals.
+	 * @param shape that is about to be drawn
+	 * @param t accumulated transformation matrix for this shape
+	 */
+	private void drawTrianglesSeparately(Shape shape, Matrix4f t) {
+		VertexData vertexData = shape.getVertexData();
 		Point4f[] positions = new Point4f[3];
 		Color3f[] colors = new Color3f[3];
 		Point4f[] normals = new Point4f[3];
@@ -141,7 +147,7 @@ public class SWRenderContext implements RenderContext {
 				Point4f p;
 				switch (ve.getSemantic()) {
 					case POSITION:
-						p = getPointAt(ve, indices[i]);
+						p = getPointAt(ve.getData(), indices[i]);
 						t.transform(p);
 						positions[k] = p;
 						k++; //increment k here, bc color and normal might be missing
@@ -151,16 +157,13 @@ public class SWRenderContext implements RenderContext {
 						break;
 					case NORMAL:
 						//dont care
-						normals[k] = getPointAt(ve, indices[i]);;
+						//normals[k] = getPointAt(ve.getData(), indices[i]);;
 						break;
 				
 				}
 			}
 			if (k == 3) {
 				rasterizeTriangle(positions, colors, normals);
-				positions = new Point4f[3];
-				colors = new Color3f[3];
-				normals = new Point4f[3];
 				k = 0;
 			}
 		}
@@ -168,6 +171,7 @@ public class SWRenderContext implements RenderContext {
 
 	private void rasterizeTriangle(Point4f[] positions, Color3f[] colors, Point4f[] normals) {
 		Matrix3f alphabetagamma = new Matrix3f();
+		 //start with smallest possible bounding rectangle
 		Point topLeft = new Point(width - 1, height - 1);
 		Point botRight = new Point(0, 0);
 		float[] oneOverWarray = new float[3];
@@ -247,8 +251,16 @@ public class SWRenderContext implements RenderContext {
 		return new Vector3f(coeffs);
 	}
 
-	public Point4f getPointAt(VertexElement ve, int index) {
-		return new Point4f(ve.getData()[index*3], ve.getData()[index*3 + 1], ve.getData()[index*3 + 2], 1);
+	/**
+	 * Returns a Point4f of the index'th vector saved in data,
+	 * assuming that all vectors in data have 3 coordinates.
+	 * </br>
+	 * The w-value is always 1.
+	 * @param index
+	 * @return
+	 */
+	public Point4f getPointAt(float[] data, int index) {
+		return new Point4f(data[index*3], data[index*3 + 1], data[index*3 + 2], 1);
 	}
 	
 	public Color3f getColorAt(VertexElement ve, int index) {
