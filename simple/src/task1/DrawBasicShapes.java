@@ -94,10 +94,10 @@ public class DrawBasicShapes
 				
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		Shape c = new Shape(new Cylinder(1, 1, 3));
+		Shape c = new Shape(new Cylinder(1, 1, 10));
 		c.getTransformation().setTranslation(new Vector3f(3, 0, 0));
 		shapes.add(c);
-		shapes.add(new Shape(new Torus(1, .3f, 3, 3)));
+		shapes.add(new Shape(new Torus(1, .3f, 10, 10)));
 		for (Shape shape: shapes)
 			sceneManager.addShape(shape);
 		// Make a render panel. The init function of the renderPanel

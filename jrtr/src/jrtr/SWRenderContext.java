@@ -28,7 +28,6 @@ public class SWRenderContext implements RenderContext {
 	private BufferedImage colorBuffer;
 	private Matrix4f viewPortMatrix;
 	private Matrix4f mergedDisplayMatrix;
-	private BufferedImage clearBuffer;
 	private int width;
 	private int height;
 		
@@ -79,7 +78,6 @@ public class SWRenderContext implements RenderContext {
 		viewPortMatrix.setM22(1/2f);
 		viewPortMatrix.setColumn(3, width/2f, height/2f, 1/2f, 1);
 		colorBuffer = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
-		clearBuffer = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 	}
 		
 	/**
@@ -91,8 +89,7 @@ public class SWRenderContext implements RenderContext {
 		mergedDisplayMatrix = new Matrix4f(viewPortMatrix);
 		mergedDisplayMatrix.mul(sceneManager.getFrustum().getProjectionMatrix());
 		mergedDisplayMatrix.mul(sceneManager.getCamera().getCameraMatrix());
-		colorBuffer.setData( clearBuffer.getRaster() );
-
+		colorBuffer.getGraphics().clearRect(0, 0, width, height);
 	}
 	
 	private void endFrame()
@@ -107,8 +104,8 @@ public class SWRenderContext implements RenderContext {
 	{
 		Matrix4f t = new Matrix4f(mergedDisplayMatrix);
 		t.mul(renderItem.getT());
-		//drawTrianglesSeparately(renderItem.getShape(), t);
-		drawDotty(renderItem.getShape(), t);
+		drawTrianglesSeparately(renderItem.getShape(), t);
+		//drawDotty(renderItem.getShape(), t);
 			
 	}
 	/**
