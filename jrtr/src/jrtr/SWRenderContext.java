@@ -107,25 +107,39 @@ public class SWRenderContext implements RenderContext {
 	{
 		Matrix4f t = new Matrix4f(mergedDisplayMatrix);
 		t.mul(renderItem.getT());
-		drawTrianglesSeparately(renderItem.getShape(), t);
-		//drawDotty(renderItem.getShape(), t);
+		//drawTrianglesSeparately(renderItem.getShape(), t);
+		drawDotty(renderItem.getShape(), t);
 			
 	}
 	/**
 	 * Draws only the vertices of the given shape in white. Normals and indices are ignored.
+	 * TODO: negative W are possible, fix plx?
 	 * @param shape
 	 * @param t
 	 */
 	private void drawDotty(Shape shape, Matrix4f t) {
-		float[] points = shape.getVertexData().getElements().getLast().getData();
-		Color white = new Color(255, 255, 255);
+		float[] points = null, colors = null;
+		for(VertexElement ve: shape.getVertexData().getElements()) {
+			switch (ve.getSemantic()) {
+				case POSITION:
+					points = ve.getData();
+					break;
+				case COLOR:
+					colors = ve.getData();
+					break;
+				case NORMAL:
+					//DO NOT WANT
+					break;
+			}
+		}
 		for (int i = 0; i < points.length; i+=3) {
 			Point4f v = new Point4f(points[i], points[i + 1], points[i + 2], 1);
+			Color3f c = new Color3f(colors[i], colors[i + 1], colors[i + 2]);
 			t.transform(v);
 			int x = Math.round(v.x / v.w);
 			int y = Math.round(v.y / v.w);
 			if (x >= 0 && y >= 0 && y < colorBuffer.getHeight() && x < colorBuffer.getWidth())
-				colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, white.getRGB());
+				drawPointAt(x, y, c.get());
 		}
 	}
 
@@ -153,11 +167,11 @@ public class SWRenderContext implements RenderContext {
 						k++; //increment k here, bc color and normal might be missing
 						break;
 					case COLOR:
-						colors[k] = getColorAt(ve, indices[i]);;
+						colors[k] = getColorAt(ve.getData(), indices[i]);;
 						break;
 					case NORMAL:
 						//dont care
-						//normals[k] = getPointAt(ve.getData(), indices[i]);;
+						//normals[k] = getPointAt(ve, indices[i]);;
 						break;
 				
 				}
@@ -199,11 +213,21 @@ public class SWRenderContext implements RenderContext {
 					if (betterZvalue(x, y, zvalue)) {
 						zBuffer[x][y] = zvalue;
 						Color c = interpolateColor(edgeCoefficients, colors);
-						colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, c.getRGB());
+						drawPointAt(x, y, c);
 					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Little wrapper bc setRGB is stupid. Arguments are self-explanatory.
+	 * @param x
+	 * @param y
+	 * @param c
+	 */
+	private void drawPointAt(int x, int y, Color c) {
+		colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, c.getRGB());
 	}
 
 	/**
@@ -258,6 +282,12 @@ public class SWRenderContext implements RenderContext {
 		else return zBuffer[x][y] < zvalue;
 	}
 
+	/**
+	 * Crops bounding rectangle to viewport size.
+	 * TODO: could be integrated in minimizeBoundingRectangle (but speed loss prolly)
+	 * @param topLeft
+	 * @param botRight
+	 */
 	private void validifyBoundingRectangle(Point topLeft, Point botRight) {
 		topLeft.x = Math.max(0, topLeft.x);
 		topLeft.y = Math.max(0, topLeft.y);
@@ -297,8 +327,8 @@ public class SWRenderContext implements RenderContext {
 		return new Point4f(data[index*3], data[index*3 + 1], data[index*3 + 2], 1);
 	}
 	
-	public Color3f getColorAt(VertexElement ve, int index) {
-		return new Color3f(ve.getData()[index*3], ve.getData()[index*3 + 1], ve.getData()[index*3 + 2]);
+	public Color3f getColorAt(float[] data, int index) {
+		return new Color3f(data[index*3], data[index*3 + 1], data[index*3 + 2]);
 	}
 	
 	/**
