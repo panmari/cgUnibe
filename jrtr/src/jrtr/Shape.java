@@ -8,6 +8,7 @@ import javax.vecmath.*;
  */
 public class Shape {
 
+	private Material material;
 	/**
 	 * Make a shape from {@link VertexData}.
 	 *  
@@ -40,6 +41,7 @@ public class Shape {
 	 */
 	public void setMaterial(Material material)
 	{
+		this.material = material;
 	}
 
 	/**
@@ -47,7 +49,7 @@ public class Shape {
 	 */
 	public Material getMaterial()
 	{
-		return null;
+		return material;
 	}
 
 	private VertexData vertexData;

@@ -138,7 +138,7 @@ public class SWRenderContext implements RenderContext {
 			int x = Math.round(v.x / v.w);
 			int y = Math.round(v.y / v.w);
 			if (x >= 0 && y >= 0 && y < colorBuffer.getHeight() && x < colorBuffer.getWidth())
-				drawPointAt(x, y, c.get());
+				drawPointAt(x, y, c.get().getRGB());
 		}
 	}
 
@@ -179,7 +179,7 @@ public class SWRenderContext implements RenderContext {
 				}
 			}
 			if (k == 3) {
-				rasterizeTriangle(positions, colors, normals);
+				rasterizeTriangle(positions, colors, texCoords, shape.getMaterial());
 				k = 0;
 			}
 		}
@@ -195,7 +195,8 @@ public class SWRenderContext implements RenderContext {
 	 * @param colors
 	 * @param normals
 	 */
-	private void rasterizeTriangle(Point4f[] positions, Color3f[] colors, Point4f[] normals) {
+	private void rasterizeTriangle(Point4f[] positions, Color3f[] colors, 
+			Point2f[] texCoords, Material material) {
 		Matrix3f alphabetagamma = new Matrix3f();
 		 //start with smallest "possible" bounding rectangle
 		Point topLeft = new Point(width - 1, height - 1);
@@ -218,12 +219,29 @@ public class SWRenderContext implements RenderContext {
 					float zvalue = new Vector3f(oneOverWarray).dot(edgeCoefficients);
 					if (betterZvalue(x, y, zvalue)) {
 						zBuffer[x][y] = zvalue;
-						Color c = interpolateColor(edgeCoefficients, colors);
+						int c;
+						if (material != null)
+							c = interpolateColorFromTexture(edgeCoefficients, 
+									texCoords, material.getTexture());
+						else c = interpolateColor(edgeCoefficients, colors).getRGB();
 						drawPointAt(x, y, c);
 					}
 				}
 			}
 		}
+	}
+
+	private int interpolateColorFromTexture(Vector3f edgeCoefficients,
+			Point2f[] texCoords, SWTexture texture) {
+		float[] resultingTexel = new float[2];
+		float[] coeffs = new float[3];
+		edgeCoefficients.get(coeffs);
+		for (int vectorNr = 0; vectorNr < 3; vectorNr++) {
+			resultingTexel[0] += coeffs[vectorNr]*texCoords[vectorNr].getX();
+			resultingTexel[1] += coeffs[vectorNr]*texCoords[vectorNr].getY();
+		}
+		float divisor = edgeCoefficients.x + edgeCoefficients.y + edgeCoefficients.z;
+		return texture.getNearestNeighbourColor(resultingTexel[0]/divisor, resultingTexel[1]/divisor);
 	}
 
 	/**
@@ -232,8 +250,8 @@ public class SWRenderContext implements RenderContext {
 	 * @param y
 	 * @param c
 	 */
-	private void drawPointAt(int x, int y, Color c) {
-		colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, c.getRGB());
+	private void drawPointAt(int x, int y, int c) {
+		colorBuffer.setRGB(x, colorBuffer.getHeight() - y - 1, c);
 	}
 
 	/**

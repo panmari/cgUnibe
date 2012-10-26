@@ -1,9 +1,12 @@
 package task3a;
 
 import jrtr.*;
+
 import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+
 import javax.vecmath.*;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,7 +42,7 @@ public class simple
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
-		    timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
+		    timer.scheduleAtFixedRate(new AnimationTask(), 0, 40);
 		}
 	}
 
@@ -81,8 +84,9 @@ public class simple
 	/**
 	 * The main function opens a 3D rendering window, constructs a simple 3D
 	 * scene, and starts a timer task to generate an animation.
+	 * @throws IOException 
 	 */
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{		
 		// Make a simple geometric object: a cube
 		
@@ -108,12 +112,12 @@ public class simple
 						1,0,0,1,0,0,1,0,0,1,0,0,
 						0,1,0,0,1,0,0,1,0,0,1,0,
 						0,-1,0,0,-1,0,0,-1,0,0,-1,0 };
-		float t[] = {	0,0,0,1,1,0,1,1,
-						0,0,0,1,1,0,1,1,
-						0,0,0,1,1,0,1,1,
-						0,0,0,1,1,0,1,1,
-						0,0,0,1,1,0,1,1,
-						0,0,0,1,1,0,1,1 };
+		float t[] = {	0,0,0,1,1,1,0,1,
+						0,0,0,1,1,1,0,1,
+						0,0,0,1,1,1,0,1,
+						0,0,0,1,1,1,0,1,
+						0,0,0,1,1,1,0,1,
+						0,0,0,1,1,1,0,1 };
 
 		// Construct a data structure that stores the vertices, their
 		// attributes, and the triangle mesh connectivity
@@ -136,6 +140,9 @@ public class simple
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(vertexData);
+		SWTexture tex = new SWTexture();
+		tex.load("026-1.jpg");
+		shape.setMaterial(new Material(tex));
 		sceneManager.addShape(shape);
 
 		// Make a render panel. The init function of the renderPanel
