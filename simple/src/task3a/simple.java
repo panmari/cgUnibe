@@ -112,12 +112,12 @@ public class simple
 						1,0,0,1,0,0,1,0,0,1,0,0,
 						0,1,0,0,1,0,0,1,0,0,1,0,
 						0,-1,0,0,-1,0,0,-1,0,0,-1,0 };
-		float t[] = {	0,0,0,1,1,1,0,1,
-						0,0,0,1,1,1,0,1,
-						0,0,0,1,1,1,0,1,
-						0,0,0,1,1,1,0,1,
-						0,0,0,1,1,1,0,1,
-						0,0,0,1,1,1,0,1 };
+		float t[] = {	0,0,0,1,1,1,1,0,
+						0,0,0,1,1,1,1,0,
+						0,0,0,1,1,1,1,0, 
+						0,0,0,1,1,1,1,0, 
+						0,0,0,1,1,1,1,0,
+						0,0,0,1,1,1,1,0,   };
 
 		// Construct a data structure that stores the vertices, their
 		// attributes, and the triangle mesh connectivity
@@ -141,7 +141,7 @@ public class simple
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(vertexData);
 		SWTexture tex = new SWTexture();
-		tex.load("026-1.jpg");
+		tex.load("banana.gif");
 		shape.setMaterial(new Material(tex));
 		sceneManager.addShape(shape);
 

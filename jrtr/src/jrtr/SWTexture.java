@@ -36,7 +36,7 @@ public class SWTexture implements Texture {
 	}
 	
 	private float getScaledY(float y) {
-		return y*(height - 1);
+		return (1 - y)*(height - 1);
 	}
 
 }
