@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import javax.vecmath.Color3f;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Point2f;
 import javax.vecmath.Point4f;
 import javax.vecmath.Vector3f;
 
@@ -152,6 +153,7 @@ public class SWRenderContext implements RenderContext {
 		Point4f[] positions = new Point4f[3];
 		Color3f[] colors = new Color3f[3];
 		Point4f[] normals = new Point4f[3];
+		Point2f[] texCoords = new Point2f[3];
 		int k = 0; //keeps track of triangle
 		int[] indices = vertexData.getIndices();
 		for (int i = 0; i < indices.length; i++) {
@@ -171,7 +173,9 @@ public class SWRenderContext implements RenderContext {
 						//dont care
 						//normals[k] = getPointAt(ve, indices[i]);;
 						break;
-				
+					case TEXCOORD:
+						texCoords[k] = getTexCoordAt(ve.getData(), indices[i]);
+						break;
 				}
 			}
 			if (k == 3) {
@@ -179,6 +183,10 @@ public class SWRenderContext implements RenderContext {
 				k = 0;
 			}
 		}
+	}
+
+	private Point2f getTexCoordAt(float[] data, int i) {
+		return new Point2f(data[2*i], data[2*i + 1]);
 	}
 
 	/**
@@ -257,10 +265,10 @@ public class SWRenderContext implements RenderContext {
 		float[] resultingColor = new float[3];
 		float[] coeffs = new float[3];
 		edgeCoefficients.get(coeffs);
-		for (int i = 0; i < 3; i++) {
-			resultingColor[0] += coeffs[i]*colors[i].getX();
-			resultingColor[1] += coeffs[i]*colors[i].getY();
-			resultingColor[2] += coeffs[i]*colors[i].getZ();
+		for (int vectorNr = 0; vectorNr < 3; vectorNr++) {
+			resultingColor[0] += coeffs[vectorNr]*colors[vectorNr].getX();
+			resultingColor[1] += coeffs[vectorNr]*colors[vectorNr].getY();
+			resultingColor[2] += coeffs[vectorNr]*colors[vectorNr].getZ();
 		}
 		//rescale (don't really know why XD)
 		float divisor = edgeCoefficients.x + edgeCoefficients.y + edgeCoefficients.z;
@@ -284,6 +292,11 @@ public class SWRenderContext implements RenderContext {
 		topLeft.y = Math.max(0, topLeft.y);
 		botRight.x = Math.min(width - 1, botRight.x);
 		botRight.y = Math.min(height - 1, botRight.y);
+		//if the area is 0, make it not go trough the draw step at all
+		if (topLeft.x == botRight.x && topLeft.y == botRight.y) {
+			botRight.x = topLeft.x - 1;
+			botRight.y = topLeft.y - 1;
+		}
 	}
 
 	/**
