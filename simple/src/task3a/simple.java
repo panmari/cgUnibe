@@ -60,7 +60,7 @@ public class simple
     		rotX.rotX(angle);
     		Matrix4f rotY = new Matrix4f();
     		rotY.rotY(angle);
-    		t.mul(rotX);
+    		//t.mul(rotX);
     		t.mul(rotY);
     		
     		// Trigger redrawing of the render window
@@ -141,8 +141,9 @@ public class simple
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(vertexData);
 		SWTexture tex = new SWTexture();
-		tex.load("banana.gif");
+		tex.load("Farbverlauf.jpg");
 		shape.setMaterial(new Material(tex));
+		shape.getTransformation().setScale(2);
 		sceneManager.addShape(shape);
 
 		// Make a render panel. The init function of the renderPanel

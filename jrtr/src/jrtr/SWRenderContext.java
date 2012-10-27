@@ -25,6 +25,7 @@ import jrtr.VertexData.VertexElement;
  */
 public class SWRenderContext implements RenderContext {
 
+	private static final boolean bilinear = true;
 	private SceneManagerInterface sceneManager;
 	private float[][] zBuffer;
 	private BufferedImage colorBuffer;
@@ -108,7 +109,6 @@ public class SWRenderContext implements RenderContext {
 		t.mul(renderItem.getT());
 		drawTrianglesSeparately(renderItem.getShape(), t);
 		//drawDotty(renderItem.getShape(), t);
-			
 	}
 	/**
 	 * Draws only the vertices of the given shape in white. Normals and indices are ignored.
@@ -127,6 +127,9 @@ public class SWRenderContext implements RenderContext {
 					colors = ve.getData();
 					break;
 				case NORMAL:
+					//DO NOT WANT
+					break;
+				case TEXCOORD:
 					//DO NOT WANT
 					break;
 			}
@@ -152,7 +155,6 @@ public class SWRenderContext implements RenderContext {
 		VertexData vertexData = shape.getVertexData();
 		Point4f[] positions = new Point4f[3];
 		Color3f[] colors = new Color3f[3];
-		Point4f[] normals = new Point4f[3];
 		Point2f[] texCoords = new Point2f[3];
 		int k = 0; //keeps track of triangle
 		int[] indices = vertexData.getIndices();
@@ -241,7 +243,11 @@ public class SWRenderContext implements RenderContext {
 			resultingTexel[1] += coeffs[vectorNr]*texCoords[vectorNr].getY();
 		}
 		float divisor = edgeCoefficients.x + edgeCoefficients.y + edgeCoefficients.z;
-		return texture.getBilinearInterpolatedColor(resultingTexel[0]/divisor, resultingTexel[1]/divisor);
+		float x = resultingTexel[0]/divisor;
+		float y = resultingTexel[1]/divisor;
+		if (bilinear)
+			return texture.getBilinearInterpolatedColor(x,y);
+		else return texture.getNearestNeighbourColor(x, y);
 	}
 
 	/**
