@@ -46,14 +46,14 @@ public class SWTexture implements Texture {
 		float horzCoeff = ceil(scaled.x) - scaled.x;
 		int[] left = getRGBArrayOfHexaColor(top[0]);
 		int[] right = getRGBArrayOfHexaColor(top[1]);
-		int[] avgTop = interpolateBetween(left, right, horzCoeff);
+		int[] weightedTop = interpolateBetween(left, right, horzCoeff);
 		left = getRGBArrayOfHexaColor(bottom[0]);
 		right = getRGBArrayOfHexaColor(bottom[1]);
-		int[] avgBottom = interpolateBetween(left, right, horzCoeff);
+		int[] weightedBottom = interpolateBetween(left, right, horzCoeff);
 		float vertCoeff = ceil(scaled.y) - scaled.y;
-		int[] result = interpolateBetween(avgTop, avgBottom, vertCoeff);
+		int[] result = interpolateBetween(weightedTop, weightedBottom, vertCoeff);
 		
-		return (result[0] << 16) & (result[1] << 8) & result[2];
+		return (result[0] << 16) | (result[1] << 8) | result[2];
 	}
 	
 	private int[] interpolateBetween(int[] colorNear, int[] colorFar, float coeff) {
@@ -66,10 +66,9 @@ public class SWTexture implements Texture {
 	
 	private int[] getRGBArrayOfHexaColor(int hexaColor) {
 		int[] rgb = new int[3];
-		int bitmask = 0xFF0000;
+		int bitmask = 0x0000FF;
 		for (int i = 0; i < 3; i++) {
-			rgb[i] = hexaColor & bitmask;
-			bitmask = bitmask >> 8;
+			rgb[2 - i] = (hexaColor >> 8*i) & bitmask;
 		}
 		return rgb;
 	}
