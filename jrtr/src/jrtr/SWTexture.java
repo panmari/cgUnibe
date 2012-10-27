@@ -58,7 +58,7 @@ public class SWTexture implements Texture {
 	private float[] interpolateBetween(float[] colorNear, float[] colorFar, float coeff) {
 		float[] avg = new float[3];
 		for (int i = 0; i < colorNear.length; i++) {
-			avg[i] = colorNear[i]*(1 - coeff) + colorFar[i]*coeff;
+			avg[i] = colorNear[i]*coeff + colorFar[i]*(1-coeff);
 		}
 		return avg;
 	}

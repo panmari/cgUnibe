@@ -141,7 +141,7 @@ public class simple
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(vertexData);
 		SWTexture tex = new SWTexture();
-		tex.load("Farbverlauf.jpg");
+		tex.load("redtowhite.jpg");
 		shape.setMaterial(new Material(tex));
 		shape.getTransformation().setScale(2);
 		sceneManager.addShape(shape);
