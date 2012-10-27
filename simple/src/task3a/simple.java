@@ -8,6 +8,9 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import javax.vecmath.*;
+
+import task2b.VirtualTrackballListener;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -54,16 +57,6 @@ public class simple
 	{
 		public void run()
 		{
-			// Update transformation
-    		Matrix4f t = shape.getTransformation();
-    		Matrix4f rotX = new Matrix4f();
-    		rotX.rotX(angle);
-    		Matrix4f rotY = new Matrix4f();
-    		rotY.rotY(angle);
-    		//t.mul(rotX);
-    		t.mul(rotY);
-    		
-    		// Trigger redrawing of the render window
     		renderPanel.getCanvas().repaint(); 
 		}
 	}
@@ -141,7 +134,7 @@ public class simple
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(vertexData);
 		SWTexture tex = new SWTexture();
-		tex.load("redtowhite.jpg");
+		tex.load("chessboard.jpg");
 		shape.setMaterial(new Material(tex));
 		shape.getTransformation().setScale(2);
 		sceneManager.addShape(shape);
@@ -157,8 +150,11 @@ public class simple
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-	    jframe.addMouseListener(new SimpleMouseListener());
-		   	    	    
+		VirtualTrackballListener l = new VirtualTrackballListener(shape, renderPanel);
+	    renderPanel.getCanvas().addMouseListener(l);
+	    renderPanel.getCanvas().addMouseMotionListener(l);
+	    renderPanel.getCanvas().addMouseWheelListener(l);
+	    
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
 	}

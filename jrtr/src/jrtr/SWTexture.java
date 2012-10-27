@@ -37,21 +37,19 @@ public class SWTexture implements Texture {
 	 */
 	public int getBilinearInterpolatedColor(float x, float y) {
 		Point2f scaled = new Point2f(getScaledX(x), getScaledY(y));
-		int[] top = new int[2], bottom = new int[2];
-		//this step is very bad
-		top[0] = texture.getRGB(floor(scaled.x), floor(scaled.y));
-		top[1] = texture.getRGB(ceil(scaled.x), floor(scaled.y));
-		bottom[0] = texture.getRGB(floor(scaled.x), ceil(scaled.y));
-		bottom[1] = texture.getRGB(ceil(scaled.x), ceil(scaled.y));
+		int[][][] imagePixels = new int[2][2][];
+		//the first coordinate signifies the top/bottom, the second left/right
+		imagePixels[0][0] = getRGBOfHexaColor(texture.getRGB(floor(scaled.x), floor(scaled.y)));
+		imagePixels[0][1] = getRGBOfHexaColor(texture.getRGB(ceil(scaled.x), floor(scaled.y)));
+		imagePixels[1][0] = getRGBOfHexaColor(texture.getRGB(floor(scaled.x), ceil(scaled.y)));
+		imagePixels[1][1] = getRGBOfHexaColor(texture.getRGB(ceil(scaled.x), ceil(scaled.y)));
 		float horzCoeff = ceil(scaled.x) - scaled.x;
-		int[] left = getRGBArrayOfHexaColor(top[0]);
-		int[] right = getRGBArrayOfHexaColor(top[1]);
-		int[] weightedTop = interpolateBetween(left, right, horzCoeff);
-		left = getRGBArrayOfHexaColor(bottom[0]);
-		right = getRGBArrayOfHexaColor(bottom[1]);
-		int[] weightedBottom = interpolateBetween(left, right, horzCoeff);
+		int[][] weightedTopBot = new int[2][];
+		for (int i = 0; i < 2; i++) {
+			weightedTopBot[i] = interpolateBetween(imagePixels[i][0], imagePixels[i][1], horzCoeff);
+		}
 		float vertCoeff = ceil(scaled.y) - scaled.y;
-		int[] result = interpolateBetween(weightedTop, weightedBottom, vertCoeff);
+		int[] result = interpolateBetween(weightedTopBot[0], weightedTopBot[1], vertCoeff);
 		
 		return (result[0] << 16) | (result[1] << 8) | result[2];
 	}
@@ -64,7 +62,7 @@ public class SWTexture implements Texture {
 		return avg;
 	}
 	
-	private int[] getRGBArrayOfHexaColor(int hexaColor) {
+	private int[] getRGBOfHexaColor(int hexaColor) {
 		int[] rgb = new int[3];
 		int bitmask = 0x0000FF;
 		for (int i = 0; i < 3; i++) {
