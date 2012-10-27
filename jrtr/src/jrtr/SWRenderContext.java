@@ -241,7 +241,7 @@ public class SWRenderContext implements RenderContext {
 			resultingTexel[1] += coeffs[vectorNr]*texCoords[vectorNr].getY();
 		}
 		float divisor = edgeCoefficients.x + edgeCoefficients.y + edgeCoefficients.z;
-		return texture.getNearestNeighbourColor(resultingTexel[0]/divisor, resultingTexel[1]/divisor);
+		return texture.getBilinearInterpolatedColor(resultingTexel[0]/divisor, resultingTexel[1]/divisor);
 	}
 
 	/**

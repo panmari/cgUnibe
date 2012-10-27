@@ -1,9 +1,11 @@
 package jrtr;
 
 import java.awt.Color;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.vecmath.Point2f;
@@ -27,16 +29,38 @@ public class SWTexture implements Texture {
 		return texture.getRGB(Math.round(getScaledX(x)), Math.round(getScaledY(y)));
 	}
 
+	/**
+	 * this is so ugly, refactor pls!
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public int getBilinearInterpolatedColor(float x, float y) {
-		//float[] scaled =  { getScaledX(x), getScaledY(y) };
 		Point2f scaled = new Point2f(getScaledX(x), getScaledY(y));
-		int[] top = new int[2], bottom = new int[2];
-		top[0] = texture.getRGB((int) scaled.x, (int) scaled.y);
-		top[1] = texture.getRGB(((int) scaled.x) + 1, (int) scaled.y);
-		bottom[0] = texture.getRGB((int) scaled.x, ((int) scaled.y) + 1);
-		bottom[1] = texture.getRGB(((int) scaled.x) + 1, ((int) scaled.y) + 1);
-		//TODO scale the values. Must be converted first to a jawa.awt.Color?
-		return 0;
+		Color[] top = new Color[2], bottom = new Color[2];
+		top[0] = new Color(texture.getRGB(floor(scaled.x), floor(scaled.y)));
+		top[1] = new Color(texture.getRGB(ceil(scaled.x), floor(scaled.y)));
+		bottom[0] = new Color(texture.getRGB(floor(scaled.x), ceil(scaled.y)));
+		bottom[1] = new Color(texture.getRGB(ceil(scaled.x), ceil(scaled.y)));
+		float horzCoeff = ceil(scaled.x) - scaled.x;
+		float[] left = new float[3], right = new float[3];
+		top[0].getColorComponents(left);
+		top[1].getColorComponents(right);
+		float[] avgTop = interpolateBetween(left, right, horzCoeff);
+		bottom[0].getColorComponents(left);
+		bottom[1].getColorComponents(right);
+		float[] avgBottom = interpolateBetween(left, right, horzCoeff);
+		float vertCoeff = ceil(scaled.y) - scaled.y;
+		float[] result = interpolateBetween(avgTop, avgBottom, vertCoeff);
+		return new Color(top[0].getColorSpace(), result, 1).getRGB();
+	}
+	
+	private float[] interpolateBetween(float[] colorNear, float[] colorFar, float coeff) {
+		float[] avg = new float[3];
+		for (int i = 0; i < colorNear.length; i++) {
+			avg[i] = colorNear[i]*(1 - coeff) + colorFar[i]*coeff;
+		}
+		return avg;
 	}
 	
 	private float getScaledX(float x) {
@@ -45,6 +69,18 @@ public class SWTexture implements Texture {
 	
 	private float getScaledY(float y) {
 		return (1 - y)*(height - 1);
+	}
+	
+	private int floor(float f) {
+		return (int) f;
+	}
+	/**
+	 * Not exactly ceil, but close enough for this purpose.
+	 * @param f
+	 * @return
+	 */
+	private int ceil(float f) {
+		return (int) Math.ceil(f);
 	}
 
 }
