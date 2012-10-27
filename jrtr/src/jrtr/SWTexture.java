@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.vecmath.Point2f;
 
 /**
  * Manages textures for the software renderer. Not implemented here.
@@ -27,7 +28,14 @@ public class SWTexture implements Texture {
 	}
 
 	public int getBilinearInterpolatedColor(float x, float y) {
-		// TODO Auto-generated method stub
+		//float[] scaled =  { getScaledX(x), getScaledY(y) };
+		Point2f scaled = new Point2f(getScaledX(x), getScaledY(y));
+		int[] top = new int[2], bottom = new int[2];
+		top[0] = texture.getRGB((int) scaled.x, (int) scaled.y);
+		top[1] = texture.getRGB(((int) scaled.x) + 1, (int) scaled.y);
+		bottom[0] = texture.getRGB((int) scaled.x, ((int) scaled.y) + 1);
+		bottom[1] = texture.getRGB(((int) scaled.x) + 1, ((int) scaled.y) + 1);
+		//TODO scale the values. Must be converted first to a jawa.awt.Color?
 		return 0;
 	}
 	
