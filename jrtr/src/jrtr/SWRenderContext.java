@@ -2,7 +2,6 @@ package jrtr;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
 import javax.vecmath.Color3f;
@@ -216,16 +215,16 @@ public class SWRenderContext implements RenderContext {
 		
 		for (int y = topLeft.y; y <= botRight.y; y++) {
 			for (int x = topLeft.x; x <= botRight.x; x++) {
-				Vector3f edgeCoefficients = getEdgeCoefficients(x, y, alphabetagamma);
-				if (edgeCoefficients != null) {
-					float zvalue = new Vector3f(oneOverWarray).dot(edgeCoefficients);
+				Vector3f vertexWeights = getVertexWeights(x, y, alphabetagamma);
+				if (vertexWeights != null) {
+					float zvalue = new Vector3f(oneOverWarray).dot(vertexWeights);
 					if (betterZvalue(x, y, zvalue)) {
 						zBuffer[x][y] = zvalue;
 						int c;
 						if (material != null)
-							c = interpolateColorFromTexture(edgeCoefficients, 
+							c = interpolateColorFromTexture(vertexWeights, 
 									texCoords, material.getTexture());
-						else c = interpolateColor(edgeCoefficients, colors).getRGB();
+						else c = interpolateColor(vertexWeights, colors).getRGB();
 						drawPointAt(x, y, c);
 					}
 				}
@@ -280,22 +279,26 @@ public class SWRenderContext implements RenderContext {
 	 * Interpolates the color by splitting the colors of the 3 vertices into its channels.
 	 * the second coordinate represents the channel.
 	 * 
-	 * Each channel is weighted by the given edge coefficient and then put together to a color again.
-	 * @param edgeCoefficients
+	 * Each channel is weighted by the given vertex weights and then put together to a color again.
+	 * <p>
+	 * An alternative way to compute this is to transform the channe vectors by the edge
+	 * coefficients matrix.
+	 * </p>
+	 * @param vertexWeights
 	 * @param colors
 	 * @return a java.awt.Color, that can be put on ImageBuffer by calling .getRGB()
 	 */
-	private Color interpolateColor(Vector3f edgeCoefficients, Color3f[] colors) {
+	private Color interpolateColor(Vector3f vertexWeights, Color3f[] colors) {
 		float[] resultingColor = new float[3];
 		float[] coeffs = new float[3];
-		edgeCoefficients.get(coeffs);
+		vertexWeights.get(coeffs);
 		for (int vectorNr = 0; vectorNr < 3; vectorNr++) {
 			resultingColor[0] += coeffs[vectorNr]*colors[vectorNr].getX();
 			resultingColor[1] += coeffs[vectorNr]*colors[vectorNr].getY();
 			resultingColor[2] += coeffs[vectorNr]*colors[vectorNr].getZ();
 		}
 		//rescale (don't really know why XD)
-		float divisor = edgeCoefficients.x + edgeCoefficients.y + edgeCoefficients.z;
+		float divisor = vertexWeights.x + vertexWeights.y + vertexWeights.z;
 		return new Color(resultingColor[0]/divisor, resultingColor[1]/divisor, resultingColor[2]/divisor);
 	}
 
@@ -330,7 +333,7 @@ public class SWRenderContext implements RenderContext {
 	 * @param alphabetagamma
 	 * @return
 	 */
-	private Vector3f getEdgeCoefficients(int x, int y, Matrix3f alphabetagamma) {
+	private Vector3f getVertexWeights(int x, int y, Matrix3f alphabetagamma) {
 		Vector3f abgVector = new Vector3f();
 		float[] coeffs = new float[3];
 		for (int i = 0; i < 3; i++) {
