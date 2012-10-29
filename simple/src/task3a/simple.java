@@ -1,20 +1,23 @@
 package task3a;
 
-import jrtr.*;
-
-import javax.swing.*;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
-
-import javax.vecmath.*;
-
-import task2b.VirtualTrackballListener;
-import task2c.CameraInputListener;
-import task2c.FlyingCameraInputListener;
-
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.JFrame;
+
+import jrtr.GLRenderPanel;
+import jrtr.Material;
+import jrtr.RenderContext;
+import jrtr.RenderPanel;
+import jrtr.SWRenderPanel;
+import jrtr.SWTexture;
+import jrtr.Shape;
+import jrtr.SimpleSceneManager;
+import jrtr.VertexData;
+import task2c.FlyingCameraInputListener;
 
 /**
  * Implements a simple application that opens a 3D rendering window and 
@@ -107,7 +110,7 @@ public class simple
 						1,0,0,1,0,0,1,0,0,1,0,0,
 						0,1,0,0,1,0,0,1,0,0,1,0,
 						0,-1,0,0,-1,0,0,-1,0,0,-1,0 };
-		float t[] = {	0,0,0,1,1,1,1,0,
+		float t[] = {	0,0,1,0,1,1,0,1,
 						0,0,0,1,1,1,1,0,
 						0,0,0,1,1,1,1,0, 
 						0,0,0,1,1,1,1,0, 
@@ -136,7 +139,7 @@ public class simple
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(vertexData);
 		SWTexture tex = new SWTexture();
-		tex.load("chessboard.jpg");
+		tex.load("banana.gif");
 		shape.setMaterial(new Material(tex));
 		sceneManager.addShape(shape);
 

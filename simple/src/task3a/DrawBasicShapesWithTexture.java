@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JFrame;
+import javax.vecmath.Vector3f;
 
 import jrtr.GLRenderPanel;
 import jrtr.Material;
@@ -17,6 +18,7 @@ import jrtr.SWTexture;
 import jrtr.Shape;
 import jrtr.SimpleSceneManager;
 import jrtr.VertexData;
+import task1.Cylinder;
 import task1.Torus;
 import task2c.FlyingCameraInputListener;
 
@@ -24,7 +26,7 @@ import task2c.FlyingCameraInputListener;
  * Implements a simple application that opens a 3D rendering window and 
  * shows a rotating cube.
  */
-public class DrawTorusWithTexture
+public class DrawBasicShapesWithTexture
 {	
 	static RenderPanel renderPanel;
 	static RenderContext renderContext;
@@ -92,7 +94,11 @@ public class DrawTorusWithTexture
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(new Torus(2, 1 , 30, 30));
 		SWTexture tex = new SWTexture();
-		tex.load("chessboard2.jpg");
+		tex.load("redtowhite.jpg");
+		shape.setMaterial(new Material(tex));
+		sceneManager.addShape(shape);
+		shape = new Shape(new Cylinder(2, 1, 30));
+		shape.getTransformation().setTranslation(new Vector3f(6, 0, 0));
 		shape.setMaterial(new Material(tex));
 		sceneManager.addShape(shape);
 
