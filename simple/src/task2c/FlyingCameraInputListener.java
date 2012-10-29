@@ -21,7 +21,7 @@ public class FlyingCameraInputListener implements KeyListener, MouseMotionListen
 	private Matrix4f rot;
 	private MouseEvent prevEvent;
 	private final float factor = 0.01f;
-	FlyingCameraInputListener(Camera c) {
+	public FlyingCameraInputListener(Camera c) {
 		this.c = c;
 		rot = new Matrix4f();
 	}

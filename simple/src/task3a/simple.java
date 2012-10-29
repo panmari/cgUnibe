@@ -10,6 +10,8 @@ import java.io.IOException;
 import javax.vecmath.*;
 
 import task2b.VirtualTrackballListener;
+import task2c.CameraInputListener;
+import task2c.FlyingCameraInputListener;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -136,7 +138,6 @@ public class simple
 		SWTexture tex = new SWTexture();
 		tex.load("chessboard.jpg");
 		shape.setMaterial(new Material(tex));
-		shape.getTransformation().setScale(2);
 		sceneManager.addShape(shape);
 
 		// Make a render panel. The init function of the renderPanel
@@ -150,7 +151,8 @@ public class simple
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-		VirtualTrackballListener l = new VirtualTrackballListener(shape, renderPanel);
+		FlyingCameraInputListener l = new FlyingCameraInputListener(sceneManager.getCamera());
+		jframe.addKeyListener(l);
 	    renderPanel.getCanvas().addMouseListener(l);
 	    renderPanel.getCanvas().addMouseMotionListener(l);
 	    renderPanel.getCanvas().addMouseWheelListener(l);

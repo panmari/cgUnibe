@@ -35,12 +35,7 @@ public class Camera {
 	 */
 	public Camera()
 	{
-		cameraMatrix = new Matrix4f();
-		float f[] = {1.f, 0.f, 0.f, 0.f,
-					 0.f, 1.f, 0.f, 0.f,
-					 0.f, 0.f, 1.f, -10.f,
-					 0.f, 0.f, 0.f, 1.f};
-		cameraMatrix.set(f);
+		this(new Point3f(0,0,10), new Point3f(0,0,0), new Vector3f(0,1,0));
 	}
 	
 	/**
