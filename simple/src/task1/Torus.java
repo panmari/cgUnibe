@@ -57,11 +57,11 @@ public class Torus extends AbstractShape {
 						(i + smallResolution) % n, 
 						(adjacentVector + smallResolution) % n, 
 						adjacentVector);
-				Point2f p = new Point2f((i % smallResolution)/(float)smallResolution, k/(float)n);
+				Point2f p = new Point2f((i % smallResolution)*2/(float)smallResolution, k*2/(float)n);
 				if (i % smallResolution > smallResolution/2f)
-					p.x = 1 - p.x;
+					p.x = 2 - p.x;
 				if (k > n/2f)
-					p.y = 1 - p.y;
+					p.y = 2 - p.y;
 				addTexel(i, p);
 			}
 		}
