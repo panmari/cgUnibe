@@ -35,7 +35,7 @@ public class Camera {
 	 */
 	public Camera()
 	{
-		this(new Point3f(0,0,10), new Point3f(0,0,0), new Vector3f(0,1,0));
+		this(new Point3f(2,5,10), new Point3f(0,0,0), new Vector3f(0,1,0));
 	}
 	
 	/**
