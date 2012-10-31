@@ -21,7 +21,8 @@ public class CameraInputListener implements KeyListener, MouseMotionListener, Mo
 	private Matrix4f rot;
 	private MouseEvent prevEvent;
 	private final float factor = 0.01f;
-	CameraInputListener(Camera c) {
+	
+	public CameraInputListener(Camera c) {
 		this.c = c;
 		rot = new Matrix4f();
 	}

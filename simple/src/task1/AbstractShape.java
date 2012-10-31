@@ -3,6 +3,8 @@ package task1;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.vecmath.Point2f;
+
 import jrtr.VertexData;
 
 public abstract class AbstractShape extends VertexData {
@@ -11,6 +13,7 @@ public abstract class AbstractShape extends VertexData {
 	protected FloatVertexElement vertices;
 	protected FloatVertexElement colors;
 	protected FloatVertexElement normals;
+	protected float[] texels;
 	private int numberOfVertices;
 	
 	
@@ -20,6 +23,7 @@ public abstract class AbstractShape extends VertexData {
 		vertices = new FloatVertexElement(numberOfVertices);
 		colors = new FloatVertexElement(numberOfVertices);
 		normals = new FloatVertexElement(numberOfVertices);
+		texels = new float[2*numberOfVertices];
 	}
 
 	protected void addIndicesList(List<Integer> indicesList) {
@@ -45,6 +49,15 @@ public abstract class AbstractShape extends VertexData {
 	protected void addQuadrangle(int i, int j, int k, int l) {
 		addIndex(i, j, k);
 		addIndex(i, k, l);
+	}
+	
+	protected void addTexel(int vertexNr, Point2f p) {
+		addTexel(vertexNr, p.x, p.y);
+	}
+	
+	protected void addTexel(int vertexNr, float x, float y) {
+		texels[vertexNr*2] = x;
+		texels[vertexNr*2 + 1] = y;
 	}
 
 }

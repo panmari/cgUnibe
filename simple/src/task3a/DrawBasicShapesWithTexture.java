@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JFrame;
+import javax.vecmath.Vector3f;
 
 import jrtr.GLRenderPanel;
 import jrtr.Material;
@@ -17,13 +18,15 @@ import jrtr.SWTexture;
 import jrtr.Shape;
 import jrtr.SimpleSceneManager;
 import jrtr.VertexData;
+import task1.Cylinder;
+import task1.Torus;
 import task2c.FlyingCameraInputListener;
 
 /**
  * Implements a simple application that opens a 3D rendering window and 
  * shows a rotating cube.
  */
-public class simple
+public class DrawBasicShapesWithTexture
 {	
 	static RenderPanel renderPanel;
 	static RenderContext renderContext;
@@ -86,60 +89,16 @@ public class simple
 	 */
 	public static void main(String[] args) throws IOException
 	{		
-		// Make a simple geometric object: a cube
-		
-		// The vertex positions of the cube
-		float v[] = {-1,-1,1, 1,-1,1, 1,1,1, -1,1,1,		// front face
-			         -1,-1,-1, -1,-1,1, -1,1,1, -1,1,-1,	// left face
-				  	 1,-1,-1,-1,-1,-1, -1,1,-1, 1,1,-1,		// back face
-					 1,-1,1, 1,-1,-1, 1,1,-1, 1,1,1,		// right face
-					 1,1,1, 1,1,-1, -1,1,-1, -1,1,1,		// top face
-					-1,-1,1, -1,-1,-1, 1,-1,-1, 1,-1,1};	// bottom face
-
-		// The vertex colors
-		float c[] = {1,0,0, 0.5f,0,0.5f, 0,0,1, .5f,0,.5f,
-				     0,1,0, 0,1,0, 0,1,0, 0,1,0,
-					 1,0,0, 1,0,0, 1,0,1, 1,0,0,
-					 0,1,0, 0,1,0, 0,1,0, 0,1,0,
-					 0,0,1, 1,0,1, 0,0,1, 0,1,1,
-					 0,0,1, 0,0,1, 0,0,1, 0,0,1};
-		
-		float n[] = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-						-1,0,0,-1,0,0,-1,0,0,-1,0,0,
-						0,0,-1,0,0,-1,0,0,-1,0,0,-1,
-						1,0,0,1,0,0,1,0,0,1,0,0,
-						0,1,0,0,1,0,0,1,0,0,1,0,
-						0,-1,0,0,-1,0,0,-1,0,0,-1,0 };
-		float t[] = {	0,0,1,0,1,1,0,1,
-						0,0,0,1,1,1,1,0,
-						0,0,0,1,1,1,1,0, 
-						0,0,0,1,1,1,1,0, 
-						0,0,0,1,1,1,1,0,
-						0,0,0,1,1,1,1,0,   };
-
-		// Construct a data structure that stores the vertices, their
-		// attributes, and the triangle mesh connectivity
-		VertexData vertexData = new VertexData(24);
-		vertexData.addElement(c, VertexData.Semantic.COLOR, 3);
-		vertexData.addElement(v, VertexData.Semantic.POSITION, 3);
-		vertexData.addElement(n, VertexData.Semantic.NORMAL, 3);
-		vertexData.addElement(t, VertexData.Semantic.TEXCOORD, 2);
-		
-		// The triangles (three vertex indices for each triangle)
-		int indices[] = {0,2,3, 0,1,2,			// front face
-						 4,6,7, 4,5,6,			// left face
-						 8,10,11, 8,9,10,		// back face
-						 12,14,15, 12,13,14,	// right face
-						 16,18,19, 16,17,18,	// top face
-						 20,22,23, 20,21,22};	// bottom face
-
-		vertexData.addIndices(indices);
 				
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		shape = new Shape(vertexData);
+		shape = new Shape(new Torus(2, 1 , 30, 30));
 		SWTexture tex = new SWTexture();
-		tex.load("banana.gif");
+		tex.load("redtowhite.jpg");
+		shape.setMaterial(new Material(tex));
+		sceneManager.addShape(shape);
+		shape = new Shape(new Cylinder(2, 1, 30));
+		shape.getTransformation().setTranslation(new Vector3f(6, 0, 0));
 		shape.setMaterial(new Material(tex));
 		sceneManager.addShape(shape);
 

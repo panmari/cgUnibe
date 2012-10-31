@@ -1,7 +1,11 @@
 package task1;
 
+import java.awt.Point;
+import java.util.Arrays;
+
 import javax.vecmath.Color3f;
 import javax.vecmath.Matrix3f;
+import javax.vecmath.Point2f;
 import javax.vecmath.Vector3f;
 
 import jogamp.graph.math.MathFloat;
@@ -53,12 +57,19 @@ public class Torus extends AbstractShape {
 						(i + smallResolution) % n, 
 						(adjacentVector + smallResolution) % n, 
 						adjacentVector);
+				Point2f p = new Point2f((i % smallResolution)*2/(float)smallResolution, k*2/(float)n);
+				if (i % smallResolution > smallResolution/2f)
+					p.x = 2 - p.x;
+				if (k > n/2f)
+					p.y = 2 - p.y;
+				addTexel(i, p);
 			}
 		}
-		
+		System.out.println(Arrays.toString(texels));
 		addIndicesList(indicesList);
 		addElement(vertices.getFinishedArray(), VertexData.Semantic.POSITION, 3);
 		addElement(colors.getFinishedArray(), VertexData.Semantic.COLOR, 3);
+		addElement(texels, VertexData.Semantic.TEXCOORD, 2);
 	}
 
 	private Vector3f[] createFirstCrossSection() {

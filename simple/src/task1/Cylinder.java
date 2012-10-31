@@ -42,8 +42,8 @@ public class Cylinder extends AbstractShape {
 		}
 		addMantle();
 		addIndicesList(indicesList);
-		System.out.println(Arrays.toString(normals.getFinishedArray()));
-		addElement(normals.getFinishedArray(), VertexData.Semantic.NORMAL, 3);
+		//addElement(normals.getFinishedArray(), VertexData.Semantic.NORMAL, 3);
+		addElement(texels, VertexData.Semantic.TEXCOORD, 2);
 	}
 	
 	/**
@@ -99,6 +99,11 @@ public class Cylinder extends AbstractShape {
 		for (int i = 1; i <= resolution; i++) {
 			addQuadrangle(i, getAdjacentDiscVertex(i), 
 					getAdjacentDiscVertex(i) + lowerDiscCenterVertex, i + lowerDiscCenterVertex);
+			float y = i*2/(float)resolution;
+			if (i > resolution/2)
+				y = 2 - y;
+			addTexel(i, 0, y);
+			addTexel(i + lowerDiscCenterVertex, 1, y);
 		}
 	}
 	
