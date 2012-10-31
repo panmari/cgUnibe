@@ -18,11 +18,17 @@ public class SWTexture implements Texture {
 	BufferedImage texture;
 	int width, height;
 	
+	public SWTexture() {
+		
+	}
+	public SWTexture(String fileName) throws IOException {
+		load(fileName);
+	}
+
 	public void load(String fileName) throws IOException {
 		texture = ImageIO.read(new File(fileName));
 		width = texture.getWidth();
 		height = texture.getHeight();
-		
 	}
 
 	public int getNearestNeighbourColor(float x, float y) {

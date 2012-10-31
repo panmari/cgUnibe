@@ -93,8 +93,7 @@ public class DrawBasicShapesWithTexture
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(new Torus(2, 1 , 30, 30));
-		SWTexture tex = new SWTexture();
-		tex.load("redtowhite.jpg");
+		SWTexture tex = new SWTexture("bread2.jpg");
 		shape.setMaterial(new Material(tex));
 		sceneManager.addShape(shape);
 		shape = new Shape(new Cylinder(2, 1, 30));
