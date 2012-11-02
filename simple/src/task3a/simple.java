@@ -138,7 +138,7 @@ public class simple
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(vertexData);
-		SWTexture tex = new SWTexture("banana.gif");
+		SWTexture tex = new SWTexture("redtowhite.jpg");
 		shape.setMaterial(new Material(tex));
 		sceneManager.addShape(shape);
 

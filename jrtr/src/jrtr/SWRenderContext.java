@@ -24,7 +24,7 @@ import jrtr.VertexData.VertexElement;
  */
 public class SWRenderContext implements RenderContext {
 
-	private static final boolean bilinear = true;
+	private static final boolean bilinear = false;
 	private SceneManagerInterface sceneManager;
 	private float[][] zBuffer;
 	private BufferedImage colorBuffer;

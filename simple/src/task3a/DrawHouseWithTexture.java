@@ -10,6 +10,8 @@ import java.io.IOException;
 
 import javax.vecmath.*;
 
+import task2c.FlyingCameraInputListener;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -49,9 +51,6 @@ public class DrawHouseWithTexture
 	
 			// Register a timer task
 		    Timer timer = new Timer();
-		    angle = 0.01f;
-		    trans = new Matrix4f();
-			trans.rotY(angle);
 			timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
 		}
 	}
@@ -65,11 +64,7 @@ public class DrawHouseWithTexture
 
 		public void run()
 		{
-			if (move) {
-				trans.transform(c.getCenterOfProjection());
-				c.update();
-				renderPanel.getCanvas().repaint(); 
-			}
+			renderPanel.getCanvas().repaint(); 
 		}
 	}
 
@@ -118,7 +113,11 @@ public class DrawHouseWithTexture
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-	    renderPanel.getCanvas().addMouseListener(new SimpleMouseListener());
+		FlyingCameraInputListener l = new FlyingCameraInputListener(c);
+	    jframe.addKeyListener(l);
+	    renderPanel.getCanvas().addMouseListener(l);
+	    renderPanel.getCanvas().addMouseWheelListener(l);
+	    renderPanel.getCanvas().addMouseMotionListener(l);
 		   	    	    
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
