@@ -11,6 +11,7 @@ uniform vec4 lightDirection;
 uniform vec3 pointLightsPos[MAX_LIGHTS];
 uniform vec3 pointLightsCol[MAX_LIGHTS];
 uniform float pointLightsRad[MAX_LIGHTS];
+uniform float diffuseReflectionCoefficient;
 // Input vertex attributes; passed in from host program to shader
 // via vertex buffer objects
 in vec3 normal;
@@ -28,8 +29,10 @@ void main()
 	// Note: here we assume "lightDirection" is specified in camera coordinates,
 	// so we transform the normal to camera coordinates, and we don't transform
 	// the light direction, i.e., it stays in camera coordinates
-	ndotl = max(dot(modelview * vec4(normal,0), lightDirection),0);
-
+	// ndotl = max(dot(modelview * vec4(normal,0), lightDirection),0);
+	vec3 L = pointLightsPos[0].xyz - position.xyz;
+	float nxDir = max(0.0, dot(normal, L));
+	ndotl = pointLightsRad[0]*diffuseReflectionCoefficient*nxDir;
 	// Pass texture coordiantes to fragment shader, OpenGL automatically
 	// interpolates them to each pixel  (in a perspectively correct manner) 
 	frag_texcoord = texcoord;

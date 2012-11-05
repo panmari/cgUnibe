@@ -13,32 +13,24 @@ public class Material {
 	private MaterialType type;
 	private float diffuseReflectionCoefficient;
 	
-	/**
-	 * Old constructor for compatability reasons, always of type paper
-	 * @param texture
-	 */
 	public Material(SWTexture texture) {
-		this(texture, MaterialType.Paper);
-		this.diffuseReflectionCoefficient = 2;
+		this(texture, 1);
 	}
 	
-	public Material(SWTexture texture, MaterialType type) {
+	public Material(SWTexture texture, float diffuseReflectionCoefficient) {
 		this.texture = texture;
-		this.type = type;
+		this.diffuseReflectionCoefficient = diffuseReflectionCoefficient;
 	}
 	
+	public Material() {
+		this(null);
+	}
+
 	public SWTexture getTexture() {
 		return texture;
 	}
 	
 	public float getDiffuseReflectionCoefficient() {
 		return diffuseReflectionCoefficient;
-	}
-	/**
-	 * For this method to work, the GLShaderManager has to be initialized first!
-	 * @return the shader corresponding to the Materialtype set. 
-	 */
-	public GLShader getShader() {
-		return GLShaderManager.getShaderFor(type);
 	}
 }

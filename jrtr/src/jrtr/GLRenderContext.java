@@ -31,7 +31,6 @@ public class GLRenderContext implements RenderContext {
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         
         // Load and use default shader
-        GLShaderManager.initialize(gl);
         GLShader defaultShader = new GLShader(gl);
         try {
         	defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
@@ -47,24 +46,6 @@ public class GLRenderContext implements RenderContext {
 		gl.glUniform4f(id, 0, 0, 1, 0);		// Set light direction
 		
 		//pass point lights:
-		final int MaxLight = 8;
-		float[] pointLightsPos = new float[3*MaxLight];
-		float[] pointLightsCol = new float[3*MaxLight];
-		float[] pointLightsRad = new float[MaxLight];
-		Iterator<PointLight> lightIter = sceneManager.lightIterator();
-		for (int i = 0; i < MaxLight && lightIter.hasNext(); i ++) {
-			PointLight l = lightIter.next();
-			fillTuple3fIntoArray(i, l.position, pointLightsPos);
-			fillTuple3fIntoArray(i, l.color, pointLightsCol);
-			pointLightsRad[i] = l.radiance;
-		}
-		
-		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsPos");
-		gl.glUniform3fv(id, MaxLight, pointLightsPos, 0);
-		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsCol");
-		gl.glUniform3fv(id, MaxLight, pointLightsCol, 0);
-		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsRad");
-		gl.glUniform1fv(id, MaxLight, pointLightsRad, 0);
 		
 		GLTexture tex;
 		try {
@@ -249,6 +230,8 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void setMaterial(Material m)
 	{
+		int id = gl.glGetUniformLocation(activeShader.programId(), "diffuseReflectionCoefficient");
+		gl.glUniform1f(id, m.getDiffuseReflectionCoefficient());
 	}
 	
 	/**
@@ -259,6 +242,24 @@ public class GLRenderContext implements RenderContext {
 	 */
 	void setLights()
 	{	
+		final int MaxLight = 8;
+		float[] pointLightsPos = new float[3*MaxLight];
+		float[] pointLightsCol = new float[3*MaxLight];
+		float[] pointLightsRad = new float[MaxLight];
+		Iterator<PointLight> lightIter = sceneManager.lightIterator();
+		for (int i = 0; i < MaxLight && lightIter.hasNext(); i ++) {
+			PointLight l = lightIter.next();
+			fillTuple3fIntoArray(i, l.position, pointLightsPos);
+			fillTuple3fIntoArray(i, l.color, pointLightsCol);
+			pointLightsRad[i] = l.radiance;
+		}
+		
+		int id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsPos");
+		gl.glUniform3fv(id, MaxLight, pointLightsPos, 0);
+		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsCol");
+		gl.glUniform3fv(id, MaxLight, pointLightsCol, 0);
+		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsRad");
+		gl.glUniform1fv(id, MaxLight, pointLightsRad, 0);
 	}
 
 	/**

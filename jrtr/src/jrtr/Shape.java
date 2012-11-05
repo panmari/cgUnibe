@@ -17,6 +17,7 @@ public class Shape {
 	public Shape(VertexData vertexData)
 	{
 		this.vertexData = vertexData;
+		this.material = new Material();
 		t = new Matrix4f();
 		t.setIdentity();
 	}
