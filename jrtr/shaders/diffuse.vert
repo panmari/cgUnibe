@@ -1,4 +1,5 @@
 #version 150
+#define MAX_LIGHTS 8
 // GLSL version 1.50 
 // Vertex shader for diffuse shading in combination with a texture map
 
@@ -7,7 +8,9 @@
 uniform mat4 projection;
 uniform mat4 modelview;
 uniform vec4 lightDirection;
-
+uniform vec3 pointLightsPos[MAX_LIGHTS];
+uniform vec3 pointLightsCol[MAX_LIGHTS];
+uniform float pointLightsRad[MAX_LIGHTS];
 // Input vertex attributes; passed in from host program to shader
 // via vertex buffer objects
 in vec3 normal;

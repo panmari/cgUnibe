@@ -2,6 +2,7 @@ package jrtr;
 
 import java.nio.IntBuffer;
 import java.nio.FloatBuffer;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import javax.media.opengl.GL3;
@@ -45,6 +46,26 @@ public class GLRenderContext implements RenderContext {
 		int id = gl.glGetUniformLocation(activeShader.programId(), "lightDirection");
 		gl.glUniform4f(id, 0, 0, 1, 0);		// Set light direction
 		
+		//pass point lights:
+		final int MaxLight = 8;
+		float[] pointLightsPos = new float[3*MaxLight];
+		float[] pointLightsCol = new float[3*MaxLight];
+		float[] pointLightsRad = new float[MaxLight];
+		Iterator<PointLight> lightIter = sceneManager.lightIterator();
+		for (int i = 0; i < MaxLight && lightIter.hasNext(); i ++) {
+			PointLight l = lightIter.next();
+			fillTuple3fIntoArray(i, l.position, pointLightsPos);
+			fillTuple3fIntoArray(i, l.color, pointLightsCol);
+			pointLightsRad[i] = l.radiance;
+		}
+		
+		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsPos");
+		gl.glUniform3fv(id, MaxLight, pointLightsPos, 0);
+		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsCol");
+		gl.glUniform3fv(id, MaxLight, pointLightsCol, 0);
+		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsRad");
+		gl.glUniform1fv(id, MaxLight, pointLightsRad, 0);
+		
 		GLTexture tex;
 		try {
 			// Load texture from file
@@ -62,6 +83,11 @@ public class GLRenderContext implements RenderContext {
 			System.out.print("Could not load texture\n");
 		}
 		
+	}
+	private void fillTuple3fIntoArray(int i, Tuple3f l, float[] array) {
+		array[3*i] = l.x;
+		array[3*i + 1] = l.y;
+		array[3*i + 2] = l.z;
 	}
 	/**
 	 * Set the scene manager. The scene manager contains the 3D
