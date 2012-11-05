@@ -30,6 +30,7 @@ public class GLRenderContext implements RenderContext {
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         
         // Load and use default shader
+        GLShaderManager.initialize(gl);
         GLShader defaultShader = new GLShader(gl);
         try {
         	defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
