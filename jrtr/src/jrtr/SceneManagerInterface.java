@@ -20,7 +20,7 @@ public interface SceneManagerInterface {
 	/**
 	 * @return an iterator to access the lights in the scene.
 	 */
-	public Iterator<Light> lightIterator();
+	public Iterator<PointLight> lightIterator();
 	
 	public Camera getCamera();
 	

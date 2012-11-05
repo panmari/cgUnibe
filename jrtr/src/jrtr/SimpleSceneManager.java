@@ -1,8 +1,9 @@
 package jrtr;
 
-import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * A simple scene manager that stores objects in a linked list.
@@ -12,6 +13,7 @@ public class SimpleSceneManager implements SceneManagerInterface {
 	protected LinkedList<Shape> shapes;
 	protected Camera camera;
 	protected Frustum frustum;
+	private List<PointLight> pointLights;
 	
 	public SimpleSceneManager(Camera c, Frustum f)
 	{
@@ -22,9 +24,7 @@ public class SimpleSceneManager implements SceneManagerInterface {
 	
 	public SimpleSceneManager()
 	{
-		shapes = new LinkedList<Shape>();
-		camera = new Camera();
-		frustum = new Frustum();
+		this(new Camera(), new Frustum());
 	}
 	
 	public Camera getCamera()
@@ -47,12 +47,16 @@ public class SimpleSceneManager implements SceneManagerInterface {
 		return new SimpleSceneManagerItr(this);
 	}
 	
+	public void addPointLight(PointLight pl) {
+		this.pointLights.add(pl);
+	}
+	
 	/**
 	 * To be implemented in the "Textures and Shading" project.
 	 */
-	public Iterator<Light> lightIterator()
+	public Iterator<PointLight> lightIterator()
 	{
-		return null;
+		return pointLights.iterator();
 	}
 
 	private class SimpleSceneManagerItr implements SceneManagerIterator {

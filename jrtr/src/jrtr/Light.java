@@ -8,11 +8,11 @@ import javax.vecmath.Color3f;
  */
 public abstract class Light {
 	protected Color3f color;
-	protected float intensity;
+	protected float radiance;
 	
-	public Light(Color3f color, float intensity) {
+	public Light(Color3f color, float radiance) {
 		this.color = color;
-		this.intensity = intensity;
+		this.radiance = radiance;
 	}
 	
 }
