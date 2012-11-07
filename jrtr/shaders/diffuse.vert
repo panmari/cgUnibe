@@ -34,7 +34,7 @@ void main()
 	for (int i = 0; i < MAX_LIGHTS; i++) {
 		vec3 L = pointLightsPos[i].xyz - (transform*position).xyz;
 		float relativeRadiance =  pointLightsRad[i]/dot(L,L);
-		float nxDir = max(0.0, dot(normal,  normalize(L)));
+		float nxDir = max(0.0, dot((transform * vec4(normal, 0)).xyz,  normalize(L)));
 		ndotl += relativeRadiance*diffuseReflectionCoefficient*nxDir;
 	}
 	// Pass texture coordiantes to fragment shader, OpenGL automatically

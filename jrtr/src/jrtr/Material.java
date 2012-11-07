@@ -10,7 +10,6 @@ public class Material {
 	
 	public enum MaterialType { Paper }
 	private SWTexture texture;
-	private MaterialType type;
 	private float diffuseReflectionCoefficient;
 	
 	public Material(SWTexture texture) {
