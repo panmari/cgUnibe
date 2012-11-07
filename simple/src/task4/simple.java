@@ -139,7 +139,7 @@ public class simple
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(vertexData);
 		sceneManager.addShape(shape);
-		sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), .7f, new Point3f(0, 2, 0)));
+		sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), .7f, new Point3f(5, 5, 5)));
 		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), .5f, new Point3f(-5, 0, 0)));
 
 		// Make a render panel. The init function of the renderPanel

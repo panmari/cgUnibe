@@ -6,8 +6,7 @@
 // Uniform variables, passed in from host program via suitable 
 // variants of glUniform*
 uniform mat4 projection;
-uniform mat4 transform;
-uniform mat4 camera;
+uniform mat4 modelview;
 uniform vec4 lightDirection;
 uniform vec3 pointLightsPos[MAX_LIGHTS];
 uniform vec3 pointLightsCol[MAX_LIGHTS];
@@ -32,10 +31,9 @@ void main()
 	// the light direction, i.e., it stays in camera coordinates
 	// ndotl = max(dot(modelview * vec4(normal,0), lightDirection),0);
 	for (int i = 0; i < MAX_LIGHTS; i++) {
-		vec3 L = pointLightsPos[i].xyz - (transform*position).xyz;
-		float relativeRadiance =  pointLightsRad[i]/dot(L,L);
-		float nxDir = max(0.0, dot(normal,  normalize(L)));
-		ndotl += relativeRadiance*diffuseReflectionCoefficient*nxDir;
+		vec3 L = normalize(pointLightsPos[i].xyz - position.xyz);
+		float nxDir = max(0.0, dot(normal, L));
+		ndotl += pointLightsRad[i]*diffuseReflectionCoefficient*nxDir;
 	}
 	// Pass texture coordiantes to fragment shader, OpenGL automatically
 	// interpolates them to each pixel  (in a perspectively correct manner) 
@@ -44,5 +42,5 @@ void main()
 	// Transform position, including projection matrix
 	// Note: gl_Position is a default output variable containing
 	// the transformed vertex position
-	gl_Position = projection * camera * transform * position;
+	gl_Position = projection * modelview * position;
 }

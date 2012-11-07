@@ -154,12 +154,12 @@ public class GLRenderContext implements RenderContext {
 
 		// Compute the modelview matrix by multiplying the camera matrix and the 
 		// transformation matrix of the object
-		Matrix4f cam = sceneManager.getCamera().getCameraMatrix();
-		Matrix4f transform = renderItem.getT();
+		Matrix4f t = new Matrix4f();
+		t.set(sceneManager.getCamera().getCameraMatrix());
+		t.mul(renderItem.getT());
 		
 		// Set modelview and projection matrices in shader
-		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "camera"), 1, false, matrix4fToFloat16(cam), 0);
-		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "transform"), 1, false, matrix4fToFloat16(transform), 0);
+		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "modelview"), 1, false, matrix4fToFloat16(t), 0);
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "projection"), 1, false, matrix4fToFloat16(sceneManager.getFrustum().getProjectionMatrix()), 0);
 	     		
 		// Steps to pass vertex data to OpenGL:
