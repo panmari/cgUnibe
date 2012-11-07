@@ -10,11 +10,10 @@ public class Material {
 	
 	public enum MaterialType { Paper }
 	private SWTexture texture;
-	private MaterialType type;
 	private float diffuseReflectionCoefficient;
 	
 	public Material(SWTexture texture) {
-		this(texture, 1);
+		this(texture, 3);
 	}
 	
 	public Material(SWTexture texture, float diffuseReflectionCoefficient) {

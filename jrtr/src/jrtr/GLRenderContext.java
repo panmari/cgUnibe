@@ -160,6 +160,7 @@ public class GLRenderContext implements RenderContext {
 		
 		// Set modelview and projection matrices in shader
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "modelview"), 1, false, matrix4fToFloat16(t), 0);
+		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "camera"), 1, false, matrix4fToFloat16(sceneManager.getCamera().getCameraMatrix()), 0);
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "projection"), 1, false, matrix4fToFloat16(sceneManager.getFrustum().getProjectionMatrix()), 0);
 	     		
 		// Steps to pass vertex data to OpenGL:
@@ -242,12 +243,12 @@ public class GLRenderContext implements RenderContext {
 	 */
 	void setLights()
 	{	
-		final int MaxLight = 8;
-		float[] pointLightsPos = new float[3*MaxLight];
-		float[] pointLightsCol = new float[3*MaxLight];
-		float[] pointLightsRad = new float[MaxLight];
+		final int MAX_LIGHTS = 8;
+		float[] pointLightsPos = new float[3*MAX_LIGHTS];
+		float[] pointLightsCol = new float[3*MAX_LIGHTS];
+		float[] pointLightsRad = new float[MAX_LIGHTS];
 		Iterator<PointLight> lightIter = sceneManager.lightIterator();
-		for (int i = 0; i < MaxLight && lightIter.hasNext(); i ++) {
+		for (int i = 0; i < MAX_LIGHTS && lightIter.hasNext(); i ++) {
 			PointLight l = lightIter.next();
 			fillTuple3fIntoArray(i, l.position, pointLightsPos);
 			fillTuple3fIntoArray(i, l.color, pointLightsCol);
@@ -255,11 +256,11 @@ public class GLRenderContext implements RenderContext {
 		}
 		
 		int id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsPos");
-		gl.glUniform3fv(id, MaxLight, pointLightsPos, 0);
+		gl.glUniform3fv(id, MAX_LIGHTS, pointLightsPos, 0);
 		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsCol");
-		gl.glUniform3fv(id, MaxLight, pointLightsCol, 0);
+		gl.glUniform3fv(id, MAX_LIGHTS, pointLightsCol, 0);
 		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsRad");
-		gl.glUniform1fv(id, MaxLight, pointLightsRad, 0);
+		gl.glUniform1fv(id, MAX_LIGHTS, pointLightsRad, 0);
 	}
 
 	/**

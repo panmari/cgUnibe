@@ -7,7 +7,9 @@
 // variants of glUniform*
 uniform mat4 projection;
 uniform mat4 modelview;
+uniform mat4 camera;
 uniform vec4 lightDirection;
+// positions of lights are in world space!
 uniform vec3 pointLightsPos[MAX_LIGHTS];
 uniform vec3 pointLightsCol[MAX_LIGHTS];
 uniform float pointLightsRad[MAX_LIGHTS];
@@ -30,10 +32,12 @@ void main()
 	// so we transform the normal to camera coordinates, and we don't transform
 	// the light direction, i.e., it stays in camera coordinates
 	// ndotl = max(dot(modelview * vec4(normal,0), lightDirection),0);
+	
 	for (int i = 0; i < MAX_LIGHTS; i++) {
-		vec3 L = normalize(pointLightsPos[i].xyz - position.xyz);
-		float nxDir = max(0.0, dot(normal, L));
-		ndotl += pointLightsRad[i]*diffuseReflectionCoefficient*nxDir;
+		vec3 L = (camera * vec4(pointLightsPos[i].xyz, 0) - modelview * position).xyz;
+		float nxDir = max(0.0, dot((modelview * vec4(normal,0)).xyz, normalize(L)));
+		float relativeRadiance =  pointLightsRad[i]/dot(L, L);
+		ndotl += relativeRadiance*diffuseReflectionCoefficient*nxDir;
 	}
 	// Pass texture coordiantes to fragment shader, OpenGL automatically
 	// interpolates them to each pixel  (in a perspectively correct manner) 
