@@ -8,6 +8,7 @@ package jrtr;
 public class Material {
 	
 	private Texture texture;
+	private Shader shader;
 	private float diffuseReflectionCoefficient;
 	
 	public Material(Texture tex) {
@@ -33,6 +34,14 @@ public class Material {
 	
 	public float getDiffuseReflectionCoefficient() {
 		return diffuseReflectionCoefficient;
+	}
+	
+	public void setShader(Shader shader) {
+		this.shader = shader;
+	}
+	
+	public Shader getShader() {
+		return shader;
 	}
 	
 	public String toString() {

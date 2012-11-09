@@ -82,12 +82,14 @@ public class GLShader implements Shader {
 		while ((line=brv.readLine()) != null) {
 		  vsrc[0] += line + "\n";
 		}
-
+		brv.close();
+		
 		BufferedReader brf = new BufferedReader(new FileReader(fragmentFileName));
 		fsrc[0] = "";
 		while ((line=brf.readLine()) != null) {
 		  fsrc[0] += line + "\n";
 		}
+		brf.close();
 		
 		gl.glShaderSource(v, 1, vsrc, (int[])null, 0);
 		gl.glCompileShader(v);

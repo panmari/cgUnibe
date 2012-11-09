@@ -258,7 +258,6 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void cleanMaterial(Material m)
 	{
-		gl.glActiveTexture(0);
 		//TODO: somehow remove texture and so on...
 	}
 

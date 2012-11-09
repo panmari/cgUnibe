@@ -25,6 +25,7 @@ public class simple
 	static SimpleSceneManager sceneManager;
 	static Shape shape;
 	static float angle;
+	static Texture chessBoard = null;
 	
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -32,6 +33,7 @@ public class simple
 	 */ 
 	public final static class SimpleRenderPanel extends GLRenderPanel
 	{
+
 
 		/**
 		 * Initialization call-back. We initialize our renderer here.
@@ -44,9 +46,12 @@ public class simple
 			renderContext.setSceneManager(sceneManager);
 			
 			System.out.println("loading texture");
-			Texture chessBoard = renderContext.makeTexture();
+			chessBoard = renderContext.makeTexture();
 			Texture wood = renderContext.makeTexture();
 			Texture plant = renderContext.makeTexture();
+			
+			Shader diffuse = renderContext.makeShader();
+			
 			try {
 				chessBoard.load("../jrtr/textures/chessboard2.jpg");
 				wood.load("../jrtr/textures/wood.jpg");
@@ -173,6 +178,7 @@ public class simple
 		shape.setTransformation(t);
 		sceneManager.addShape(shape);
 		shape = new Shape(vertexData);
+		//shape.setMaterial(new Material(chessBoard));
 		sceneManager.addShape(shape);
 				
 		sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), 80f, new Point3f(0, 0, 10)));
