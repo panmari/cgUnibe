@@ -70,6 +70,12 @@ public class FlyingCameraInputListener implements KeyListener, MouseMotionListen
 				c.getCenterOfProjection().add(rightStep);
 				c.getLookAtPoint().add(rightStep);
 				break;
+			case KeyEvent.VK_SPACE:
+				dive(-1);
+				break;
+			case KeyEvent.VK_C:
+				dive(1);
+				break;
 			}
 		c.update();
 	}
@@ -128,7 +134,16 @@ public class FlyingCameraInputListener implements KeyListener, MouseMotionListen
 		backStep.scale(amount);
 		c.getCenterOfProjection().add(backStep);
 		c.getLookAtPoint().add(backStep);
-		c.update();
+	}
+	/**
+	 * positive value means downwards, negative upwards
+	 * @param i
+	 */
+	private void dive(int amount) {
+		Vector3f upStep = new Vector3f(c.getCameraYAxis());
+		upStep.scale(-amount);
+		c.getCenterOfProjection().add(upStep);
+		c.getLookAtPoint().add(upStep);
 	}
 
 }

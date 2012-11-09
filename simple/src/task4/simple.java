@@ -42,7 +42,7 @@ public class simple
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
-		    timer.scheduleAtFixedRate(new AnimationTask(), 0, 100);
+		    timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
 		}
 	}
 
@@ -141,9 +141,22 @@ public class simple
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager(new Camera(new Point3f(0,0, 10), new Point3f(0,0,0), new Vector3f(0,1,0)), new Frustum());
 		shape = new Shape(vertexData);
+		Matrix4f t = new Matrix4f();
+		t.setIdentity();
+		t.setTranslation(new Vector3f(-3, 0, 2));
+		shape.setTransformation(t);
 		sceneManager.addShape(shape);
-		sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), 5.7f, new Point3f(0, 0, 4)));
-		//sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), .5f, new Point3f(-3, 0, 0)));
+		shape = new Shape(vertexData);
+		t = new Matrix4f();
+		t.setIdentity();
+		t.setTranslation(new Vector3f(3, 0, 0));
+		shape.setTransformation(t);
+		sceneManager.addShape(shape);
+		shape = new Shape(vertexData);
+		sceneManager.addShape(shape);
+		
+		sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), 80f, new Point3f(0, 0, 10)));
+		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), 80f, new Point3f(0, 10, 0)));
 
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.

@@ -108,7 +108,9 @@ public class GLRenderContext implements RenderContext {
 	private void beginFrame()
 	{
 		setLights();
-		
+		Matrix4f camera = sceneManager.getCamera().getCameraMatrix();
+		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "camera"), 1, false, matrix4fToFloat16(camera), 0);
+
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT);
         gl.glClear(GL3.GL_DEPTH_BUFFER_BIT);
 	}
@@ -154,12 +156,11 @@ public class GLRenderContext implements RenderContext {
 
 		// Compute the modelview matrix by multiplying the camera matrix and the 
 		// transformation matrix of the object
-		Matrix4f camera = sceneManager.getCamera().getCameraMatrix();
-		Matrix4f modelview = new Matrix4f(camera);
+		
+		Matrix4f modelview = new Matrix4f(sceneManager.getCamera().getCameraMatrix());
 		modelview.mul(renderItem.getT());
 		
 		// Set modelview and projection matrices in shader
-		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "camera"), 1, false, matrix4fToFloat16(camera), 0);
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "modelview"), 1, false, matrix4fToFloat16(modelview), 0);
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "projection"), 1, false, matrix4fToFloat16(sceneManager.getFrustum().getProjectionMatrix()), 0);
 	     		
@@ -261,6 +262,7 @@ public class GLRenderContext implements RenderContext {
 		gl.glUniform3fv(id, MaxLight, pointLightsCol, 0);
 		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsRad");
 		gl.glUniform1fv(id, MaxLight, pointLightsRad, 0);
+
 	}
 
 	/**
