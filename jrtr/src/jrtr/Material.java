@@ -8,15 +8,14 @@ import java.io.IOException;
  */
 public class Material {
 	
-	public enum MaterialType { Paper }
-	private SWTexture texture;
+	private Texture texture;
 	private float diffuseReflectionCoefficient;
 	
 	public Material(SWTexture texture) {
 		this(texture, 1);
 	}
 	
-	public Material(SWTexture texture, float diffuseReflectionCoefficient) {
+	public Material(Texture texture, float diffuseReflectionCoefficient) {
 		this.texture = texture;
 		this.diffuseReflectionCoefficient = diffuseReflectionCoefficient;
 	}
@@ -25,8 +24,12 @@ public class Material {
 		this(null);
 	}
 
-	public SWTexture getTexture() {
+	public Texture getTexture() {
 		return texture;
+	}
+	
+	public void setTexture(Texture tex) {
+		this.texture = tex;
 	}
 	
 	public float getDiffuseReflectionCoefficient() {

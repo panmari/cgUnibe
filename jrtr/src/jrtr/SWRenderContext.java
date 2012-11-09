@@ -233,7 +233,7 @@ public class SWRenderContext implements RenderContext {
 	}
 
 	private int interpolateColorFromTexture(Vector3f edgeCoefficients,
-			Point2f[] texCoords, SWTexture texture) {
+			Point2f[] texCoords, Texture texture) {
 		float[] resultingTexel = new float[2];
 		float[] coeffs = new float[3];
 		edgeCoefficients.get(coeffs);
@@ -245,8 +245,8 @@ public class SWRenderContext implements RenderContext {
 		float x = resultingTexel[0]/divisor;
 		float y = resultingTexel[1]/divisor;
 		if (bilinear)
-			return texture.getBilinearInterpolatedColor(x,y);
-		else return texture.getNearestNeighbourColor(x, y);
+			return ((SWTexture) texture).getBilinearInterpolatedColor(x,y);
+		else return ((SWTexture) texture).getNearestNeighbourColor(x, y);
 	}
 
 	/**

@@ -39,31 +39,7 @@ public class GLRenderContext implements RenderContext {
 	    	System.out.print(e.getMessage());
 	    }
         defaultShader.use();	  
-        activeShader = defaultShader;
-
-        // Pass light direction to shader
-		int id = gl.glGetUniformLocation(activeShader.programId(), "lightDirection");
-		gl.glUniform4f(id, 0, 0, 1, 0);		// Set light direction
-		
-		//pass point lights:
-		
-		GLTexture tex;
-		try {
-			// Load texture from file
-			tex = new GLTexture(gl);
-			tex.load("../jrtr/textures/plant.jpg");
-			// OpenGL calls to activate the texture 
-			gl.glActiveTexture(0);	// Work with texture unit 0
-			gl.glEnable(GL3.GL_TEXTURE_2D);
-			gl.glBindTexture(GL3.GL_TEXTURE_2D, tex.getId());
-			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
-			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
-			id = gl.glGetUniformLocation(activeShader.programId(), "myTexture");
-			gl.glUniform1i(id, 0);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
-		} catch(Exception e) {
-			System.out.print("Could not load texture\n");
-		}
-		
+        activeShader = defaultShader;	
 	}
 	private void fillTuple3fIntoArray(int i, Tuple3f l, float[] array) {
 		array[3*i] = l.x;
@@ -234,6 +210,16 @@ public class GLRenderContext implements RenderContext {
 	{
 		int id = gl.glGetUniformLocation(activeShader.programId(), "diffuseReflectionCoefficient");
 		gl.glUniform1f(id, m.getDiffuseReflectionCoefficient());
+		GLTexture tex = (GLTexture) m.getTexture();
+		if (tex != null) {
+			gl.glActiveTexture(0);	// Work with texture unit 0
+			gl.glEnable(GL3.GL_TEXTURE_2D);
+			gl.glBindTexture(GL3.GL_TEXTURE_2D, tex.getId());
+			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
+			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
+			id = gl.glGetUniformLocation(activeShader.programId(), "myTexture");
+			gl.glUniform1i(id, 0);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
+		}
 	}
 	
 	/**
@@ -272,6 +258,7 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void cleanMaterial(Material m)
 	{
+		//TODO: somehow remove texture and so on...
 	}
 
 	public Shader makeShader()
