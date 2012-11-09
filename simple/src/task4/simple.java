@@ -5,6 +5,9 @@ import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import javax.vecmath.*;
+
+import task2c.FlyingCameraInputListener;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -139,8 +142,8 @@ public class simple
 		sceneManager = new SimpleSceneManager();
 		shape = new Shape(vertexData);
 		sceneManager.addShape(shape);
-		sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), .7f, new Point3f(0, 3, 0)));
-		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), .5f, new Point3f(-2, 0, 0)));
+		sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), 5.7f, new Point3f(0, 0, 4)));
+		//sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), .5f, new Point3f(-3, 0, 0)));
 
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
@@ -153,8 +156,12 @@ public class simple
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-	    jframe.addMouseListener(new SimpleMouseListener());
-		   	    	    
+		FlyingCameraInputListener l = new FlyingCameraInputListener(sceneManager.getCamera());
+	    renderPanel.getCanvas().addMouseListener(l);
+	    renderPanel.getCanvas().addMouseMotionListener(l);
+	    renderPanel.getCanvas().addMouseWheelListener(l);
+	    renderPanel.getCanvas().addKeyListener(l);
+	    
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
 	}
