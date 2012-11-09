@@ -1,9 +1,12 @@
 package task4;
 
 import jrtr.*;
+
 import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+
 import javax.vecmath.*;
 
 import task2c.FlyingCameraInputListener;
@@ -22,13 +25,14 @@ public class simple
 	static SimpleSceneManager sceneManager;
 	static Shape shape;
 	static float angle;
-
+	
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
 	 * provide a call-back function for initialization. 
 	 */ 
 	public final static class SimpleRenderPanel extends GLRenderPanel
 	{
+
 		/**
 		 * Initialization call-back. We initialize our renderer here.
 		 * 
@@ -38,7 +42,22 @@ public class simple
 		{
 			renderContext = r;
 			renderContext.setSceneManager(sceneManager);
-	
+			
+			System.out.println("loading texture");
+			Texture chessBoard = renderContext.makeTexture();
+			Texture wood = renderContext.makeTexture();
+			Texture plant = renderContext.makeTexture();
+			try {
+				chessBoard.load("../jrtr/textures/chessboard2.jpg");
+				wood.load("../jrtr/textures/wood.jpg");
+				plant.load("../jrtr/textures/plant.jpg");
+			} catch (IOException e) {
+				System.out.println("error loading texture");
+			}
+			SceneManagerIterator iter = sceneManager.iterator();
+			iter.next().getShape().setMaterial(new Material(wood));
+			iter.next().getShape().setMaterial(new Material(chessBoard, 5));
+
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
@@ -85,8 +104,9 @@ public class simple
 	/**
 	 * The main function opens a 3D rendering window, constructs a simple 3D
 	 * scene, and starts a timer task to generate an animation.
+	 * @throws IOException 
 	 */
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{		
 		// Make a simple geometric object: a cube
 		
@@ -140,7 +160,7 @@ public class simple
 				
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager(new Camera(new Point3f(0,0, 10), new Point3f(0,0,0), new Vector3f(0,1,0)), new Frustum());
-		shape = new Shape(vertexData);
+		shape = new Shape(ObjReader.read("teapot_tex.obj", 1));
 		Matrix4f t = new Matrix4f();
 		t.setIdentity();
 		t.setTranslation(new Vector3f(-3, 0, 2));
@@ -154,7 +174,7 @@ public class simple
 		sceneManager.addShape(shape);
 		shape = new Shape(vertexData);
 		sceneManager.addShape(shape);
-		
+				
 		sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), 80f, new Point3f(0, 0, 10)));
 		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), 80f, new Point3f(0, 10, 0)));
 

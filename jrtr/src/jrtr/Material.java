@@ -1,6 +1,5 @@
 package jrtr;
 
-import java.io.IOException;
 
 /**
  * Stores the properties of a material. You will implement this 
@@ -11,8 +10,8 @@ public class Material {
 	private Texture texture;
 	private float diffuseReflectionCoefficient;
 	
-	public Material(SWTexture texture) {
-		this(texture, 1);
+	public Material(Texture tex) {
+		this(tex, 1);
 	}
 	
 	public Material(Texture texture, float diffuseReflectionCoefficient) {
@@ -34,5 +33,9 @@ public class Material {
 	
 	public float getDiffuseReflectionCoefficient() {
 		return diffuseReflectionCoefficient;
+	}
+	
+	public String toString() {
+		return "" + texture + ": " + diffuseReflectionCoefficient;
 	}
 }

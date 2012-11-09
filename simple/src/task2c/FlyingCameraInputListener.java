@@ -123,6 +123,7 @@ public class FlyingCameraInputListener implements KeyListener, MouseMotionListen
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		step(e.getWheelRotation()*e.getScrollAmount());
+		c.update();
 	}
 
 	/**
