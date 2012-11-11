@@ -84,10 +84,6 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void beginFrame()
 	{
-		setLights();
-		Matrix4f camera = sceneManager.getCamera().getCameraMatrix();
-		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "camera"), 1, false, matrix4fToFloat16(camera), 0);
-
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT);
         gl.glClear(GL3.GL_DEPTH_BUFFER_BIT);
 	}
@@ -215,6 +211,7 @@ public class GLRenderContext implements RenderContext {
 		else activeShader = defaultShader;
 		
 		activeShader.use();
+		setLights();
 		
 		int id = gl.glGetUniformLocation(activeShader.programId(), "diffuseReflectionCoefficient");
 		gl.glUniform1f(id, m.getDiffuseReflectionCoefficient());
@@ -250,6 +247,10 @@ public class GLRenderContext implements RenderContext {
 			pointLightsRad[i] = l.radiance;
 		}
 		
+		//In case of camera update, this has to be informed
+		Matrix4f camera = sceneManager.getCamera().getCameraMatrix();
+		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "camera"), 1, false, matrix4fToFloat16(camera), 0);
+
 		int id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsPos");
 		gl.glUniform3fv(id, MaxLight, pointLightsPos, 0);
 		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsCol");

@@ -56,7 +56,7 @@ public class simple
 				chessBoard.load("../jrtr/textures/chessboard2.jpg");
 				wood.load("../jrtr/textures/wood.jpg");
 				plant.load("../jrtr/textures/plant.jpg");
-				diffuse.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
+				diffuse.load("../jrtr/shaders/diffuse.vert", "../jrtr/shaders/diffuse.frag");
 			} catch (IOException e) {
 				System.out.println("error loading texture");
 			} catch (Exception e) {
