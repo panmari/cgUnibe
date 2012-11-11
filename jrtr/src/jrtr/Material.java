@@ -11,17 +11,21 @@ public class Material {
 	private Shader shader;
 	private float diffuseReflectionCoefficient;
 	
-	public Material(Texture tex) {
-		this(tex, 1);
-	}
-	
-	public Material(Texture texture, float diffuseReflectionCoefficient) {
-		this.texture = texture;
-		this.diffuseReflectionCoefficient = diffuseReflectionCoefficient;
-	}
-	
 	public Material() {
 		this(null);
+	}
+
+	public Material(Texture tex) {
+		this(tex, null);
+	}
+	public Material(Texture tex, Shader shader) {
+		this(tex, shader, 1);
+	}
+	
+	public Material(Texture texture, Shader shader, float diffuseReflectionCoefficient) {
+		this.texture = texture;
+		this.shader = shader;
+		this.diffuseReflectionCoefficient = diffuseReflectionCoefficient;
 	}
 
 	public Texture getTexture() {

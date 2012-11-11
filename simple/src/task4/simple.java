@@ -56,12 +56,15 @@ public class simple
 				chessBoard.load("../jrtr/textures/chessboard2.jpg");
 				wood.load("../jrtr/textures/wood.jpg");
 				plant.load("../jrtr/textures/plant.jpg");
+				diffuse.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
 			} catch (IOException e) {
 				System.out.println("error loading texture");
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			SceneManagerIterator iter = sceneManager.iterator();
-			iter.next().getShape().setMaterial(new Material(wood));
-			iter.next().getShape().setMaterial(new Material(chessBoard, 5));
+			iter.next().getShape().setMaterial(new Material(wood, diffuse));
+			iter.next().getShape().setMaterial(new Material(chessBoard, diffuse, 5));
 
 			// Register a timer task
 		    Timer timer = new Timer();

@@ -16,7 +16,7 @@ public class GLRenderContext implements RenderContext {
 
 	private SceneManagerInterface sceneManager;
 	private GL3 gl;
-	private GLShader activeShader;
+	private GLShader activeShader, defaultShader;
 	
 	/**
 	 * This constructor is called by {@link GLRenderPanel}.
@@ -31,7 +31,7 @@ public class GLRenderContext implements RenderContext {
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         
         // Load and use default shader
-        GLShader defaultShader = new GLShader(gl);
+        defaultShader = new GLShader(gl);
         try {
         	defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
         } catch(Exception e) {
@@ -41,6 +41,7 @@ public class GLRenderContext implements RenderContext {
         defaultShader.use();	  
         activeShader = defaultShader;	
 	}
+	
 	private void fillTuple3fIntoArray(int i, Tuple3f l, float[] array) {
 		array[3*i] = l.x;
 		array[3*i + 1] = l.y;
@@ -208,6 +209,13 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void setMaterial(Material m)
 	{
+		GLShader shader = (GLShader) m.getShader();
+		if (shader != null) 
+			activeShader = shader;
+		else activeShader = defaultShader;
+		
+		activeShader.use();
+		
 		int id = gl.glGetUniformLocation(activeShader.programId(), "diffuseReflectionCoefficient");
 		gl.glUniform1f(id, m.getDiffuseReflectionCoefficient());
 		GLTexture tex = (GLTexture) m.getTexture();
@@ -258,6 +266,8 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void cleanMaterial(Material m)
 	{
+		activeShader = defaultShader;
+		activeShader.use();
 		//TODO: somehow remove texture and so on...
 	}
 
