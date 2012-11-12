@@ -26,6 +26,8 @@ public class simple
 	static Shape shape;
 	static float angle;
 	static Texture chessBoard = null;
+	private static Shape teapot;
+	private static Shape cubeOne;
 	
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -47,14 +49,14 @@ public class simple
 			
 			System.out.println("loading texture");
 			chessBoard = renderContext.makeTexture();
-			Texture wood = renderContext.makeTexture();
+			Texture woodTex = renderContext.makeTexture();
 			Texture plant = renderContext.makeTexture();
 			
 			Shader diffuse = renderContext.makeShader();
 			
 			try {
 				chessBoard.load("../jrtr/textures/chessboard2.jpg");
-				wood.load("../jrtr/textures/wood.jpg");
+				woodTex.load("../jrtr/textures/wood.jpg");
 				plant.load("../jrtr/textures/plant.jpg");
 				diffuse.load("../jrtr/shaders/diffuse.vert", "../jrtr/shaders/diffuse.frag");
 			} catch (IOException e) {
@@ -62,10 +64,18 @@ public class simple
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			SceneManagerIterator iter = sceneManager.iterator();
-			iter.next().getShape().setMaterial(new Material(wood, diffuse));
-			iter.next().getShape().setMaterial(new Material(chessBoard, diffuse, 5));
-
+			Material wood = new Material(woodTex, diffuse);
+			wood.setPhongExponent(1);
+			wood.setSpecularReflectionCoefficient(0);
+			wood.setDiffuseReflectionCoefficient(1);
+			cubeOne.setMaterial(wood);
+			
+			Material glossy = new Material(chessBoard, diffuse, 0);
+			glossy.setDiffuseReflectionCoefficient(0);
+			glossy.setSpecularReflectionCoefficient(1);
+			glossy.setPhongExponent(5);
+			teapot.setMaterial(glossy);
+			
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
@@ -168,24 +178,25 @@ public class simple
 				
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager(new Camera(new Point3f(0,0, 10), new Point3f(0,0,0), new Vector3f(0,1,0)), new Frustum());
-		shape = new Shape(ObjReader.read("teapot_tex.obj", 1));
+		teapot = new Shape(ObjReader.read("teapot_tex.obj", 1));
 		Matrix4f t = new Matrix4f();
 		t.setIdentity();
 		t.setTranslation(new Vector3f(-3, 0, 2));
-		shape.setTransformation(t);
-		sceneManager.addShape(shape);
-		shape = new Shape(vertexData);
+		teapot.setTransformation(t);
+		sceneManager.addShape(teapot);
+		
+		cubeOne = new Shape(vertexData);
 		t = new Matrix4f();
 		t.setIdentity();
 		t.setTranslation(new Vector3f(3, 0, 0));
-		shape.setTransformation(t);
-		sceneManager.addShape(shape);
+		cubeOne.setTransformation(t);
+		sceneManager.addShape(cubeOne);
 		shape = new Shape(vertexData);
 		//shape.setMaterial(new Material(chessBoard));
 		sceneManager.addShape(shape);
 				
-		sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), 80f, new Point3f(0, 0, 10)));
-		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), 80f, new Point3f(0, 10, 0)));
+		//sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), 10f, new Point3f(-5, 0, 0)));
+		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), 10f, new Point3f(0, 5, 0)));
 
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.

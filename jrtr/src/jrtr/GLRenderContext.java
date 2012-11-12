@@ -215,6 +215,10 @@ public class GLRenderContext implements RenderContext {
 		
 		int id = gl.glGetUniformLocation(activeShader.programId(), "diffuseReflectionCoefficient");
 		gl.glUniform1f(id, m.getDiffuseReflectionCoefficient());
+		id = gl.glGetUniformLocation(activeShader.programId(), "specularReflectionCoefficient");
+		gl.glUniform1f(id, m.getSpecularReflectionCoefficient());
+		id = gl.glGetUniformLocation(activeShader.programId(), "phongExponent");
+		gl.glUniform1f(id, m.getPhongExponent());
 		GLTexture tex = (GLTexture) m.getTexture();
 		if (tex != null) {
 			gl.glActiveTexture(0);	// Work with texture unit 0
@@ -250,7 +254,7 @@ public class GLRenderContext implements RenderContext {
 		//In case of camera update, this has to be informed
 		Matrix4f camera = sceneManager.getCamera().getCameraMatrix();
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "camera"), 1, false, matrix4fToFloat16(camera), 0);
-
+		
 		int id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsPos");
 		gl.glUniform3fv(id, MaxLight, pointLightsPos, 0);
 		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsCol");

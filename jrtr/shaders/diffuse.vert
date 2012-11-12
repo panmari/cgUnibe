@@ -16,6 +16,7 @@ uniform float pointLightsRad[MAX_LIGHTS];
 uniform float diffuseReflectionCoefficient;
 uniform float specularReflectionCoefficient;
 uniform float phongCoefficient;
+
 // Input vertex attributes; passed in from host program to shader
 // via vertex buffer objects
 in vec3 normal;
@@ -37,13 +38,20 @@ void main()
 	
 	for (int i = 0; i < MAX_LIGHTS; i++) {
 		vec3 L = (camera * vec4(pointLightsPos[i].xyz, 1) - modelview * position).xyz;
-		float nxDir = max(0.0, dot((modelview * vec4(normal,0)).xyz, normalize(L)));
-		float relativeRadiance =  pointLightsRad[i]/dot(L, L);
-		ndotl += relativeRadiance*diffuseReflectionCoefficient*nxDir;
+		vec3 normalCameraSpace = normalize((modelview * vec4(normal,0)).xyz);
+		float nxDir = max(0.0, dot(normalCameraSpace, normalize(L)));
+		float relativeRadiance = pointLightsRad[i]/dot(L, L);
+		ndotl += relativeRadiance * diffuseReflectionCoefficient * nxDir;
+
+		vec3 R = 2 * dot(normalize(L), normalCameraSpace) * normalCameraSpace - normalize(L);
+		//we're in camera space, cop is always (0,0,0) => just take the negative
+		vec3 e = - normalize((modelview * position).xyz);
+		ndotl += relativeRadiance * specularReflectionCoefficient * pow(dot(R,e), phongCoefficient);
 	}
 	
 	//ambient light:
-	ndotl += max(dot(modelview * vec4(normal,0), lightDirection),0);
+	// according to script: diffuse = ambient coeff
+	ndotl += diffuseReflectionCoefficient*max(dot(modelview * vec4(normal,0), lightDirection),0);
 	
 	// Pass texture coordiantes to fragment shader, OpenGL automatically
 	// interpolates them to each pixel  (in a perspectively correct manner) 

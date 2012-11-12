@@ -68,6 +68,10 @@ public class Material {
 	}
 	
 	public String toString() {
-		return "" + texture + ": " + diffuseReflectionCoefficient;
+		return "" + texture + ": " + diffuseReflectionCoefficient + " " + specularReclectionCoefficient;
+	}
+
+	public void setDiffuseReflectionCoefficient(float f) {
+		this.diffuseReflectionCoefficient = f;
 	}
 }
