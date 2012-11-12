@@ -9,7 +9,8 @@ public class Material {
 	
 	private Texture texture;
 	private Shader shader;
-	private float diffuseReflectionCoefficient;
+	private float diffuseReflectionCoefficient, phongExponent;
+	private float specularReclectionCoefficient;
 	
 	public Material() {
 		this(null);
@@ -26,6 +27,8 @@ public class Material {
 		this.texture = texture;
 		this.shader = shader;
 		this.diffuseReflectionCoefficient = diffuseReflectionCoefficient;
+		this.phongExponent = 1;
+		this.specularReclectionCoefficient = 1;
 	}
 
 	public Texture getTexture() {
@@ -46,6 +49,22 @@ public class Material {
 	
 	public Shader getShader() {
 		return shader;
+	}
+	
+	public void setPhongExponent(float phongExponent) {
+		this.phongExponent = phongExponent;
+	}
+	
+	public float getPhongExponent() {
+		return phongExponent;
+	}
+	
+	public void setSpecularReflectionCoefficient(float spc) {
+		this.specularReclectionCoefficient = spc;
+	}
+	
+	public float getSpecularReflectionCoefficient(){
+		return this.specularReclectionCoefficient;
 	}
 	
 	public String toString() {

@@ -257,6 +257,10 @@ public class GLRenderContext implements RenderContext {
 		gl.glUniform3fv(id, MaxLight, pointLightsCol, 0);
 		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsRad");
 		gl.glUniform1fv(id, MaxLight, pointLightsRad, 0);
+		
+		//set directional light:
+		id = gl.glGetUniformLocation(activeShader.programId(), "lightDirection");
+		gl.glUniform4f(id, 0, 0, 1, 0);		// Set light direction
 
 	}
 
