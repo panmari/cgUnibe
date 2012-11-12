@@ -25,6 +25,7 @@ in vec2 texcoord;
 
 // Output variables for fragment shader
 out float specularLight[MAX_LIGHTS];
+out float diffuseLight[MAX_LIGHTS];
 out float ndotl;
 out vec2 frag_texcoord;
 
@@ -41,17 +42,18 @@ void main()
 		vec3 normalCameraSpace = normalize((modelview * vec4(normal,0)).xyz);
 		float nxDir = max(0.0, dot(normalCameraSpace, normalize(L)));
 		float relativeRadiance = pointLightsRad[i]/dot(L, L);
-		ndotl += relativeRadiance * diffuseReflectionCoefficient * nxDir;
+		diffuseLight[i] += relativeRadiance * diffuseReflectionCoefficient * nxDir;
 
 		vec3 R = 2 * dot(normalize(L), normalCameraSpace) * normalCameraSpace - normalize(L);
 		//we're in camera space, cop is always (0,0,0) => just take the negative
 		vec3 e = - normalize((modelview * position).xyz);
-		specularLight[i] = relativeRadiance * specularReflectionCoefficient * pow(dot(R,e), phongCoefficient);
+		float specular = pow(max(dot(R,e), 0.0), phongCoefficient);
+		specularLight[i] = relativeRadiance * specularReflectionCoefficient * specular;
 	}
 	
 	//ambient light:
 	// according to script: diffuse = ambient coeff
-	ndotl += diffuseReflectionCoefficient*max(dot(modelview * vec4(normal,0), lightDirection),0);
+	ndotl = diffuseReflectionCoefficient*max(dot(modelview * vec4(normal,0), lightDirection),0);
 	
 	// Pass texture coordiantes to fragment shader, OpenGL automatically
 	// interpolates them to each pixel  (in a perspectively correct manner) 

@@ -10,6 +10,7 @@ uniform vec3 pointLightsCol[MAX_LIGHTS];
 // Variables passed in from the vertex shader
 in float ndotl;
 in float specularLight[MAX_LIGHTS];
+in float diffuseLight[MAX_LIGHTS];
 in vec2 frag_texcoord;
 
 // Output variable, will be written to framebuffer automatically
@@ -18,8 +19,12 @@ out vec4 frag_shaded;
 void main()
 {		
 	// The built-in GLSL function "texture" performs the texture lookup
-	frag_shaded = ndotl * texture(myTexture, frag_texcoord);
+	vec4 color = ndotl * texture(myTexture, frag_texcoord);
+
 	for (int i = 0; i < MAX_LIGHTS; i++) {
-		frag_shaded += specularLight[i] * vec4(pointLightsCol[i], 1);
+		color += diffuseLight[i] * texture(myTexture, frag_texcoord);
+		color += specularLight[i] * vec4(pointLightsCol[i], 1);
 	}
+	
+	frag_shaded = color;
 }
