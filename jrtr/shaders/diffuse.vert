@@ -1,4 +1,5 @@
 #version 150
+#pragma optionNV unroll all
 #define MAX_LIGHTS 8
 // GLSL version 1.50 
 // Vertex shader for diffuse shading in combination with a texture map
@@ -11,7 +12,6 @@ uniform mat4 camera;
 uniform vec4 lightDirection;
 // positions of lights are in world space!
 uniform vec3 pointLightsPos[MAX_LIGHTS];
-uniform vec3 pointLightsCol[MAX_LIGHTS];
 uniform float pointLightsRad[MAX_LIGHTS];
 uniform float diffuseReflectionCoefficient;
 uniform float specularReflectionCoefficient;
@@ -24,6 +24,7 @@ in vec4 position;
 in vec2 texcoord;
 
 // Output variables for fragment shader
+out float specularLight[MAX_LIGHTS];
 out float ndotl;
 out vec2 frag_texcoord;
 
@@ -34,7 +35,6 @@ void main()
 	// Note: here we assume "lightDirection" is specified in camera coordinates,
 	// so we transform the normal to camera coordinates, and we don't transform
 	// the light direction, i.e., it stays in camera coordinates
-	// ndotl 
 	
 	for (int i = 0; i < MAX_LIGHTS; i++) {
 		vec3 L = (camera * vec4(pointLightsPos[i].xyz, 1) - modelview * position).xyz;
@@ -46,7 +46,7 @@ void main()
 		vec3 R = 2 * dot(normalize(L), normalCameraSpace) * normalCameraSpace - normalize(L);
 		//we're in camera space, cop is always (0,0,0) => just take the negative
 		vec3 e = - normalize((modelview * position).xyz);
-		ndotl += relativeRadiance * specularReflectionCoefficient * pow(dot(R,e), phongCoefficient);
+		specularLight[i] = relativeRadiance * specularReflectionCoefficient * pow(dot(R,e), phongCoefficient);
 	}
 	
 	//ambient light:
