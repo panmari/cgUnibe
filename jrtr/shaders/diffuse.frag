@@ -19,12 +19,13 @@ out vec4 frag_shaded;
 void main()
 {		
 	// The built-in GLSL function "texture" performs the texture lookup
-	vec4 color = ndotl * texture(myTexture, frag_texcoord);
-
+	vec4 ambColor = ndotl * texture(myTexture, frag_texcoord);
+	vec4 specColor = vec4(0,0,0,0);
+	vec4 diffColor = vec4(0,0,0,0);
 	for (int i = 0; i < MAX_LIGHTS; i++) {
-		color += diffuseLight[i] * texture(myTexture, frag_texcoord);
-		color += specularLight[i] * vec4(pointLightsCol[i], 1);
+		diffColor += diffuseLight[i] * texture(myTexture, frag_texcoord);
+		specColor += specularLight[i] * vec4(pointLightsCol[i], 0);
 	}
-	
-	frag_shaded = color;
+	vec4 finalColor = specColor + ambColor + diffColor;
+	frag_shaded = finalColor;
 }
