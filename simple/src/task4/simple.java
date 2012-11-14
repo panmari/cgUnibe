@@ -196,7 +196,7 @@ public class simple
 		sceneManager.addShape(shape);
 				
 		//sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), 10f, new Point3f(-5, 0, 0)));
-		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), 10f, new Point3f(0, 5, 0)));
+		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), 10f, new Point3f(0, 4, 0)));
 
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
