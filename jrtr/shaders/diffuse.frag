@@ -5,11 +5,10 @@
 
 // Uniform variables passed in from host program
 uniform sampler2D myTexture;
-uniform vec3 pointLightsCol[MAX_LIGHTS];
 
 // Variables passed in from the vertex shader
 in float ndotl;
-in float specularLight[MAX_LIGHTS];
+in vec3 specularLight[MAX_LIGHTS];
 in float diffuseLight[MAX_LIGHTS];
 in vec2 frag_texcoord;
 
@@ -24,7 +23,7 @@ void main()
 	vec4 diffColor = vec4(0,0,0,0);
 	for (int i = 0; i < MAX_LIGHTS; i++) {
 		diffColor += diffuseLight[i] * texture(myTexture, frag_texcoord);
-		specColor += specularLight[i] * vec4(pointLightsCol[i], 0);
+		specColor += vec4(specularLight[i],0);
 	}
 	vec4 finalColor = specColor + ambColor + diffColor;
 	frag_shaded = finalColor;

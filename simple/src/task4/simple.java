@@ -65,15 +65,15 @@ public class simple
 				e.printStackTrace();
 			}
 			Material wood = new Material(woodTex, diffuse);
-			wood.setPhongExponent(1);
+			wood.setPhongExponent(40);
 			wood.setSpecularReflectionCoefficient(0);
 			wood.setDiffuseReflectionCoefficient(1);
 			cubeOne.setMaterial(wood);
 			
 			Material glossy = new Material(chessBoard, diffuse, 0);
-			glossy.setDiffuseReflectionCoefficient(0);
+			glossy.setDiffuseReflectionCoefficient(0.5f);
 			glossy.setSpecularReflectionCoefficient(1);
-			glossy.setPhongExponent(5);
+			glossy.setPhongExponent(120);
 			teapot.setMaterial(glossy);
 			
 			// Register a timer task

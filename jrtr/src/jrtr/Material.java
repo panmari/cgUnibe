@@ -27,8 +27,8 @@ public class Material {
 		this.texture = texture;
 		this.shader = shader;
 		this.diffuseReflectionCoefficient = diffuseReflectionCoefficient;
-		this.phongExponent = 1;
-		this.specularReflectionCoefficient = 1;
+		this.phongExponent = 20;
+		this.specularReflectionCoefficient = 0.2f;
 	}
 
 	public Texture getTexture() {

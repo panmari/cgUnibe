@@ -13,6 +13,8 @@ uniform vec4 lightDirection;
 // positions of lights are in world space!
 uniform vec3 pointLightsPos[MAX_LIGHTS];
 uniform float pointLightsRad[MAX_LIGHTS];
+uniform vec3 pointLightsCol[MAX_LIGHTS];
+
 uniform float diffuseReflectionCoefficient;
 uniform float specularReflectionCoefficient;
 uniform float phongCoefficient;
@@ -24,7 +26,7 @@ in vec4 position;
 in vec2 texcoord;
 
 // Output variables for fragment shader
-out float specularLight[MAX_LIGHTS];
+out vec3 specularLight[MAX_LIGHTS];
 out float diffuseLight[MAX_LIGHTS];
 out float ndotl;
 out vec2 frag_texcoord;
@@ -42,13 +44,13 @@ void main()
 		vec3 L = (camera * vec4(pointLightsPos[i].xyz, 1) - modelview * position).xyz;
 		float nxDir = max(0.0, dot(normalCameraSpace, normalize(L)));
 		float relativeRadiance = pointLightsRad[i]/dot(L, L);
-		diffuseLight[i] += relativeRadiance * diffuseReflectionCoefficient * nxDir;
+		diffuseLight[i] = relativeRadiance * diffuseReflectionCoefficient * nxDir;
 
 		vec3 R = 2 * dot(normalize(L), normalCameraSpace) * normalCameraSpace - normalize(L);
 		//we're in camera space, cop is always (0,0,0) => just take the negative
 		vec3 e = - normalize((modelview * position).xyz);
 		float specular = pow(max(dot(R,e), 0), phongCoefficient);
-		specularLight[i] = relativeRadiance * specularReflectionCoefficient * specular;
+		specularLight[i] = relativeRadiance * specularReflectionCoefficient * max(specular, 0) * pointLightsCol[i];
 	}
 	
 	//ambient light:
