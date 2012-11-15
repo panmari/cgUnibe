@@ -8,6 +8,8 @@ package jrtr;
 public class Material {
 	
 	private Texture texture;
+	private Texture glossMap;
+
 	private Shader shader;
 	private float diffuseReflectionCoefficient, phongExponent;
 	private float specularReflectionCoefficient;
@@ -29,6 +31,7 @@ public class Material {
 		this.diffuseReflectionCoefficient = diffuseReflectionCoefficient;
 		this.phongExponent = 20;
 		this.specularReflectionCoefficient = 0.2f;
+		this.glossMap = null;
 	}
 
 	public Texture getTexture() {
@@ -73,5 +76,13 @@ public class Material {
 
 	public void setDiffuseReflectionCoefficient(float f) {
 		this.diffuseReflectionCoefficient = f;
+	}
+	
+	public Texture getGlossMap() {
+		return glossMap;
+	}
+
+	public void setGlossMap(Texture glossMap) {
+		this.glossMap = glossMap;
 	}
 }

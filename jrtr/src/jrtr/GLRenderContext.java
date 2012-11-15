@@ -229,6 +229,17 @@ public class GLRenderContext implements RenderContext {
 			id = gl.glGetUniformLocation(activeShader.programId(), "myTexture");
 			gl.glUniform1i(id, 0);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
 		}
+		
+		GLTexture glossMap = (GLTexture) m.getGlossMap();
+		if (glossMap != null) {
+			gl.glActiveTexture(1);	// Work with texture unit 0
+			gl.glEnable(GL3.GL_TEXTURE_2D);
+			gl.glBindTexture(GL3.GL_TEXTURE_2D, glossMap.getId());
+			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
+			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
+			id = gl.glGetUniformLocation(activeShader.programId(), "glossMap");
+			gl.glUniform1i(id, 1);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
+		}
 	}
 	
 	/**

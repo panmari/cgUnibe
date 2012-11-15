@@ -195,7 +195,7 @@ public class simple
 		//shape.setMaterial(new Material(chessBoard));
 		sceneManager.addShape(shape);
 				
-		//sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), 10f, new Point3f(-5, 0, 0)));
+		sceneManager.addPointLight(new PointLight(new Color3f(1,0,0), 2f, new Point3f(-5, 0, 5)));
 		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), 10f, new Point3f(0, 4, 0)));
 
 		// Make a render panel. The init function of the renderPanel

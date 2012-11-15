@@ -5,6 +5,7 @@
 
 // Uniform variables passed in from host program
 uniform sampler2D myTexture;
+uniform sampler2D glossMap;
 
 // Variables passed in from the vertex shader
 in float ndotl;
