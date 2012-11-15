@@ -7,6 +7,9 @@
 uniform sampler2D myTexture;
 uniform sampler2D glossMap;
 uniform vec3 pointLightsCol[MAX_LIGHTS];
+uniform float pointLightsRad[MAX_LIGHTS];
+
+uniform float diffuseReflectionCoefficient;
 uniform float specularReflectionCoefficient;
 uniform float phongCoefficient;
 
@@ -14,8 +17,8 @@ uniform float phongCoefficient;
 in float ndotl;
 in float relativeRadiance[MAX_LIGHTS];
 in vec3 e;
-in vec3 R[MAX_LIGHTS];
-in float diffuseLight[MAX_LIGHTS];
+in vec3 normalCameraSpace;
+in vec3 L[MAX_LIGHTS];
 in vec2 frag_texcoord;
 
 // Output variable, will be written to framebuffer automatically
@@ -28,9 +31,14 @@ void main()
 	vec4 specColor = vec4(0,0,0,0);
 	vec4 diffColor = vec4(0,0,0,0);
 	for (int i = 0; i < MAX_LIGHTS; i++) {
-		diffColor += diffuseLight[i] * texture(myTexture, frag_texcoord);
-		float specular = pow(max(dot(R[i],e), 0), phongCoefficient);
-		float specularLight = relativeRadiance[i] * specularReflectionCoefficient * max(specular, 0); //TODO use glossmap value
+		float nxDir = max(0.0, dot(normalCameraSpace, normalize(L[i])));
+		float relativeRadiance = pointLightsRad[i]/dot(L[i], L[i]);
+		float diffuseLight = relativeRadiance * diffuseReflectionCoefficient * nxDir;
+
+		vec3 R = 2 * dot(normalize(L[i]), normalCameraSpace) * normalCameraSpace - normalize(L[i]);
+		diffColor += diffuseLight * texture(myTexture, frag_texcoord);
+		float specular = pow(max(dot(R,e), 0), phongCoefficient);
+		float specularLight = relativeRadiance * specularReflectionCoefficient * max(specular, 0); //TODO use glossmap value
 		specColor += vec4(pointLightsCol[i], 0) * specularLight;
 	}
 	vec4 finalColor = specColor + ambColor + diffColor;
