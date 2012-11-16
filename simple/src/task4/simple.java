@@ -76,6 +76,9 @@ public class simple
 			glossy.setPhongExponent(120);
 			teapot.setMaterial(glossy);
 			
+			Material test = new Material();
+			test.setGlossMap(chessBoard);
+			shape.setMaterial(test);
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
