@@ -37,19 +37,11 @@ void main()
 	// Note: here we assume "lightDirection" is specified in camera coordinates,
 	// so we transform the normal to camera coordinates, and we don't transform
 	// the light direction, i.e., it stays in camera coordinates
-<<<<<<< HEAD
-	// ndotl = max(dot(modelview * vec4(normal,0), lightDirection),0);
-	
-	for (int i = 0; i < MAX_LIGHTS; i++) {
-		vec3 L = (camera * vec4(pointLightsPos[i].xyz, 0) - modelview * position).xyz;
-		float nxDir = max(0.0, dot((modelview * vec4(normal,0)).xyz, normalize(L)));
-		float relativeRadiance =  pointLightsRad[i]/dot(L, L);
-		ndotl += relativeRadiance*diffuseReflectionCoefficient*nxDir;
-=======
 	vec3 normalCameraSpace = normalize((modelview * vec4(normal,0)).xyz);
 
-	//we're in camera space, cop is always (0,0,0) => just take the negative
+	// we're in camera space, cop is always (0,0,0) => just take the negative
 	e = - normalize((modelview * position).xyz);
+
 	for (int i = 0; i < MAX_LIGHTS; i++) {
 		vec3 L = (camera * vec4(pointLightsPos[i].xyz, 1) - modelview * position).xyz;
 		float nxDir = max(0.0, dot(normalCameraSpace, normalize(L)));
@@ -57,13 +49,12 @@ void main()
 		relativeRadiance[i] = pointLightsRad[i]/attenuation;
 		diffuseLight[i] = relativeRadiance[i] * diffuseReflectionCoefficient * nxDir;
 
-		R[i] = 2 * dot(normalize(L), normalCameraSpace) * normalCameraSpace - normalize(L);
->>>>>>> glossMap
+		R[i] = reflect(- normalize(L), normalCameraSpace);
 	}
 	
 	//ambient light:
 	// according to script: diffuse = ambient coeff
-	ndotl = diffuseReflectionCoefficient*max(dot(modelview * vec4(normal,0), lightDirection),0);
+	ndotl = diffuseReflectionCoefficient;
 	
 	// Pass texture coordiantes to fragment shader, OpenGL automatically
 	// interpolates them to each pixel  (in a perspectively correct manner) 
