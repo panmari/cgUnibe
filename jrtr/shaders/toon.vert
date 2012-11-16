@@ -37,15 +37,6 @@ void main()
 	// Note: here we assume "lightDirection" is specified in camera coordinates,
 	// so we transform the normal to camera coordinates, and we don't transform
 	// the light direction, i.e., it stays in camera coordinates
-<<<<<<< HEAD
-	// ndotl = max(dot(modelview * vec4(normal,0), lightDirection),0);
-	
-	for (int i = 0; i < MAX_LIGHTS; i++) {
-		vec3 L = (camera * vec4(pointLightsPos[i].xyz, 0) - modelview * position).xyz;
-		float nxDir = max(0.0, dot((modelview * vec4(normal,0)).xyz, normalize(L)));
-		float relativeRadiance =  pointLightsRad[i]/dot(L, L);
-		ndotl += relativeRadiance*diffuseReflectionCoefficient*nxDir;
-=======
 	vec3 normalCameraSpace = normalize((modelview * vec4(normal,0)).xyz);
 
 	//we're in camera space, cop is always (0,0,0) => just take the negative
@@ -58,7 +49,6 @@ void main()
 		diffuseLight[i] = relativeRadiance[i] * diffuseReflectionCoefficient * nxDir;
 
 		R[i] = 2 * dot(normalize(L), normalCameraSpace) * normalCameraSpace - normalize(L);
->>>>>>> glossMap
 	}
 	
 	//ambient light:

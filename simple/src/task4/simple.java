@@ -1,10 +1,16 @@
 package task4;
 
 import jrtr.*;
+
 import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+
 import javax.vecmath.*;
+
+import task2c.FlyingCameraInputListener;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -19,13 +25,18 @@ public class simple
 	static SimpleSceneManager sceneManager;
 	static Shape shape;
 	static float angle;
-
+	static Texture chessBoard = null;
+	private static Shape teapot;
+	private static Shape cubeOne;
+	
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
 	 * provide a call-back function for initialization. 
 	 */ 
 	public final static class SimpleRenderPanel extends GLRenderPanel
 	{
+
+
 		/**
 		 * Initialization call-back. We initialize our renderer here.
 		 * 
@@ -35,7 +46,40 @@ public class simple
 		{
 			renderContext = r;
 			renderContext.setSceneManager(sceneManager);
-	
+			
+			System.out.println("loading texture");
+			chessBoard = renderContext.makeTexture();
+			Texture woodTex = renderContext.makeTexture();
+			Texture plant = renderContext.makeTexture();
+			
+			Shader diffuse = renderContext.makeShader();
+			Shader toon = renderContext.makeShader();
+			try {
+				chessBoard.load("../jrtr/textures/chessboard2.jpg");
+				woodTex.load("../jrtr/textures/wood.jpg");
+				plant.load("../jrtr/textures/plant.jpg");
+				diffuse.load("../jrtr/shaders/diffuse.vert", "../jrtr/shaders/diffuse.frag");
+				toon.load("../jrtr/shaders/toon.vert", "../jrtr/shaders/toon.frag");
+			} catch (IOException e) {
+				System.out.println("error loading texture");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			Material wood = new Material(woodTex, diffuse);
+			wood.setPhongExponent(40);
+			wood.setSpecularReflectionCoefficient(0);
+			wood.setDiffuseReflectionCoefficient(1);
+			cubeOne.setMaterial(wood);
+			
+			Material glossy = new Material(chessBoard, diffuse, 0);
+			glossy.setDiffuseReflectionCoefficient(0.5f);
+			glossy.setSpecularReflectionCoefficient(40);
+			glossy.setPhongExponent(50);
+			teapot.setMaterial(glossy);
+			
+			Material test = new Material();
+			test.setGlossMap(chessBoard);
+			shape.setMaterial(test);
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
@@ -57,9 +101,8 @@ public class simple
     		rotX.rotX(angle);
     		Matrix4f rotY = new Matrix4f();
     		rotY.rotY(angle);
-    		t.mul(rotX);
+    		//t.mul(rotX);
     		t.mul(rotY);
-    		shape.setTransformation(t);
     		
     		// Trigger redrawing of the render window
     		renderPanel.getCanvas().repaint(); 
@@ -82,8 +125,9 @@ public class simple
 	/**
 	 * The main function opens a 3D rendering window, constructs a simple 3D
 	 * scene, and starts a timer task to generate an animation.
+	 * @throws IOException 
 	 */
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{		
 		// Make a simple geometric object: a cube
 		
@@ -136,11 +180,25 @@ public class simple
 		vertexData.addIndices(indices);
 				
 		// Make a scene manager and add the object
-		sceneManager = new SimpleSceneManager();
+		sceneManager = new SimpleSceneManager(new Camera(new Point3f(0,0, 10), new Point3f(0,0,0), new Vector3f(0,1,0)), new Frustum());
+		teapot = new Shape(ObjReader.read("teapot_tex.obj", 1));
+		Matrix4f t = new Matrix4f();
+		t.setIdentity();
+		t.setTranslation(new Vector3f(-3, 0, 2));
+		teapot.setTransformation(t);
+		sceneManager.addShape(teapot);
+		
+		cubeOne = new Shape(vertexData);
+		t = new Matrix4f();
+		t.setIdentity();
+		t.setTranslation(new Vector3f(3, 0, 0));
+		cubeOne.setTransformation(t);
+		sceneManager.addShape(cubeOne);
 		shape = new Shape(vertexData);
+		//shape.setMaterial(new Material(chessBoard));
 		sceneManager.addShape(shape);
-		sceneManager.addPointLight(new PointLight(new Color3f(1,1,1), 10.7f, new Point3f(0, 2, 0)));
-		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), .5f, new Point3f(-5, 0, 0)));
+		sceneManager.addPointLight(new PointLight(new Color3f(1,0,0), 10f, new Point3f(-3, 0, 15)));
+		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), 10f, new Point3f(0, 4, 0)));
 
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
@@ -153,8 +211,12 @@ public class simple
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-	    jframe.addMouseListener(new SimpleMouseListener());
-		   	    	    
+		FlyingCameraInputListener l = new FlyingCameraInputListener(sceneManager.getCamera());
+	    renderPanel.getCanvas().addMouseListener(l);
+	    renderPanel.getCanvas().addMouseMotionListener(l);
+	    renderPanel.getCanvas().addMouseWheelListener(l);
+	    renderPanel.getCanvas().addKeyListener(l);
+	    
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
 	}

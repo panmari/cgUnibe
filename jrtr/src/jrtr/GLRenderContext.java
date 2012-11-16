@@ -5,6 +5,8 @@ import java.nio.FloatBuffer;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
+
+import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.*;
@@ -16,7 +18,7 @@ public class GLRenderContext implements RenderContext {
 
 	private SceneManagerInterface sceneManager;
 	private GL3 gl;
-	private GLShader activeShader;
+	private GLShader activeShader, defaultShader;
 	
 	/**
 	 * This constructor is called by {@link GLRenderPanel}.
@@ -31,7 +33,7 @@ public class GLRenderContext implements RenderContext {
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         
         // Load and use default shader
-        GLShader defaultShader = new GLShader(gl);
+        defaultShader = new GLShader(gl);
         try {
         	defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
         } catch(Exception e) {
@@ -39,32 +41,9 @@ public class GLRenderContext implements RenderContext {
 	    	System.out.print(e.getMessage());
 	    }
         defaultShader.use();	  
-        activeShader = defaultShader;
-
-        // Pass light direction to shader
-		int id = gl.glGetUniformLocation(activeShader.programId(), "lightDirection");
-		gl.glUniform4f(id, 0, 0, 1, 0);		// Set light direction
-		
-		//pass point lights:
-		
-		GLTexture tex;
-		try {
-			// Load texture from file
-			tex = new GLTexture(gl);
-			tex.load("../jrtr/textures/plant.jpg");
-			// OpenGL calls to activate the texture 
-			gl.glActiveTexture(0);	// Work with texture unit 0
-			gl.glEnable(GL3.GL_TEXTURE_2D);
-			gl.glBindTexture(GL3.GL_TEXTURE_2D, tex.getId());
-			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
-			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
-			id = gl.glGetUniformLocation(activeShader.programId(), "myTexture");
-			gl.glUniform1i(id, 0);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
-		} catch(Exception e) {
-			System.out.print("Could not load texture\n");
-		}
-		
+        activeShader = defaultShader;	
 	}
+	
 	private void fillTuple3fIntoArray(int i, Tuple3f l, float[] array) {
 		array[3*i] = l.x;
 		array[3*i + 1] = l.y;
@@ -107,8 +86,6 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void beginFrame()
 	{
-		setLights();
-		
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT);
         gl.glClear(GL3.GL_DEPTH_BUFFER_BIT);
 	}
@@ -154,13 +131,12 @@ public class GLRenderContext implements RenderContext {
 
 		// Compute the modelview matrix by multiplying the camera matrix and the 
 		// transformation matrix of the object
-		Matrix4f t = new Matrix4f();
-		t.set(sceneManager.getCamera().getCameraMatrix());
-		t.mul(renderItem.getT());
+		
+		Matrix4f modelview = new Matrix4f(sceneManager.getCamera().getCameraMatrix());
+		modelview.mul(renderItem.getT());
 		
 		// Set modelview and projection matrices in shader
-		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "modelview"), 1, false, matrix4fToFloat16(t), 0);
-		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "camera"), 1, false, matrix4fToFloat16(sceneManager.getCamera().getCameraMatrix()), 0);
+		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "modelview"), 1, false, matrix4fToFloat16(modelview), 0);
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "projection"), 1, false, matrix4fToFloat16(sceneManager.getFrustum().getProjectionMatrix()), 0);
 	     		
 		// Steps to pass vertex data to OpenGL:
@@ -231,8 +207,41 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void setMaterial(Material m)
 	{
+		GLShader shader = (GLShader) m.getShader();
+		if (shader != null) 
+			activeShader = shader;
+		else activeShader = defaultShader;
+		
+		activeShader.use();
+		setLights();
+		
 		int id = gl.glGetUniformLocation(activeShader.programId(), "diffuseReflectionCoefficient");
 		gl.glUniform1f(id, m.getDiffuseReflectionCoefficient());
+		id = gl.glGetUniformLocation(activeShader.programId(), "specularReflectionCoefficient");
+		gl.glUniform1f(id, m.getSpecularReflectionCoefficient());
+		id = gl.glGetUniformLocation(activeShader.programId(), "phongExponent");
+		gl.glUniform1f(id, m.getPhongExponent());
+		GLTexture tex = (GLTexture) m.getTexture();
+		if (tex != null) {
+			gl.glActiveTexture(GL3.GL_TEXTURE0);	// Work with texture unit 0
+			gl.glEnable(GL3.GL_TEXTURE_2D);
+			gl.glBindTexture(GL3.GL_TEXTURE_2D, tex.getId());
+			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
+			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
+			id = gl.glGetUniformLocation(activeShader.programId(), "myTexture");
+			gl.glUniform1i(id, 0);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
+		}
+		
+		GLTexture glossMap = (GLTexture) m.getGlossMap();
+		if (glossMap != null) {
+			gl.glActiveTexture(GL3.GL_TEXTURE0 + 2);
+			gl.glEnable(GL3.GL_TEXTURE_2D);
+			gl.glBindTexture(GL3.GL_TEXTURE_2D, glossMap.getId());
+			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
+			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
+			id = gl.glGetUniformLocation(activeShader.programId(), "glossMap");
+			gl.glUniform1i(id, 2);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
+		}
 	}
 	
 	/**
@@ -255,12 +264,21 @@ public class GLRenderContext implements RenderContext {
 			pointLightsRad[i] = l.radiance;
 		}
 		
+		//In case of camera update, this has to be informed
+		Matrix4f camera = sceneManager.getCamera().getCameraMatrix();
+		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "camera"), 1, false, matrix4fToFloat16(camera), 0);
+		
 		int id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsPos");
 		gl.glUniform3fv(id, MAX_LIGHTS, pointLightsPos, 0);
 		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsCol");
 		gl.glUniform3fv(id, MAX_LIGHTS, pointLightsCol, 0);
 		id = gl.glGetUniformLocation(activeShader.programId(), "pointLightsRad");
 		gl.glUniform1fv(id, MAX_LIGHTS, pointLightsRad, 0);
+		
+		//set directional light:
+		id = gl.glGetUniformLocation(activeShader.programId(), "lightDirection");
+		gl.glUniform4f(id, 0, 0, 1, 0);		// Set light direction
+
 	}
 
 	/**
@@ -270,6 +288,9 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void cleanMaterial(Material m)
 	{
+		activeShader = defaultShader;
+		activeShader.use();
+		//TODO: somehow remove texture and so on...
 	}
 
 	public Shader makeShader()

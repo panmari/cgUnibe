@@ -36,6 +36,16 @@ void main()
 		float specularLight = relativeRadiance[i] * rfc * max(specular, 0); //TODO use glossmap value
 		specColor += vec4(pointLightsCol[i], 0) * specularLight;
 	}
-	vec4 finalColor = specColor + ambColor + diffColor;
-	frag_shaded = finalColor;
+	vec4 color = specColor + ambColor + diffColor;
+	float intensity = length(color);
+	if (intensity > 0.95)
+		color = vec4(1.0,0,0,1.0);
+	else if (intensity > 0.5)
+		color = vec4(0.6,0,0,1.0);
+	else if (intensity > 0.25)
+		color = vec4(0.4,0,0,1.0);
+	else
+		color = vec4(0.2,0,0,1.0);
+	
+	frag_shaded = color;
 }
