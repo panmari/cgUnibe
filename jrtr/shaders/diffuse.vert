@@ -8,13 +8,7 @@
 // variants of glUniform*
 uniform mat4 projection;
 uniform mat4 modelview;
-uniform mat4 camera;
 uniform vec4 lightDirection;
-// positions of lights are in world space!
-uniform vec3 pointLightsPos[MAX_LIGHTS];
-uniform float pointLightsRad[MAX_LIGHTS];
-
-uniform float diffuseReflectionCoefficient;
 
 // Input vertex attributes; passed in from host program to shader
 // via vertex buffer objects
@@ -23,11 +17,9 @@ in vec4 position;
 in vec2 texcoord;
 
 // Output variables for fragment shader
-out float relativeRadiance[MAX_LIGHTS];
-out float diffuseLight[MAX_LIGHTS];
-out vec3 R[MAX_LIGHTS];
-out vec3 e;
-out float ndotl;
+
+out vec4 posCameraSpace;
+out vec3 normalCameraSpace;
 out vec2 frag_texcoord;
 
 void main()
@@ -37,25 +29,10 @@ void main()
 	// Note: here we assume "lightDirection" is specified in camera coordinates,
 	// so we transform the normal to camera coordinates, and we don't transform
 	// the light direction, i.e., it stays in camera coordinates
-	vec3 normalCameraSpace = normalize((modelview * vec4(normal,0)).xyz);
-
+	normalCameraSpace = normalize((modelview * vec4(normal,0)).xyz);
+	posCameraSpace = modelview * position;
 	// we're in camera space, cop is always (0,0,0) => just take the negative
-	e = - normalize((modelview * position).xyz);
 
-	for (int i = 0; i < MAX_LIGHTS; i++) {
-		vec3 L = (camera * vec4(pointLightsPos[i].xyz, 1) - modelview * position).xyz;
-		float nxDir = max(0.0, dot(normalCameraSpace, normalize(L)));
-		float attenuation = dot(L, L);
-		relativeRadiance[i] = pointLightsRad[i]/attenuation;
-		diffuseLight[i] = relativeRadiance[i] * diffuseReflectionCoefficient * nxDir;
-
-		R[i] = reflect(- normalize(L), normalCameraSpace);
-	}
-	
-	//ambient light:
-	// according to script: diffuse = ambient coeff
-	ndotl = diffuseReflectionCoefficient;
-	
 	// Pass texture coordiantes to fragment shader, OpenGL automatically
 	// interpolates them to each pixel  (in a perspectively correct manner) 
 	frag_texcoord = texcoord;

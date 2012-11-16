@@ -71,7 +71,7 @@ public class simple
 			wood.setDiffuseReflectionCoefficient(1);
 			cubeOne.setMaterial(wood);
 			
-			Material glossy = new Material(chessBoard, diffuse, 0);
+			Material glossy = new Material(woodTex, diffuse, 0);
 			glossy.setDiffuseReflectionCoefficient(0.5f);
 			glossy.setSpecularReflectionCoefficient(40);
 			glossy.setPhongExponent(50);
