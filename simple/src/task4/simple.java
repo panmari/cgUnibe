@@ -53,12 +53,13 @@ public class simple
 			Texture plant = renderContext.makeTexture();
 			
 			Shader diffuse = renderContext.makeShader();
-			
+			Shader toon = renderContext.makeShader();
 			try {
 				chessBoard.load("../jrtr/textures/chessboard2.jpg");
 				woodTex.load("../jrtr/textures/wood.jpg");
 				plant.load("../jrtr/textures/plant.jpg");
 				diffuse.load("../jrtr/shaders/diffuse.vert", "../jrtr/shaders/diffuse.frag");
+				toon.load("../jrtr/shaders/toon.vert", "../jrtr/shaders/toon.frag");
 			} catch (IOException e) {
 				System.out.println("error loading texture");
 			} catch (Exception e) {
