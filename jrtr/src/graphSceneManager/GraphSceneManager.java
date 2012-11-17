@@ -1,5 +1,6 @@
 package graphSceneManager;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Stack;
@@ -36,8 +37,7 @@ public class GraphSceneManager implements SceneManagerInterface {
 
 	@Override
 	public Iterator<PointLight> lightIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyIterator();
 	}
 
 	@Override

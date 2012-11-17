@@ -35,7 +35,7 @@ public class GLRenderContext implements RenderContext {
         // Load and use default shader
         defaultShader = new GLShader(gl);
         try {
-        	defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
+        	defaultShader.load("../jrtr/shaders/default.vert","../jrtr/shaders/default.frag");
         } catch(Exception e) {
 	    	System.out.print("Problem with shader:\n");
 	    	System.out.print(e.getMessage());
