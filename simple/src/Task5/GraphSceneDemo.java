@@ -4,6 +4,7 @@ import graphSceneManager.GraphSceneManager;
 import graphSceneManager.Node;
 import graphSceneManager.ShapeNode;
 import graphSceneManager.TransformGroup;
+import jogamp.graph.math.MathFloat;
 import jrtr.*;
 
 import javax.swing.*;
@@ -31,7 +32,7 @@ public class GraphSceneDemo
 	static SceneManagerInterface sceneManager;
 	static Shape shape;
 	static float angle;
-	private static Shape torus;
+	private static TransformGroup body;
 	
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -89,13 +90,13 @@ public class GraphSceneDemo
 		public void run()
 		{
 			// Update transformation
-    		Matrix4f t = shape.getTransformation();
+    		Matrix4f t = body.getTransformation();
     		Matrix4f rotX = new Matrix4f();
     		rotX.rotX(angle);
     		Matrix4f rotY = new Matrix4f();
     		rotY.rotY(angle);
     	
-    		t.mul(rotX);
+    		//t.mul(rotX);
     		t.mul(rotY);
     		
     		// Trigger redrawing of the render window
@@ -179,17 +180,21 @@ public class GraphSceneDemo
 		shape = new Shape(ObjReader.read("teapot_tex.obj", 3));
 		
 		
-		torus = new Shape(new Cylinder(5, 1, 4));
-		Shape head = new Shape(new Torus(.5f, .2f, 10, 10));
-		head.getTransformation().setTranslation(new Vector3f(1, 5, 1));
-		TransformGroup body = new TransformGroup();
+		Shape torus = new Shape(new Cylinder(5, 1, 20));
+		Shape head = new Shape(new Torus(.5f, .2f, 20, 20));
+		Matrix4f m = new Matrix4f();
+		m.rotX(MathFloat.PI/2);
+		torus.getTransformation().mul(m);
+		head.getTransformation().setTranslation(new Vector3f(0, 3.5f, 0));
+		body = new TransformGroup();
 		body.addChild(new ShapeNode(head));
 		body.addChild(new ShapeNode(torus));
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
 		
 		Node rootNode =  body;
-		sceneManager = new GraphSceneManager(rootNode);
+		Camera cam = new Camera(new Point3f(0,0,-10), new Point3f(0,0,0), new Vector3f(0,1,0));
+		sceneManager = new GraphSceneManager(rootNode, cam, new Frustum());
 		renderPanel = new SimpleRenderPanel();
 		
 		// Make the main window of this application and add the renderer to it

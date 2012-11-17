@@ -69,7 +69,7 @@ public class GraphSceneManager implements SceneManagerInterface {
 			while (sceneStack.peek().getChildren() != null) {
 				Node current = sceneStack.pop();
 				for (Node n: current.getChildren()) {
-					n.getTransformation().mul(current.getTransformation());
+					n.getTransformation().mul(current.getTransformation(), n.getTransformation());
 					sceneStack.push(n);
 				}
 			}
