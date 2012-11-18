@@ -33,6 +33,7 @@ public class GraphSceneDemo
 	static Shape shape;
 	static float angle;
 	private static TransformGroup body;
+	private static TransformGroup leftArm;
 	
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -96,7 +97,7 @@ public class GraphSceneDemo
     		Matrix4f rotY = new Matrix4f();
     		rotY.rotY(angle);
     	
-    		//t.mul(rotX);
+    		leftArm.getTransformation().mul(rotX);
     		t.mul(rotY);
     		
     		// Trigger redrawing of the render window
@@ -182,18 +183,19 @@ public class GraphSceneDemo
 		
 		ShapeNode torus = new ShapeNode(new Shape(new Cylinder(5, 1, 20)));
 		ShapeNode head = new ShapeNode(new Shape(new Torus(.5f, .2f, 20, 20)));
-		Shape arm = new Shape(new Cylinder(3, .2f, 20));
 		Matrix4f m = new Matrix4f();
 		m.rotX(MathFloat.PI/2);
 		torus.getTransformation().mul(m);
 		head.getTransformation().setTranslation(new Vector3f(0, 3.5f, 0));
 		TransformGroup upperBody = new TransformGroup();
 		upperBody.addChild(torus);
-		ShapeNode leftArm = new ShapeNode(arm);
-		ShapeNode rightArm = new ShapeNode(arm);
+		
+		leftArm = makeArm();
+		TransformGroup rightArm = makeArm();
+
 		Matrix4f rot = new Matrix4f();
 		rot.rotX(MathFloat.PI/4);
-		leftArm.getTransformation().setTranslation(new Vector3f(-1, 2.5f, -1f));
+		leftArm.getTransformation().setTranslation(new Vector3f(-1, 2.5f, 0f));
 		rightArm.getTransformation().setTranslation(new Vector3f(1, 2.5f, -1f));
 		upperBody.addChild(leftArm);
 		upperBody.addChild(rightArm);
@@ -225,5 +227,17 @@ public class GraphSceneDemo
 	    
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
+	}
+
+	private static TransformGroup makeArm() {
+		Shape armPart = new Shape(new Cylinder(1.5f, .2f, 20));
+		TransformGroup arm = new TransformGroup();
+		ShapeNode upperArm = new ShapeNode(armPart);
+		upperArm.getTransformation().setTranslation(new Vector3f(0,0, -1));
+		ShapeNode lowerArm = new ShapeNode(armPart);
+		lowerArm.getTransformation().setTranslation(new Vector3f(0,0,-3));
+		arm.addChild(upperArm);
+		arm.addChild(lowerArm);
+		return arm;
 	}
 }
