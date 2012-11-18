@@ -68,25 +68,25 @@ public class GraphSceneManager implements SceneManagerInterface {
 		
 		public RenderItem next()
 		{
-			while (sceneStack.peek().n.getChildren() != null) {
+			while (sceneStack.peek().node.getChildren() != null) {
 				StackWrapper current = sceneStack.pop();
-				for (Node n: current.n.getChildren()) {
+				for (Node node: current.node.getChildren()) {
 					Matrix4f t = new Matrix4f();
-					t.mul(current.n.getTransformation(), n.getTransformation());
-					sceneStack.push(new StackWrapper(n, t));
+					t.mul(current.node.getTransformation(), node.getTransformation());
+					sceneStack.push(new StackWrapper(node, t));
 				}
 			}
 			StackWrapper next = sceneStack.pop();
-			ShapeNode nextShapeNode = (ShapeNode) next.n;
+			ShapeNode nextShapeNode = (ShapeNode) next.node;
 			return new RenderItem(nextShapeNode.getShape(), next.t);
 		}
 		
 		private class StackWrapper {
-			private Node n;
+			private Node node;
 			private Matrix4f t;
 
 			StackWrapper(Node n, Matrix4f t) {
-				this.n = n;
+				this.node = n;
 				this.t = t;
 			}
 		}

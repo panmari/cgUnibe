@@ -180,15 +180,26 @@ public class GraphSceneDemo
 		shape = new Shape(ObjReader.read("teapot_tex.obj", 3));
 		
 		
-		Shape torus = new Shape(new Cylinder(5, 1, 20));
-		Shape head = new Shape(new Torus(.5f, .2f, 20, 20));
+		ShapeNode torus = new ShapeNode(new Shape(new Cylinder(5, 1, 20)));
+		ShapeNode head = new ShapeNode(new Shape(new Torus(.5f, .2f, 20, 20)));
+		Shape arm = new Shape(new Cylinder(2, .2f, 20));
 		Matrix4f m = new Matrix4f();
 		m.rotX(MathFloat.PI/2);
 		torus.getTransformation().mul(m);
 		head.getTransformation().setTranslation(new Vector3f(0, 3.5f, 0));
+		TransformGroup torusGroup = new TransformGroup();
+		torusGroup.addChild(torus);
+		ShapeNode leftArm = new ShapeNode(arm);
+		ShapeNode rightArm = new ShapeNode(arm);
+		leftArm.getTransformation().rotX(MathFloat.PI/4);
+		rightArm.getTransformation().rotX(MathFloat.PI/4);
+		torusGroup.addChild(leftArm);
+		torusGroup.addChild(rightArm);
 		body = new TransformGroup();
-		body.addChild(new ShapeNode(head));
-		body.addChild(new ShapeNode(torus));
+		body.addChild(head);
+		body.addChild(torusGroup);
+
+		
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
 		

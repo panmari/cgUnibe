@@ -9,18 +9,25 @@ import jrtr.Shape;
 public class ShapeNode extends Leaf {
 	
 	private Shape shape;
+	private Matrix4f t;
 
 	public ShapeNode(Shape shape) {
 		this.shape = shape;
+		t = new Matrix4f();
+		t.setIdentity();
 	}
 	
 	public Shape getShape() {
 		return shape;
 	}
+	
+	public void setTransformation(Matrix4f t) {
+		this.t = t;
+	}
 
 	@Override
 	public Matrix4f getTransformation() {
-		return shape.getTransformation();
+		return t;
 	}
 
 	@Override

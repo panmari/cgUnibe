@@ -12,4 +12,7 @@ public class TransformGroup extends Group {
 	public Matrix4f getTransformation() {
 		return this.transformation;
 	}
+	public void setTransformation(Matrix4f m) {
+		this.transformation = m;
+	}
 }
