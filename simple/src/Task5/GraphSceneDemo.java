@@ -190,15 +190,24 @@ public class GraphSceneDemo
 		TransformGroup upperBody = new TransformGroup();
 		upperBody.addChild(torus);
 		
-		leftArm = makeArm();
-		TransformGroup rightArm = makeArm();
+		leftArm = makeArm(1.5f);
+		TransformGroup rightArm = makeArm(1.5f);
 
 		Matrix4f rot = new Matrix4f();
 		rot.rotX(MathFloat.PI/4);
 		leftArm.getTransformation().setTranslation(new Vector3f(-1, 2.5f, 0f));
-		rightArm.getTransformation().setTranslation(new Vector3f(1, 2.5f, -1f));
-		upperBody.addChild(leftArm);
-		upperBody.addChild(rightArm);
+		rightArm.getTransformation().setTranslation(new Vector3f(1, 2.5f, 0f));
+		
+		TransformGroup leftLeg = makeArm(2f);
+		TransformGroup rightLeg = makeArm(2f);
+		Matrix4f rotX90 = new Matrix4f();
+		rotX90.rotX(MathFloat.PI/2);
+		leftLeg.getTransformation().setTranslation(new Vector3f(-1, -5f, 0));
+		leftLeg.getTransformation().mul(rotX90);
+		rightLeg.getTransformation().setTranslation(new Vector3f(1, -5f, 0));
+		rightLeg.getTransformation().mul(rotX90);
+		upperBody.addChild(leftArm, rightArm, leftLeg, rightLeg);
+		
 		body = new TransformGroup();
 		body.addChild(upperBody);
 		body.addChild(head);
@@ -229,15 +238,27 @@ public class GraphSceneDemo
 	    jframe.setVisible(true); // show window
 	}
 
-	private static TransformGroup makeArm() {
-		Shape armPart = new Shape(new Cylinder(1.5f, .2f, 20));
+	private static TransformGroup makeArm(float size) {
+		Shape armPart = new Shape(new Cylinder(size, .2f, 20));
 		TransformGroup arm = new TransformGroup();
+		ShapeNode upper = new ShapeNode(armPart);
+		upper.getTransformation().setTranslation(new Vector3f(0,0, -1));
+		ShapeNode lower = new ShapeNode(armPart);
+		lower.getTransformation().setTranslation(new Vector3f(0,0,-3));
+		arm.addChild(upper);
+		arm.addChild(lower);
+		return arm;
+	}
+	
+	private static TransformGroup makeLeg() {
+		Shape armPart = new Shape(new Cylinder(1.5f, .2f, 20));
+		TransformGroup leg = new TransformGroup();
 		ShapeNode upperArm = new ShapeNode(armPart);
 		upperArm.getTransformation().setTranslation(new Vector3f(0,0, -1));
 		ShapeNode lowerArm = new ShapeNode(armPart);
 		lowerArm.getTransformation().setTranslation(new Vector3f(0,0,-3));
-		arm.addChild(upperArm);
-		arm.addChild(lowerArm);
-		return arm;
+		leg.addChild(upperArm);
+		leg.addChild(lowerArm);
+		return leg;
 	}
 }

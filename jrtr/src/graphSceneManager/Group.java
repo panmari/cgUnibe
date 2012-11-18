@@ -9,8 +9,9 @@ public abstract class Group implements Node {
 
 	List<Node> children = new LinkedList<Node>();
 	
-	public void addChild(Node n) {
-		children.add(n);
+	public void addChild(Node... nodes) {
+		for (Node n: nodes)
+			children.add(n);
 	}
 	
 	public boolean removeChild(Node n) {
