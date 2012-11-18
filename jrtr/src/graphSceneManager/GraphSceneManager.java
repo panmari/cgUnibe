@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Stack;
 
+import javax.vecmath.Matrix4f;
+
 import jrtr.Camera;
 import jrtr.Frustum;
 import jrtr.PointLight;
@@ -52,11 +54,11 @@ public class GraphSceneManager implements SceneManagerInterface {
 	
 	private class GraphSceneManagerItr implements SceneManagerIterator {
 		
-		Stack<Node> sceneStack = new Stack<Node>();
+		Stack<StackWrapper> sceneStack = new Stack<StackWrapper>();
 		
 		public GraphSceneManagerItr(GraphSceneManager sceneManager)
 		{
-			sceneStack.push(sceneManager.rootNode);
+			sceneStack.push(new StackWrapper(sceneManager.rootNode, sceneManager.rootNode.getTransformation()));
 		}
 		
 		public boolean hasNext()
@@ -66,16 +68,27 @@ public class GraphSceneManager implements SceneManagerInterface {
 		
 		public RenderItem next()
 		{
-			while (sceneStack.peek().getChildren() != null) {
-				Node current = sceneStack.pop();
-				for (Node n: current.getChildren()) {
-					n.getTransformation().mul(current.getTransformation(), n.getTransformation());
-					sceneStack.push(n);
+			while (sceneStack.peek().n.getChildren() != null) {
+				StackWrapper current = sceneStack.pop();
+				for (Node n: current.n.getChildren()) {
+					Matrix4f t = new Matrix4f();
+					t.mul(current.n.getTransformation(), n.getTransformation());
+					sceneStack.push(new StackWrapper(n, t));
 				}
 			}
-			ShapeNode nextShapeNode = (ShapeNode) sceneStack.pop();
-			return new RenderItem(nextShapeNode.getShape(), nextShapeNode.getTransformation());
+			StackWrapper next = sceneStack.pop();
+			ShapeNode nextShapeNode = (ShapeNode) next.n;
+			return new RenderItem(nextShapeNode.getShape(), next.t);
 		}
 		
+		private class StackWrapper {
+			private Node n;
+			private Matrix4f t;
+
+			StackWrapper(Node n, Matrix4f t) {
+				this.n = n;
+				this.t = t;
+			}
+		}
 	}
 }
