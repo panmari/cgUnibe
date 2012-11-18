@@ -15,4 +15,8 @@ public class TransformGroup extends Group {
 	public void setTransformation(Matrix4f m) {
 		this.transformation = m;
 	}
+	
+	public String toString() {
+		return "TransformGroup with Matrix: " + transformation.toString();
+	}
 }

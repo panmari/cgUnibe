@@ -187,19 +187,19 @@ public class GraphSceneDemo
 		m.rotX(MathFloat.PI/2);
 		torus.getTransformation().mul(m);
 		head.getTransformation().setTranslation(new Vector3f(0, 3.5f, 0));
-		TransformGroup torusGroup = new TransformGroup();
-		torusGroup.addChild(torus);
+		TransformGroup upperBody = new TransformGroup();
+		upperBody.addChild(torus);
 		ShapeNode leftArm = new ShapeNode(arm);
 		ShapeNode rightArm = new ShapeNode(arm);
 		Matrix4f rot = new Matrix4f();
 		rot.rotX(MathFloat.PI/4);
 		leftArm.getTransformation().setTranslation(new Vector3f(-1, 2.5f, -1f));
 		rightArm.getTransformation().setTranslation(new Vector3f(1, 2.5f, -1f));
-		torusGroup.addChild(leftArm);
-		torusGroup.addChild(rightArm);
+		upperBody.addChild(leftArm);
+		upperBody.addChild(rightArm);
 		body = new TransformGroup();
+		body.addChild(upperBody);
 		body.addChild(head);
-		body.addChild(torusGroup);
 
 		
 		// Make a render panel. The init function of the renderPanel

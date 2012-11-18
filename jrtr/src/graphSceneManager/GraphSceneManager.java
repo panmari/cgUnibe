@@ -2,7 +2,6 @@ package graphSceneManager;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Stack;
 
 import javax.vecmath.Matrix4f;
@@ -14,7 +13,6 @@ import jrtr.RenderItem;
 import jrtr.SceneManagerInterface;
 import jrtr.SceneManagerIterator;
 import jrtr.Shape;
-import jrtr.SimpleSceneManager;
 
 public class GraphSceneManager implements SceneManagerInterface {
 
@@ -72,13 +70,13 @@ public class GraphSceneManager implements SceneManagerInterface {
 				StackWrapper current = sceneStack.pop();
 				for (Node node: current.node.getChildren()) {
 					Matrix4f t = new Matrix4f();
-					t.mul(current.node.getTransformation(), node.getTransformation());
+					t.mul(current.t, node.getTransformation());
 					sceneStack.push(new StackWrapper(node, t));
 				}
 			}
 			StackWrapper next = sceneStack.pop();
-			ShapeNode nextShapeNode = (ShapeNode) next.node;
-			return new RenderItem(nextShapeNode.getShape(), next.t);
+			Shape nextShape = ((ShapeNode) next.node).getShape();
+			return new RenderItem(nextShape, next.t);
 		}
 		
 		private class StackWrapper {
