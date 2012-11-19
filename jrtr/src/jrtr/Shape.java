@@ -1,6 +1,9 @@
 package jrtr;
 import javax.vecmath.*;
 
+import jrtr.VertexData.Semantic;
+import jrtr.VertexData.VertexElement;
+
 /**
  * Represents a 3D shape. The shape currently just consists
  * of its vertex data. It should later be extended to include
@@ -55,4 +58,26 @@ public class Shape {
 
 	private VertexData vertexData;
 	private Matrix4f t;
+	
+	public class BoundingSphere {
+		
+		float radius;
+		Point3f center;
+
+		private BoundingSphere(VertexData vd) {
+			VertexElement positions = vd.getElements().getFirst();
+			if (positions.getSemantic() != Semantic.POSITION)
+				throw new RuntimeException("Should be poaitions");
+			float[] positionsArray = positions.getData();
+			int n = positionsArray.length;
+			center = new Point3f();
+			for (int i = 0; i < n; i+=3) {
+				center.x += positionsArray[i]/n;
+				center.y += positionsArray[i+1]/n;
+				center.z += positionsArray[i+2]/n;
+			}
+			//TODO: compute radius
+			this.radius = radius;
+		}
+	}
 }
