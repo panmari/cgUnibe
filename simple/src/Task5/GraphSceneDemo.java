@@ -1,6 +1,7 @@
 package Task5;
 
 import graphSceneManager.GraphSceneManager;
+import graphSceneManager.LightNode;
 import graphSceneManager.Node;
 import graphSceneManager.ShapeNode;
 import graphSceneManager.TransformGroup;
@@ -98,7 +99,7 @@ public class GraphSceneDemo
     		rotY.rotY(angle);
     	
     		leftArm.getTransformation().mul(rotX);
-    		t.mul(rotY);
+    		t.mul(rotY, t);
     		
     		// Trigger redrawing of the render window
     		renderPanel.getCanvas().repaint(); 
@@ -209,6 +210,7 @@ public class GraphSceneDemo
 		upperBody.addChild(leftArm, rightArm, leftLeg, rightLeg);
 		
 		body = new TransformGroup();
+		body.getTransformation().setTranslation(new Vector3f(4, 0, 0));
 		body.addChild(upperBody);
 		body.addChild(head);
 
@@ -217,7 +219,7 @@ public class GraphSceneDemo
 		// (see above) will be called back for initialization.
 		
 		Node rootNode =  body;
-		Camera cam = new Camera(new Point3f(0,0,-10), new Point3f(0,0,0), new Vector3f(0,1,0));
+		Camera cam = new Camera(new Point3f(0,0,-15), new Point3f(0,0,0), new Vector3f(0,1,0));
 		sceneManager = new GraphSceneManager(rootNode, cam, new Frustum());
 		renderPanel = new SimpleRenderPanel();
 		
@@ -243,22 +245,12 @@ public class GraphSceneDemo
 		TransformGroup arm = new TransformGroup();
 		ShapeNode upper = new ShapeNode(armPart);
 		upper.getTransformation().setTranslation(new Vector3f(0,0, -1));
-		ShapeNode lower = new ShapeNode(armPart);
+		TransformGroup lower = new TransformGroup();
+		PointLight l = new PointLight(new Color3f(1,0,0), 20f, new Point3f(0,0,0));
+		lower.addChild(new ShapeNode(armPart), new LightNode(l));
 		lower.getTransformation().setTranslation(new Vector3f(0,0,-3));
 		arm.addChild(upper);
 		arm.addChild(lower);
 		return arm;
-	}
-	
-	private static TransformGroup makeLeg() {
-		Shape armPart = new Shape(new Cylinder(1.5f, .2f, 20));
-		TransformGroup leg = new TransformGroup();
-		ShapeNode upperArm = new ShapeNode(armPart);
-		upperArm.getTransformation().setTranslation(new Vector3f(0,0, -1));
-		ShapeNode lowerArm = new ShapeNode(armPart);
-		lowerArm.getTransformation().setTranslation(new Vector3f(0,0,-3));
-		leg.addChild(upperArm);
-		leg.addChild(lowerArm);
-		return leg;
 	}
 }

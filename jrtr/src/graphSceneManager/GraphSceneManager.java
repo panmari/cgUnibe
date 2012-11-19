@@ -71,7 +71,8 @@ public class GraphSceneManager implements SceneManagerInterface {
 				for (Node node: current.node.getChildren()) {
 					Matrix4f t = new Matrix4f();
 					t.mul(current.t, node.getTransformation());
-					sceneStack.push(new StackWrapper(node, t));
+					if (!LightNode.class.isInstance(node))
+						sceneStack.push(new StackWrapper(node, t));
 				}
 			}
 			StackWrapper next = sceneStack.pop();
