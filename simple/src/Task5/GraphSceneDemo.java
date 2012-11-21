@@ -35,6 +35,8 @@ public class GraphSceneDemo
 	static float angle;
 	private static TransformGroup body;
 	private static TransformGroup leftArm;
+	private static TransformGroup leftLeg;
+	private static TransformGroup rightLeg;
 	
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -86,15 +88,27 @@ public class GraphSceneDemo
 	 */
 	public static class AnimationTask extends TimerTask
 	{
+		private int counter;
+
 		public void run()
 		{
+    		counter++;
 			// Update transformation
     		Matrix4f t = body.getTransformation();
     		Matrix4f rotX = new Matrix4f();
     		rotX.rotX(angle);
+    		Matrix4f rotXinvert = new Matrix4f(rotX);
+    		rotXinvert.invert();
     		Matrix4f rotY = new Matrix4f();
     		rotY.rotY(angle);
-    	
+    		if (counter % 250 < 125) {
+    			rightLeg.getTransformation().mul(rotX);
+    			leftLeg.getTransformation().mul(rotXinvert);
+    		} else {
+    			rightLeg.getTransformation().mul(rotXinvert);
+    			leftLeg.getTransformation().mul(rotX);
+    		}
+    		
     		leftArm.getTransformation().mul(rotX);
     		t.mul(rotY, t);
     		
@@ -189,25 +203,28 @@ public class GraphSceneDemo
 		upperBody.addChild(torus);
 		
 		leftArm = makeArm(1.5f);
-		TransformGroup rightArm = makeArm(1.5f);
+		TransformGroup rightArm = makeArm(1f);
 
 		Matrix4f rot = new Matrix4f();
 		rot.rotX(MathFloat.PI/4);
 		leftArm.getTransformation().setTranslation(new Vector3f(-1, 2.5f, 0f));
 		rightArm.getTransformation().setTranslation(new Vector3f(1, 2.5f, 0f));
 		
-		TransformGroup leftLeg = makeArm(2f);
-		TransformGroup rightLeg = makeArm(2f);
+		leftLeg = makeArm(2f);
+		rightLeg = makeArm(2f);
 		Matrix4f rotX90 = new Matrix4f();
-		rotX90.rotX(MathFloat.PI/2);
-		leftLeg.getTransformation().setTranslation(new Vector3f(-1, -5f, 0));
+		rotX90.rotX(-MathFloat.PI/2 + 60*0.01f);
+		leftLeg.getTransformation().setTranslation(new Vector3f(-1, -2, 0));
 		leftLeg.getTransformation().mul(rotX90);
-		rightLeg.getTransformation().setTranslation(new Vector3f(1, -5f, 0));
+		rightLeg.getTransformation().setTranslation(new Vector3f(1, -2, 0));
+		rotX90.rotX(-MathFloat.PI/2 - 60*0.01f);
 		rightLeg.getTransformation().mul(rotX90);
+		PointLight light = new PointLight(new Color3f(1,0,0), 20f, new Point3f(0,0,-6));
+		leftArm.addChild(new LightNode(light));
 		upperBody.addChild(leftArm, rightArm, leftLeg, rightLeg);
 		
 		body = new TransformGroup();
-		body.getTransformation().setTranslation(new Vector3f(4, 0, 0));
+		body.getTransformation().setTranslation(new Vector3f(8, 0, 0));
 		body.addChild(upperBody);
 		body.addChild(head);
 
@@ -216,7 +233,7 @@ public class GraphSceneDemo
 		// (see above) will be called back for initialization.
 		
 		Node rootNode =  body;
-		Camera cam = new Camera(new Point3f(0,0,-15), new Point3f(0,0,0), new Vector3f(0,1,0));
+		Camera cam = new Camera(new Point3f(0,0,-20), new Point3f(0,0,0), new Vector3f(0,1,0));
 		sceneManager = new GraphSceneManager(rootNode, cam, new Frustum());
 		renderPanel = new SimpleRenderPanel();
 		
@@ -241,11 +258,10 @@ public class GraphSceneDemo
 		Shape armPart = new Shape(new Cylinder(size, .2f, 20));
 		TransformGroup arm = new TransformGroup();
 		ShapeNode upper = new ShapeNode(armPart);
-		upper.getTransformation().setTranslation(new Vector3f(0,0, -1));
+		upper.getTransformation().setTranslation(new Vector3f(0,0, -size));
 		TransformGroup lower = new TransformGroup();
-		PointLight l = new PointLight(new Color3f(1,0,0), 20f, new Point3f(0,0,0));
-		lower.addChild(new ShapeNode(armPart), new LightNode(l));
-		lower.getTransformation().setTranslation(new Vector3f(0,0,-3));
+		lower.addChild(new ShapeNode(armPart));
+		lower.getTransformation().setTranslation(new Vector3f(0,0,-size*2 - .5f));
 		arm.addChild(upper);
 		arm.addChild(lower);
 		return arm;
