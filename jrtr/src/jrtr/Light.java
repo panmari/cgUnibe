@@ -14,5 +14,13 @@ public abstract class Light {
 		this.color = color;
 		this.radiance = radiance;
 	}
+
+	public Color3f getColor() {
+		return color;
+	}
+
+	public float getRadiance() {
+		return radiance;
+	}
 	
 }

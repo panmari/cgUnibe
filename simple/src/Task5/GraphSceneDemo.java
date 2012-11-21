@@ -1,12 +1,12 @@
 package Task5;
 
-import graphSceneManager.GraphSceneManager;
-import graphSceneManager.LightNode;
-import graphSceneManager.Node;
-import graphSceneManager.ShapeNode;
-import graphSceneManager.TransformGroup;
 import jogamp.graph.math.MathFloat;
 import jrtr.*;
+import jrtr.graphSceneManager.GraphSceneManager;
+import jrtr.graphSceneManager.LightNode;
+import jrtr.graphSceneManager.Node;
+import jrtr.graphSceneManager.ShapeNode;
+import jrtr.graphSceneManager.TransformGroup;
 
 import javax.swing.*;
 import java.awt.event.MouseListener;

@@ -1,4 +1,4 @@
-package graphSceneManager;
+package jrtr.graphSceneManager;
 
 import java.util.LinkedList;
 import java.util.List;

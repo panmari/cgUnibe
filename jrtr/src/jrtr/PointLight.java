@@ -11,4 +11,8 @@ public class PointLight extends Light {
 		super(color, radiance);
 		this.position = position;
 	}
+	
+	public Point3f getPosition() {
+		return position;
+	}
 }
