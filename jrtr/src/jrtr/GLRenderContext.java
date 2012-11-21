@@ -19,6 +19,7 @@ public class GLRenderContext implements RenderContext {
 	private SceneManagerInterface sceneManager;
 	private GL3 gl;
 	private GLShader activeShader, defaultShader;
+	private GLTexture defaultTexture;
 	
 	/**
 	 * This constructor is called by {@link GLRenderPanel}.
@@ -34,8 +35,10 @@ public class GLRenderContext implements RenderContext {
         
         // Load and use default shader
         defaultShader = new GLShader(gl);
+        defaultTexture = new GLTexture(gl);
         try {
-        	defaultShader.load("../jrtr/shaders/default.vert","../jrtr/shaders/default.frag");
+        	defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
+        	defaultTexture.load("../jrtr/textures/wood.jpg");
         } catch(Exception e) {
 	    	System.out.print("Problem with shader:\n");
 	    	System.out.print(e.getMessage());
@@ -222,15 +225,17 @@ public class GLRenderContext implements RenderContext {
 		id = gl.glGetUniformLocation(activeShader.programId(), "phongExponent");
 		gl.glUniform1f(id, m.getPhongExponent());
 		GLTexture tex = (GLTexture) m.getTexture();
-		if (tex != null) {
-			gl.glActiveTexture(GL3.GL_TEXTURE0);	// Work with texture unit 0
-			gl.glEnable(GL3.GL_TEXTURE_2D);
-			gl.glBindTexture(GL3.GL_TEXTURE_2D, tex.getId());
-			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
-			gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
-			id = gl.glGetUniformLocation(activeShader.programId(), "myTexture");
-			gl.glUniform1i(id, 0);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
+		
+		if (tex == null) {
+			tex = defaultTexture;
 		}
+		gl.glActiveTexture(GL3.GL_TEXTURE0);	// Work with texture unit 0
+		gl.glEnable(GL3.GL_TEXTURE_2D);
+		gl.glBindTexture(GL3.GL_TEXTURE_2D, tex.getId());
+		gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
+		gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
+		id = gl.glGetUniformLocation(activeShader.programId(), "myTexture");
+		gl.glUniform1i(id, 0);	// The variable in the shader needs to be set to the desired texture unit, i.e., 
 		
 		GLTexture glossMap = (GLTexture) m.getGlossMap();
 		if (glossMap != null) {

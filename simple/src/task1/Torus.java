@@ -53,6 +53,15 @@ public class Torus extends AbstractShape {
 		for (int k = 0; k < n; k+=smallResolution) {
 			for (int i = k; i < k + smallResolution; i++) {
 				int adjacentVector = (i + 1) % smallResolution + k;
+				
+				Vector3f first = new Vector3f(vertices.get(i));
+				first.sub(new Vector3f(vertices.get((i + smallResolution) % n)));
+				Vector3f second = new Vector3f(vertices.get(i));
+				second.sub(new Vector3f(vertices.get(adjacentVector)));
+				Vector3f normal = new Vector3f();
+				normal.cross(first, second);
+				normals.appendVector(normal);
+				
 				addQuadrangle(i, 
 						(i + smallResolution) % n, 
 						(adjacentVector + smallResolution) % n, 
@@ -67,6 +76,8 @@ public class Torus extends AbstractShape {
 		}
 		System.out.println(Arrays.toString(texels));
 		addIndicesList(indicesList);
+		
+		addElement(normals.getFinishedArray(), VertexData.Semantic.NORMAL, 3);
 		addElement(vertices.getFinishedArray(), VertexData.Semantic.POSITION, 3);
 		addElement(colors.getFinishedArray(), VertexData.Semantic.COLOR, 3);
 		addElement(texels, VertexData.Semantic.TEXCOORD, 2);

@@ -73,9 +73,6 @@ public class GraphSceneDemo
 				e.printStackTrace();
 			}
 			
-			Material tronny = new Material();
-			tronny.setShader(tron);
-			shape.setMaterial(tronny);
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;

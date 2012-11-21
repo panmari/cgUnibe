@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import javax.vecmath.*;
 
+import task1.Cylinder;
 import task2c.FlyingCameraInputListener;
 
 import java.util.Timer;
@@ -28,6 +29,7 @@ public class DiffuseShaderDemo
 	static Texture chessBoard = null;
 	private static Shape teapot;
 	private static Shape cubeOne;
+	private static Shape cylinder;
 	
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -197,6 +199,11 @@ public class DiffuseShaderDemo
 		shape = new Shape(vertexData);
 		//shape.setMaterial(new Material(chessBoard));
 		sceneManager.addShape(shape);
+		
+		cylinder = new Shape(new Cylinder(4, 1, 30));
+		cylinder.getTransformation().setTranslation(new Vector3f(0, 2, -3));
+		
+		sceneManager.addShape(cylinder);
 		sceneManager.addPointLight(new PointLight(new Color3f(1,0,0), 10f, new Point3f(-3, 0, 15)));
 		sceneManager.addPointLight(new PointLight(new Color3f(1,1,0), 10f, new Point3f(0, 4, 0)));
 
