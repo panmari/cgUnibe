@@ -74,7 +74,6 @@ public class Torus extends AbstractShape {
 				addTexel(i, p);
 			}
 		}
-		System.out.println(Arrays.toString(texels));
 		addIndicesList(indicesList);
 		
 		addElement(normals.getFinishedArray(), VertexData.Semantic.NORMAL, 3);

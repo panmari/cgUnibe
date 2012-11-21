@@ -1,6 +1,7 @@
 package jrtr.graphSceneManager;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Stack;
 
 import javax.vecmath.Matrix4f;
@@ -19,6 +20,7 @@ public class GraphSceneManager implements SceneManagerInterface {
 	private Node rootNode;
 	private Camera camera;
 	private Frustum frustum;
+	public LinkedList<PointLight> lights;
 
 	public GraphSceneManager(Node rootNode, Camera c, Frustum f) {
 		this.rootNode = rootNode;
@@ -37,7 +39,7 @@ public class GraphSceneManager implements SceneManagerInterface {
 
 	@Override
 	public Iterator<PointLight> lightIterator() {
-		return new GraphSceneLightIterator(rootNode);
+		return lights.iterator();
 	}
 
 	@Override
@@ -56,6 +58,7 @@ public class GraphSceneManager implements SceneManagerInterface {
 		
 		private GraphSceneManagerItr(Node rootNode)
 		{
+			lights = new LinkedList<PointLight>();
 			sceneStack.push(new StackWrapper(rootNode, rootNode.getTransformation()));
 		}
 		
@@ -73,6 +76,12 @@ public class GraphSceneManager implements SceneManagerInterface {
 					t.mul(current.t, node.getTransformation());
 					if (!LightNode.class.isInstance(node))
 						sceneStack.push(new StackWrapper(node, t));
+					else {
+						PointLight nextLight = ((LightNode) node).getLight();
+						Point3f newPosition = new Point3f(nextLight.getPosition());
+						t.transform(newPosition);
+						lights.add(new PointLight(nextLight.getColor(), nextLight.getRadiance(), newPosition));
+					}
 				}
 			}
 			StackWrapper next = sceneStack.pop();
@@ -80,46 +89,7 @@ public class GraphSceneManager implements SceneManagerInterface {
 			return new RenderItem(nextShape, next.t);
 		}
 	}
-	
-	private class GraphSceneLightIterator implements Iterator<PointLight> {
-
-		Stack<StackWrapper> sceneStack = new Stack<StackWrapper>();
 		
-		private GraphSceneLightIterator(Node rootNode) {
-			sceneStack.push(new StackWrapper(rootNode, rootNode.getTransformation()));
-		}
-		
-		@Override
-		public boolean hasNext() {
-			return !sceneStack.empty();
-		}
-
-		@Override
-		public PointLight next() {
-			while (sceneStack.peek().node.getChildren() != null) {
-				StackWrapper current = sceneStack.pop();
-				for (Node node: current.node.getChildren()) {
-					Matrix4f t = new Matrix4f();
-					t.mul(current.t, node.getTransformation());
-					if (!ShapeNode.class.isInstance(node))
-						sceneStack.push(new StackWrapper(node, t));
-				}
-			}
-			StackWrapper next = sceneStack.pop();
-			PointLight nextLight = ((LightNode) next.node).getLight();
-			Point3f newPosition = new Point3f(nextLight.getPosition());
-			next.t.transform(newPosition);
-			return new PointLight(nextLight.getColor(), nextLight.getRadiance(), newPosition);
-		}
-
-		@Override
-		public void remove() {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
-	
 	private class StackWrapper {
 		private Node node;
 		private Matrix4f t;

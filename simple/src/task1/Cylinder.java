@@ -43,7 +43,6 @@ public class Cylinder extends AbstractShape {
 		addMantle();
 		addIndicesList(indicesList);
 		float[] a = normals.getFinishedArray();
-		System.out.println(Arrays.toString(a));
 		addElement(a, VertexData.Semantic.NORMAL, 3);
 		addElement(texels, VertexData.Semantic.TEXCOORD, 2);
 	}
