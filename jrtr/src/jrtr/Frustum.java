@@ -65,20 +65,24 @@ public class Frustum {
 		planePoints[2] = new Point3f(0,0,0);
 		
 		//downside:
-		verticalNormal.negate();
+		verticalNormal = new Vector3f(0,-1,0);
+		rot.rotX(-verticalFieldOfView/2);
+		rot.transform(verticalNormal);
 		planeNormals[3] = verticalNormal;
 		planePoints[3] = new Point3f(0,0,0);
 		
 		//to the right
 		Vector3f horizontalNormal = new Vector3f(1,0,0);
 		float horizontalFieldOfView = (float) Math.atan(tan(verticalFieldOfView/2)*nearPlane*aspectRatio/nearPlane);
-		rot.rotY(horizontalFieldOfView/2);
+		rot.rotY(-horizontalFieldOfView/2);
 		rot.transform(horizontalNormal);
 		planeNormals[4] = new Vector3f(horizontalNormal);
 		planePoints[4] = new Point3f(0,0,0);
 		
 		//to the left
-		horizontalNormal.negate();
+		horizontalNormal = new Vector3f(-1,0,0);
+		rot.rotY(horizontalFieldOfView/2);
+		rot.transform(horizontalNormal);
 		planeNormals[5] = horizontalNormal;
 		planePoints[5] = new Point3f(0,0,0);		
 	}

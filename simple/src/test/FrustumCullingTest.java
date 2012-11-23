@@ -44,8 +44,14 @@ public class FrustumCullingTest {
 	}
 
 	@Test
-	public void fullFrustumInside() {
-		BoundingSphere bs = new BoundingSphere(new Point3f(0,-4,0), 4);
+	public void fullFrustumFullyInside() {
+		BoundingSphere bs = new BoundingSphere(new Point3f(0, 0,-4), 4);
+		assertFalse(standardFrustum.isOutside(bs));
+	}
+	
+	@Test
+	public void fullFrustumFullyInsideDeeper() {
+		BoundingSphere bs = new BoundingSphere(new Point3f(0,0,-20), 4);
 		assertFalse(standardFrustum.isOutside(bs));
 	}
 	
