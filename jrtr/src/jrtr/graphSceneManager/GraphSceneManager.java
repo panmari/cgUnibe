@@ -7,6 +7,7 @@ import java.util.Stack;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
 
+import jrtr.BoundingSphere;
 import jrtr.Camera;
 import jrtr.Frustum;
 import jrtr.PointLight;
@@ -74,7 +75,16 @@ public class GraphSceneManager implements SceneManagerInterface {
 				for (Node node: current.node.getChildren()) {
 					Matrix4f t = new Matrix4f();
 					t.mul(current.t, node.getTransformation());
-					if (!LightNode.class.isInstance(node))
+					
+					if (ShapeNode.class.isInstance(node)) {
+						Shape s = ((ShapeNode) node).getShape();
+						Point3f c = new Point3f(s.getBoundingSphere().center);
+						node.getTransformation().transform(c);
+						camera.getCameraMatrix().transform(c);
+						if (!frustum.isOutside(new BoundingSphere(c, s.getBoundingSphere().radius)))
+							sceneStack.push(new StackWrapper(node, t));
+					}
+					else if (!LightNode.class.isInstance(node))
 						sceneStack.push(new StackWrapper(node, t));
 					else {
 						PointLight nextLight = ((LightNode) node).getLight();
