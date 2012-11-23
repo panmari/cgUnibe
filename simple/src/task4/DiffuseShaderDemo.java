@@ -10,6 +10,7 @@ import java.io.IOException;
 import javax.vecmath.*;
 
 import task1.Cylinder;
+import task1.Torus;
 import task2c.FlyingCameraInputListener;
 
 import java.util.Timer;
@@ -200,7 +201,7 @@ public class DiffuseShaderDemo
 		//shape.setMaterial(new Material(chessBoard));
 		sceneManager.addShape(shape);
 		
-		cylinder = new Shape(new Cylinder(4, 1, 30));
+		cylinder = new Shape(new Torus(4, 1, 30, 30));
 		cylinder.getTransformation().setTranslation(new Vector3f(0, 2, -3));
 		
 		sceneManager.addShape(cylinder);

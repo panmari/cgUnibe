@@ -12,6 +12,8 @@ import jrtr.VertexData.VertexElement;
 public class Shape {
 
 	private Material material;
+	private BoundingSphere boundingSphere;
+	
 	/**
 	 * Make a shape from {@link VertexData}.
 	 *  
@@ -23,6 +25,8 @@ public class Shape {
 		this.material = new Material();
 		t = new Matrix4f();
 		t.setIdentity();
+		this.boundingSphere = new BoundingSphere(vertexData);
+		System.out.println(boundingSphere);
 	}
 	
 	public VertexData getVertexData()
@@ -55,6 +59,10 @@ public class Shape {
 	{
 		return material;
 	}
+	
+	public String toString() {
+		return boundingSphere.toString();
+	}
 
 	private VertexData vertexData;
 	private Matrix4f t;
@@ -65,9 +73,13 @@ public class Shape {
 		Point3f center;
 
 		private BoundingSphere(VertexData vd) {
-			VertexElement positions = vd.getElements().getFirst();
-			if (positions.getSemantic() != Semantic.POSITION)
-				throw new RuntimeException("Should be poaitions");
+			VertexElement positions;
+			int index = 0;
+			do {
+				positions = vd.getElements().get(index);
+				index++;
+			} while(positions.getSemantic() != Semantic.POSITION);
+			
 			float[] positionsArray = positions.getData();
 			int n = positionsArray.length;
 			center = new Point3f();
@@ -76,8 +88,19 @@ public class Shape {
 				center.y += positionsArray[i+1]/n;
 				center.z += positionsArray[i+2]/n;
 			}
-			//TODO: compute radius
-			this.radius = radius;
+			
+			for (int i = 0; i < n; i+=3) {
+				Point3f current = new Point3f();
+				current.x = positionsArray[i];
+				current.y = positionsArray[i+1];
+				current.z = positionsArray[i+2];
+				if (current.distance(center) > radius) 
+					radius = current.distance(center);
+			}
+		}
+		
+		public String toString() {
+			return "r=" + radius + " c=" + center;
 		}
 	}
 }
