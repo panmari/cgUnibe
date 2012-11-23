@@ -65,10 +65,6 @@ public class BoundingSphereDemo
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			Material tronny = new Material();
-			tronny.setShader(tron);
-			shape.setMaterial(tronny);
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
@@ -173,8 +169,8 @@ public class BoundingSphereDemo
 		shape = new Shape(ObjReader.read("teapot_tex.obj", 1));
 		
 		TransformGroup root = new TransformGroup();
-		for (int x = 0; x < 100; x++)
-			for (int z = 0; z < 100; z++){
+		for (int x = 0; x < 20; x++)
+			for (int z = 0; z < 20; z++){
 				ShapeNode s = new ShapeNode(shape);
 				s.getTransformation().setTranslation(new Vector3f(x*2, 0, z*2));
 				root.addChild(s);
