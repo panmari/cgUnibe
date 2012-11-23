@@ -73,7 +73,7 @@ public class Frustum {
 		
 		//to the right
 		Vector3f horizontalNormal = new Vector3f(1,0,0);
-		float horizontalFieldOfView = (float) Math.atan(tan(verticalFieldOfView/2)*nearPlane*aspectRatio/nearPlane);
+		float horizontalFieldOfView = (float) Math.atan(tan(verticalFieldOfView/2)*nearPlane*aspectRatio/nearPlane)*2;
 		rot.rotY(-horizontalFieldOfView/2);
 		rot.transform(horizontalNormal);
 		planeNormals[4] = new Vector3f(horizontalNormal);
