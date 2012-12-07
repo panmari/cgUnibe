@@ -28,6 +28,7 @@ public class BoundingSphereDemo
 	static SceneManagerInterface sceneManager;
 	static Shape shape;
 	static float angle;
+	static JFrame jframe;
 	
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -78,19 +79,21 @@ public class BoundingSphereDemo
 	 */
 	public static class AnimationTask extends TimerTask
 	{
+		private int frame, nframes = 10;
+		private long oldTime = System.nanoTime();
+
 		public void run()
 		{
-			// Update transformation
-    		Matrix4f t = shape.getTransformation();
-    		Matrix4f rotX = new Matrix4f();
-    		rotX.rotX(angle);
-    		Matrix4f rotY = new Matrix4f();
-    		rotY.rotY(angle);
-    	
-    		//t.mul(rotX);
-    		//t.mul(rotY);
-    		
-    		// Trigger redrawing of the render window
+			if(frame == nframes){
+			       long newTime = System.nanoTime();
+			       float timeElapsed = (newTime-oldTime)/1000000000f; //convert nanosec to sec
+			       oldTime = newTime;
+			       jframe.setTitle("FPS: " +  nframes/timeElapsed);
+			       frame=0;
+			} else
+			       frame++;
+
+
     		renderPanel.getCanvas().repaint(); 
 		}
 	}
@@ -180,7 +183,7 @@ public class BoundingSphereDemo
 		renderPanel = new SimpleRenderPanel();
 		sceneManager = new GraphSceneManager(root);
 		// Make the main window of this application and add the renderer to it
-		JFrame jframe = new JFrame("simple");
+		jframe = new JFrame("simple");
 		jframe.setSize(500, 500);
 		jframe.setLocationRelativeTo(null); // center of screen
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
