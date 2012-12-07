@@ -53,6 +53,10 @@ public class GraphSceneManager implements SceneManagerInterface {
 		return frustum;
 	}
 	
+	/**
+	 * Has to be called before iterating lights
+	 * @author Mazzzy
+	 */
 	private class GraphSceneManagerItr implements SceneManagerIterator {
 		
 		Stack<StackWrapper> sceneStack = new Stack<StackWrapper>();
