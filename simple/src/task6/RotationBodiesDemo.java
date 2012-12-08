@@ -105,6 +105,7 @@ public class RotationBodiesDemo
 		
 		for (Shape shape: shapes)
 			sceneManager.addShape(shape);
+		sceneManager.addPointLight(new PointLight(new Color3f(1,0,0), 10, new Point3f(0,5,0)));
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
 		renderPanel = new SimpleRenderPanel();
