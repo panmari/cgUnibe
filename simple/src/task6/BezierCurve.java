@@ -46,6 +46,7 @@ public class BezierCurve {
 			Vector4f tangent = new Vector4f(curveMesh[(t + 1) % evalN]);
 			tangent.sub(curveMesh[t]);
 			tangent.normalize();
+			tangent.negate();
 			tangents[t] = tangent;
 		}
 

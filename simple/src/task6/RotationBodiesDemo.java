@@ -190,7 +190,7 @@ public class RotationBodiesDemo
 		root.addChild(tableGroup);
 		sceneManager = new GraphSceneManager(root);
 		
-		root.addChild(new LightNode((new PointLight(new Color3f(1,0,0), 40, new Point3f(-5,15,0)))));
+		root.addChild(new LightNode((new PointLight(new Color3f(1,0,0), 40, new Point3f(10,20,0)))));
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
 		renderPanel = new SimpleRenderPanel();
