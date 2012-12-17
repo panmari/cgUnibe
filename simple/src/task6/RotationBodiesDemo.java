@@ -105,12 +105,12 @@ public class RotationBodiesDemo
 		//shapes.add(c);
 		
 		controlPoints = new Point2f[4];
-		controlPoints[0] = new Point2f(1,0);
-		controlPoints[1] = new Point2f(2,1);
-		controlPoints[2] = new Point2f(2,2);
+		controlPoints[0] = new Point2f(0,0);
+		controlPoints[1] = new Point2f(1,0);
+		controlPoints[2] = new Point2f(1.5f,3);
 		controlPoints[3] = new Point2f(0,3);
 		BezierCurve eggCurve = new BezierCurve(1, controlPoints, 40);
-		Shape egg = new Shape(new RotationBody(eggCurve, 4));
+		Shape egg = new Shape(new RotationBody(eggCurve, 40));
 		shapes.add(egg);
 		
 		

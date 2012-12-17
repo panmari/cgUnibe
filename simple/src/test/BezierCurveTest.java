@@ -70,13 +70,12 @@ public class BezierCurveTest {
 		controlPoints[0] = new Point2f(1,0);
 		controlPoints[1] = new Point2f(2,1);
 		controlPoints[2] = new Point2f(2,2);
-		controlPoints[3] = new Point2f(0,100);
+		controlPoints[3] = new Point2f(0,3);
 		BezierCurve eggCurve = new BezierCurve(1, controlPoints, 5);
 		Point4f[] curve = eggCurve.getCurveMesh();
 		System.out.println(Arrays.toString(curve));
 		assertEquals(0, curve[4].x, epsilon);
-		assertEquals(100, curve[4].y, epsilon);
-		
+		assertEquals(3, curve[4].y, epsilon);
 	}
 
 }

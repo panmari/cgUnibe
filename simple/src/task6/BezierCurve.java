@@ -39,7 +39,7 @@ public class BezierCurve {
 			segmentMatrices[i/3] = segmentMatrix;
 		}
 		
-		float evalStep = n/(float)evalN;
+		float evalStep = n*3/(float)(evalN - 1);
 		for (int t = 0; t < evalN; t++ )
 			curveMesh[t] = pointFor(t*evalStep);
 		for (int t = 0; t < evalN; t++ ) {
@@ -58,6 +58,8 @@ public class BezierCurve {
 	 */
 	public Point4f pointFor(float t) {
 		int segmentBegin = (int) t/3;
+		if (t % 3 == 0 && t != 0)
+			segmentBegin -= 1;
 		float x = (t - segmentBegin*3) / 3f;
 		Point4f resultingPoint = new Point4f(MathFloat.pow(x, 3),
 										MathFloat.pow(x, 2),
