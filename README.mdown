@@ -1,0 +1,23 @@
+# Computer Graphics
+
+Various tasks all concerning different issues faced in the field of computer graphics. It 
+is based on the jrtr framework, which is itself based on jogl.
+
+## Requirements
+
+Needs at least OpenGL 3.1. On Linux, this would be Mesa drivers > 9.1 (as in not released yet). You are adviced to
+work on Windows.
+
+## Tasks
+
+1. First steps, make shades using the jrtr/j3d classes
+2. Extend the given camera and frustum. And a landscape generating algorithm.
+3. Softwarerender, interpolate colors, read out of textures. And introduce texels.
+4. Light, programm shaders that support specular and diffuse reflection.
+5. Graph scene manager and bounding sphere.
+6. Bezier curves, rotation bodies and some extra work
+
+## Advice
+
+Before making ANYTHING, read through the existing classes. Lots of functionality is given by jrtr, j3d.
+Be aware that this course has a crazy workload. Nonetheless, every task is very rewarding. 
