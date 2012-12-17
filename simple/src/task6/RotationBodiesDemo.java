@@ -1,8 +1,16 @@
 package task6;
 import jrtr.*;
+import jrtr.graphSceneManager.GraphSceneManager;
+import jrtr.graphSceneManager.LightNode;
+import jrtr.graphSceneManager.Node;
+import jrtr.graphSceneManager.ShapeNode;
+import jrtr.graphSceneManager.TransformGroup;
+
 import javax.swing.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+
 import javax.vecmath.*;
 
 import task1.Cylinder;
@@ -22,9 +30,11 @@ public class RotationBodiesDemo
 {	
 	static RenderPanel renderPanel;
 	static RenderContext renderContext;
-	static SimpleSceneManager sceneManager;
+	static GraphSceneManager sceneManager;
 	static List<Shape> shapes = new ArrayList<Shape>();
 	static float angle;
+	static Texture eggTexture;
+	private static ShapeNode egg;
 
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -42,6 +52,14 @@ public class RotationBodiesDemo
 			renderContext = r;
 			renderContext.setSceneManager(sceneManager);
 	
+			eggTexture = renderContext.makeTexture();
+			try {
+				eggTexture.load("../jrtr/textures/egg.jpg");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			egg.getShape().setMaterial(new Material(eggTexture));
 			// Register a timer task
 		    Timer timer = new Timer();
 		    angle = 0.01f;
@@ -57,16 +75,6 @@ public class RotationBodiesDemo
 	{
 		public void run()
 		{
-			for (Shape shape: shapes) {
-	    		Matrix4f t = shape.getTransformation();
-	    		Matrix4f rotX = new Matrix4f();
-	    		rotX.rotX(angle);
-	    		Matrix4f rotY = new Matrix4f();
-	    		rotY.rotY(angle);
-	    		t.mul(rotX);
-	    		t.mul(rotY);
-	    		shape.setTransformation(t);
-			}
     		// Trigger redrawing of the render window
     		renderPanel.getCanvas().repaint(); 
 		}
@@ -94,29 +102,49 @@ public class RotationBodiesDemo
 		
 				
 		// Make a scene manager and add the object
-		sceneManager = new SimpleSceneManager();
-		Point2f[] controlPoints = new Point2f[4];
-		controlPoints[0] = new Point2f(0,0);
-		controlPoints[1] = new Point2f(1,1);
-		controlPoints[2] = new Point2f(2,2);
-		controlPoints[3] = new Point2f(3,3);
-		BezierCurve schraeg = new BezierCurve(1, controlPoints, 20);
-		Shape c = new Shape(new RotationBody(schraeg, 20));
-		//shapes.add(c);
+		TransformGroup root = new TransformGroup();
+		Point2f[] controlPoints;
+		
+		controlPoints = new Point2f[4];
+		controlPoints[0] = new Point2f(3,0);
+		controlPoints[1] = new Point2f(1,0);
+		controlPoints[2] = new Point2f(5f,3);
+		controlPoints[3] = new Point2f(.5f,3);
+
+		BezierCurve cylinder = new BezierCurve(1, controlPoints, 40);
+		
+		controlPoints = new Point2f[7];
+		controlPoints[0] = new Point2f(3,0);
+		controlPoints[1] = new Point2f(.5f,0);
+		controlPoints[2] = new Point2f(.5f,3);
+		controlPoints[3] = new Point2f(.5f,4);
+		controlPoints[4] = new Point2f(2f,5);
+		controlPoints[5] = new Point2f(2f,6);
+		controlPoints[6] = new Point2f(2f,7);
+
+		BezierCurve eggHolderCurve = new BezierCurve(2, controlPoints, 40);
+		
+		Shape eggHolder = new Shape(new RotationBody(eggHolderCurve, 40));
+		TransformGroup eggStuff = new TransformGroup();
+		eggStuff.addChild(new ShapeNode(eggHolder));
 		
 		controlPoints = new Point2f[4];
 		controlPoints[0] = new Point2f(0,0);
-		controlPoints[1] = new Point2f(1,0);
-		controlPoints[2] = new Point2f(1.5f,3);
-		controlPoints[3] = new Point2f(0,3);
+		controlPoints[1] = new Point2f(3.5f,0);
+		controlPoints[2] = new Point2f(2f,6);
+		controlPoints[3] = new Point2f(0,6);
 		BezierCurve eggCurve = new BezierCurve(1, controlPoints, 40);
-		Shape egg = new Shape(new RotationBody(eggCurve, 40));
-		shapes.add(egg);
+		egg = new ShapeNode(new Shape(new RotationBody(eggCurve, 40)));
+		Matrix4f t = new Matrix4f();
+		t.setIdentity();
+		t.setTranslation(new Vector3f(0,5,0));
+		egg.setTransformation(t);
+		eggStuff.addChild(egg);
 		
+		root.addChild(eggStuff);
+		sceneManager = new GraphSceneManager(root);
 		
-		for (Shape shape: shapes)
-			sceneManager.addShape(shape);
-		sceneManager.addPointLight(new PointLight(new Color3f(1,0,0), 10, new Point3f(0,5,0)));
+		root.addChild(new LightNode((new PointLight(new Color3f(1,0,0), 10, new Point3f(-3,5,0)))));
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
 		renderPanel = new SimpleRenderPanel();

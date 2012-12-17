@@ -1,6 +1,7 @@
 package task6;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Point2f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Point4f;
 import javax.vecmath.Vector3f;
@@ -44,11 +45,18 @@ public class RotationBody extends AbstractShape {
 							(currentIndex + curveLength + 1) % n, 
 							(currentIndex + curveLength) % n);
 				}
+				
+				//texel:
+				Point2f texel = new Point2f(i*2/(float)rotationSteps, j/(float)curveLength);
+				if (i > rotationSteps/2f)
+					texel.x = 2 - texel.x;
+				addTexel(currentIndex, texel);
 			}
 			currentRot.mul(stepRot);
 		}
 		addElement(vertices.getFinishedArray(), Semantic.POSITION, 3);
 		addElement(normals.getFinishedArray(), Semantic.NORMAL, 3);
+		addElement(this.texels, Semantic.TEXCOORD, 2);
 		addIndicesList(indicesList);
 	}
 }
