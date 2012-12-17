@@ -26,7 +26,7 @@ public class RotationBody extends AbstractShape {
 		Matrix4f currentRot = new Matrix4f();
 		currentRot.setIdentity();
 		for (int i = 0; i < rotationSteps; i++) {
-			for (int j = 0; j < curve.getCurveMesh().length; j++) {
+			for (int j = 0; j < curveLength; j++) {
 				Point4f p = curve.getCurveMesh()[j];
 				Vector4f tangent = curve.getTangents()[j];
 				Point3f currentVertex = new Point3f(p.x, p.y, p.z);
@@ -35,12 +35,15 @@ public class RotationBody extends AbstractShape {
 				currentRot.transform(currentNormal);
 				vertices.appendVector(currentVertex);
 				normals.appendVector(currentNormal);
-				if (j < curve.getCurveMesh().length ) {
-					int currentIndex = i*rotationSteps + j;
-					addQuadrangle(currentIndex % n, (currentIndex + 1) % n, 
-							(currentIndex + 1 + curveLength) % n, 
+				//add surface:
+				int currentIndex = i*curveLength + j;
+				
+				if (j < curveLength - 1) {
+					addQuadrangle(currentIndex, 
+							currentIndex + 1, 
+							(currentIndex + curveLength + 1) % n, 
 							(currentIndex + curveLength) % n);
-					}
+				}
 			}
 			currentRot.mul(stepRot);
 		}

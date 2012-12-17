@@ -7,6 +7,7 @@ import javax.vecmath.*;
 
 import task1.Cylinder;
 import task1.Torus;
+import task2c.FlyingCameraInputListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,9 +100,19 @@ public class RotationBodiesDemo
 		controlPoints[1] = new Point2f(1,1);
 		controlPoints[2] = new Point2f(2,2);
 		controlPoints[3] = new Point2f(3,3);
-		BezierCurve schraeg = new BezierCurve(1, controlPoints, 4);
-		Shape c = new Shape(new RotationBody(schraeg, 5));
-		shapes.add(c);
+		BezierCurve schraeg = new BezierCurve(1, controlPoints, 20);
+		Shape c = new Shape(new RotationBody(schraeg, 20));
+		//shapes.add(c);
+		
+		controlPoints = new Point2f[4];
+		controlPoints[0] = new Point2f(1,0);
+		controlPoints[1] = new Point2f(2,1);
+		controlPoints[2] = new Point2f(2,2);
+		controlPoints[3] = new Point2f(0,3);
+		BezierCurve eggCurve = new BezierCurve(1, controlPoints, 40);
+		Shape egg = new Shape(new RotationBody(eggCurve, 4));
+		shapes.add(egg);
+		
 		
 		for (Shape shape: shapes)
 			sceneManager.addShape(shape);
@@ -117,8 +128,13 @@ public class RotationBodiesDemo
 		jframe.getContentPane().add(renderPanel.getCanvas());// put the canvas into a JFrame window
 
 		// Add a mouse listener
-	    jframe.addMouseListener(new SimpleMouseListener());
-		   	    	    
+		// Add a mouse listener
+		FlyingCameraInputListener l = new FlyingCameraInputListener(sceneManager.getCamera());
+	    renderPanel.getCanvas().addMouseListener(l);
+	    renderPanel.getCanvas().addMouseMotionListener(l);
+	    renderPanel.getCanvas().addMouseWheelListener(l);
+	    renderPanel.getCanvas().addKeyListener(l);
+	    
 	    jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setVisible(true); // show window
 	}
