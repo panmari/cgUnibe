@@ -9,6 +9,7 @@
 uniform mat4 projection;
 uniform mat4 modelview;
 uniform vec4 lightDirection;
+uniform mat4 shadowMapT;
 
 // Input vertex attributes; passed in from host program to shader
 // via vertex buffer objects
@@ -20,7 +21,10 @@ in vec2 texcoord;
 
 out vec4 posCameraSpace;
 out vec3 normalCameraSpace;
+out vec4 posLightSpace;
+
 out vec2 frag_texcoord;
+out float shadowDepth;
 
 void main()
 {		
@@ -31,6 +35,7 @@ void main()
 	// the light direction, i.e., it stays in camera coordinates
 	normalCameraSpace = normalize((modelview * vec4(normal,0)).xyz);
 	posCameraSpace = modelview * position;
+	posLightSpace = shadowMapT * position;
 	// we're in camera space, cop is always (0,0,0) => just take the negative
 	
 	// Pass texture coordiantes to fragment shader, OpenGL automatically

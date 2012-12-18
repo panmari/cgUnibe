@@ -1,8 +1,10 @@
 package jrtr;
 
+import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -21,9 +23,9 @@ public class GLRenderContext implements RenderContext {
 	private GL3 gl;
 	private GLShader activeShader, defaultShader;
 	private GLTexture defaultTexture;
-	private ByteBuffer shadowMap;
-	private GLShader shadowShader;
-	
+	private GLTexture shadowMap;
+	private PointLight light;
+	private boolean shadowDraw;
 	/**
 	 * This constructor is called by {@link GLRenderPanel}.
 	 * 
@@ -39,9 +41,8 @@ public class GLRenderContext implements RenderContext {
         // Load and use default shader
         defaultShader = new GLShader(gl);
         defaultTexture = new GLTexture(gl);
-        shadowShader = new GLShader(gl);
+        shadowMap = new GLTexture(gl);
         try {
-        	shadowShader.load("../jrtr/shaders/shadow.vert","../jrtr/shaders/shadow.frag");
         	defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
         	defaultTexture.load("../jrtr/textures/wood.jpg");
         } catch(Exception e) {
@@ -78,22 +79,25 @@ public class GLRenderContext implements RenderContext {
 		
 		Iterator<PointLight> lightIter = sceneManager.lightIterator();
 		
-		while (lightIter.hasNext()) {
-			SceneManagerIterator iter = sceneManager.iterator();
-			PointLight currentLight = lightIter.next();
-			while(iter.hasNext())
+		SceneManagerIterator iterator = sceneManager.iterator();
+
+		if (lightIter.hasNext()) {
+			this.light = lightIter.next();
+			shadowDraw = true;
+			while(iterator.hasNext())
 			{
-				RenderItem r = iter.next();
-				if(r != null && r.getShape()!=null) draw(r, currentLight);
+				RenderItem r = iterator.next();
+				if(r != null && r.getShape()!=null) draw(r);
 			}
 		}
 		
+		shadowDraw = false;
 		beginFrame();
-		SceneManagerIterator iterator = sceneManager.iterator();	
+		iterator = sceneManager.iterator();	
 		while(iterator.hasNext())
 		{
 			RenderItem r = iterator.next();
-			if(r != null && r.getShape()!=null) draw(r, null);
+			if(r != null && r.getShape()!=null) draw(r);
 		}		
 		
 		endFrame();
@@ -136,12 +140,8 @@ public class GLRenderContext implements RenderContext {
 	 * 
 	 * @param renderItem	the object that needs to be drawn
 	 */
-	private void draw(RenderItem renderItem, PointLight pointLight)
+	private void draw(RenderItem renderItem)
 	{
-		boolean shadowDraw = false;
-		if (pointLight != null)
-			shadowDraw = true;
-		
 		VertexData vertexData = renderItem.getShape().getVertexData();
 		LinkedList<VertexData.VertexElement> vertexElements = vertexData.getElements();
 		int indices[] = vertexData.getIndices();
@@ -154,18 +154,13 @@ public class GLRenderContext implements RenderContext {
 		// Compute the modelview matrix by multiplying the camera matrix and the 
 		// transformation matrix of the object
 		Matrix4f modelview;
+		Camera lightCam;
+		if (light != null)
+			lightCam = new Camera(light.getPosition(), sceneManager.getCamera().getLookAtPoint(), sceneManager.getCamera().getUpVector());
+		else lightCam = new Camera();
+		
 		if (shadowDraw) {
-			Camera c = new Camera(pointLight.getPosition(), sceneManager.getCamera().getLookAtPoint(), sceneManager.getCamera().getUpVector());
-			modelview = new Matrix4f(c.getCameraMatrix());
-			if (glossMap != null) {
-				gl.glActiveTexture(GL3.GL_TEXTURE0 + 4);
-				gl.glEnable(GL3.GL_TEXTURE_2D);
-				gl.glBindTexture(GL3.GL_TEXTURE_2D, glossMap.getId());
-				gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
-				gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
-				id = gl.glGetUniformLocation(activeShader.programId(), "glossMap");
-				gl.glUniform1i(id, 2);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
-			}
+			modelview = new Matrix4f(lightCam.getCameraMatrix());
 		}
 		else {
 			modelview = new Matrix4f(sceneManager.getCamera().getCameraMatrix());
@@ -177,6 +172,15 @@ public class GLRenderContext implements RenderContext {
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "modelview"), 1, false, matrix4fToFloat16(modelview), 0);
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "projection"), 1, false, matrix4fToFloat16(sceneManager.getFrustum().getProjectionMatrix()), 0);
 	     		
+		Matrix4f shadowMapT = new Matrix4f(1/2f,  0,  0,  1/2f,
+											0,  1/2f, 0, 1/2f,
+											0,    0,  1/2f, 1/2f,
+											0,    0,  0 ,   1/2f);
+		shadowMapT.mul(lightCam.getCameraMatrix());
+		shadowMapT.mul(sceneManager.getFrustum().getProjectionMatrix());
+		shadowMapT.mul(renderItem.getT());
+		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "shadowMapT"), 1, false, matrix4fToFloat16(shadowMapT), 0);
+
 		// Steps to pass vertex data to OpenGL:
 		// 1. For all vertex attributes (position, normal, etc.)
 			// Copy vertex data into float buffers that can be passed to OpenGL
@@ -231,12 +235,15 @@ public class GLRenderContext implements RenderContext {
 		
 		// 3. Render the vertex buffer objects
 		gl.glDrawArrays(GL3.GL_TRIANGLES, 0, indices.length);
-		
+		gl.glDeleteBuffers(vboBuffer.array().length, vboBuffer.array(), 0);		
 		// 4. Clean up
 		if (shadowDraw) {
-			gl.glDeleteBuffers(vboBuffer.array().length, vboBuffer.array(), 0);
-			this.shadowMap = ByteBuffer.allocate(3 * 500 * 500); 
-	        gl.glReadPixels(0, 0, 500, 500, GL3.GL_DEPTH_COMPONENT, GL3.GL_BYTE, shadowMap);
+			gl.glActiveTexture(GL3.GL_TEXTURE0 + 2);
+	        gl.glBindTexture(GL.GL_TEXTURE_2D, shadowMap.getId());
+	        gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_DEPTH_COMPONENT24, 0, 0, 100, 100, 0);
+	        int id = gl.glGetUniformLocation(activeShader.programId(), "shadowMap");
+			gl.glUniform1i(id, 2);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
+
 		}
         cleanMaterial(renderItem.getShape().getMaterial());
 	}

@@ -6,6 +6,7 @@
 // Uniform variables passed in from host program
 uniform sampler2D myTexture;
 uniform sampler2D glossMap;
+uniform sampler2DShadow shadowMap;
 
 uniform mat4 camera;
 
@@ -21,12 +22,14 @@ uniform float phongExponent;
 in vec3 normalCameraSpace;
 in vec2 frag_texcoord;
 in vec4 posCameraSpace;
+in vec4 posLightSpace;
 
 // Output variable, will be written to framebuffer automatically
 out vec4 frag_shaded;
 
 void main()
-{		
+{	
+
 	// The built-in GLSL function "texture" performs the texture lookup
 	vec4 ambColor = diffuseReflectionCoefficient * texture(myTexture, frag_texcoord);
 	vec4 specColor = vec4(0,0,0,0);
@@ -50,6 +53,10 @@ void main()
 		float specularLight = relativeRadiance * rfc * specular; //TODO use glossmap value
 		specColor += vec4(pointLightsCol[i], 0) * specularLight;
 	}
+	
+	float shadowValue = textureProj(shadowMap, posLightSpace, 0);
 	vec4 finalColor = specColor + ambColor + diffColor;
+	finalColor = finalColor*shadowValue;
+
 	frag_shaded = finalColor;
 }
