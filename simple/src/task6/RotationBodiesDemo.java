@@ -193,7 +193,10 @@ public class RotationBodiesDemo
 		
 		root.addChild(tableGroup);
 		sceneManager = new GraphSceneManager(root);
+		sceneManager.getCamera().setCenterOfProjection(new Point3f(0, 15, 30));
+		sceneManager.getCamera().setLookAtPoint(new Point3f(0, 15, 0));
 		
+		//LIGHT
 		root.addChild(new LightNode((new PointLight(new Color3f(1,0,0), 40, new Point3f(10,20,0)))));
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.

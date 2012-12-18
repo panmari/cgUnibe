@@ -1,5 +1,6 @@
 package jrtr.graphSceneManager;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
@@ -27,6 +28,7 @@ public class GraphSceneManager implements SceneManagerInterface {
 		this.rootNode = rootNode;
 		this.camera = c;
 		this.frustum = f;
+		this.lights = new LinkedList<PointLight>();
 	}
 	
 	public GraphSceneManager(Node rootNode) {

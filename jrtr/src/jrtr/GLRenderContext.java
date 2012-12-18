@@ -1,5 +1,6 @@
 package jrtr;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
@@ -20,6 +21,7 @@ public class GLRenderContext implements RenderContext {
 	private GL3 gl;
 	private GLShader activeShader, defaultShader;
 	private GLTexture defaultTexture;
+	private ByteBuffer shadowMap;
 	
 	/**
 	 * This constructor is called by {@link GLRenderPanel}.
@@ -71,18 +73,29 @@ public class GLRenderContext implements RenderContext {
 	{
 		gl = drawable.getGL().getGL3();
 		
-		beginFrame();
+		Iterator<PointLight> lightIter = sceneManager.lightIterator();
 		
+		while (lightIter.hasNext()) {
+			SceneManagerIterator iter = sceneManager.iterator();
+			PointLight currentLight = lightIter.next();
+			while(iter.hasNext())
+			{
+				RenderItem r = iter.next();
+				if(r != null && r.getShape()!=null) draw(r, currentLight);
+			}
+		}
+		
+		beginFrame();
 		SceneManagerIterator iterator = sceneManager.iterator();	
 		while(iterator.hasNext())
 		{
 			RenderItem r = iterator.next();
-			if(r != null && r.getShape()!=null) draw(r);
+			if(r != null && r.getShape()!=null) draw(r, null);
 		}		
 		
 		endFrame();
 	}
-		
+
 	/**
 	 * This method is called at the beginning of each frame, i.e., before
 	 * scene drawing starts.
@@ -120,8 +133,12 @@ public class GLRenderContext implements RenderContext {
 	 * 
 	 * @param renderItem	the object that needs to be drawn
 	 */
-	private void draw(RenderItem renderItem)
+	private void draw(RenderItem renderItem, PointLight pointLight)
 	{
+		boolean shadowDraw = false;
+		if (pointLight != null)
+			shadowDraw = true;
+		
 		VertexData vertexData = renderItem.getShape().getVertexData();
 		LinkedList<VertexData.VertexElement> vertexElements = vertexData.getElements();
 		int indices[] = vertexData.getIndices();
@@ -130,12 +147,18 @@ public class GLRenderContext implements RenderContext {
 		if(indices == null) return;
 		
 		// Set the material
-		setMaterial(renderItem.getShape().getMaterial());
-
+	
 		// Compute the modelview matrix by multiplying the camera matrix and the 
 		// transformation matrix of the object
-		
-		Matrix4f modelview = new Matrix4f(sceneManager.getCamera().getCameraMatrix());
+		Matrix4f modelview;
+		if (shadowDraw) {
+			Camera c = new Camera(pointLight.getPosition(), sceneManager.getCamera().getLookAtPoint(), sceneManager.getCamera().getUpVector());
+			modelview = new Matrix4f(c.getCameraMatrix());
+		}
+		else {
+			modelview = new Matrix4f(sceneManager.getCamera().getCameraMatrix());
+			setMaterial(renderItem.getShape().getMaterial());
+		}
 		modelview.mul(renderItem.getT());
 		
 		// Set modelview and projection matrices in shader
@@ -198,8 +221,11 @@ public class GLRenderContext implements RenderContext {
 		gl.glDrawArrays(GL3.GL_TRIANGLES, 0, indices.length);
 		
 		// 4. Clean up
-		gl.glDeleteBuffers(vboBuffer.array().length, vboBuffer.array(), 0);
-        
+		if (shadowDraw) {
+			gl.glDeleteBuffers(vboBuffer.array().length, vboBuffer.array(), 0);
+			this.shadowMap = ByteBuffer.allocate(3 * 500 * 500); 
+	        gl.glReadPixels(0, 0, 500, 500, GL3.GL_DEPTH_COMPONENT, GL3.GL_BYTE, shadowMap);
+		}
         cleanMaterial(renderItem.getShape().getMaterial());
 	}
 
