@@ -67,7 +67,10 @@ public class RotationBodiesDemo
 				e.printStackTrace();
 			}
 			egg.getShape().setMaterial(new Material(eggTexture));
-			eggHolder.setMaterial(new Material(metal));
+			Material metalMat = new Material(metal);
+			metalMat.setSpecularReflectionCoefficient(1);
+			metalMat.setDiffuseReflectionCoefficient(.4f);
+			eggHolder.setMaterial(metalMat);
 			hat.getShape().setMaterial(new Material(pink));
 			
 			// Register a timer task
