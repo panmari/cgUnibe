@@ -22,6 +22,7 @@ public class GLRenderContext implements RenderContext {
 	private GLShader activeShader, defaultShader;
 	private GLTexture defaultTexture;
 	private ByteBuffer shadowMap;
+	private GLShader shadowShader;
 	
 	/**
 	 * This constructor is called by {@link GLRenderPanel}.
@@ -38,7 +39,9 @@ public class GLRenderContext implements RenderContext {
         // Load and use default shader
         defaultShader = new GLShader(gl);
         defaultTexture = new GLTexture(gl);
+        shadowShader = new GLShader(gl);
         try {
+        	shadowShader.load("../jrtr/shaders/shadow.vert","../jrtr/shaders/shadow.frag");
         	defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
         	defaultTexture.load("../jrtr/textures/wood.jpg");
         } catch(Exception e) {
@@ -154,6 +157,15 @@ public class GLRenderContext implements RenderContext {
 		if (shadowDraw) {
 			Camera c = new Camera(pointLight.getPosition(), sceneManager.getCamera().getLookAtPoint(), sceneManager.getCamera().getUpVector());
 			modelview = new Matrix4f(c.getCameraMatrix());
+			if (glossMap != null) {
+				gl.glActiveTexture(GL3.GL_TEXTURE0 + 4);
+				gl.glEnable(GL3.GL_TEXTURE_2D);
+				gl.glBindTexture(GL3.GL_TEXTURE_2D, glossMap.getId());
+				gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
+				gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
+				id = gl.glGetUniformLocation(activeShader.programId(), "glossMap");
+				gl.glUniform1i(id, 2);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
+			}
 		}
 		else {
 			modelview = new Matrix4f(sceneManager.getCamera().getCameraMatrix());
