@@ -146,13 +146,25 @@ public class Frustum {
 		update();
 	}
 	
+	/**
+	 * Conservative way to determine if a bounding sphere is inside
+	 * @param bs
+	 * @return
+	 */
 	public boolean isOutside(BoundingSphere bs) {
 		for (int i = 0; i < 6; i++)
 			if (isOutsideOf(planeNormals[i], planePoints[i], bs))
 				return true;
 		return false;
 	}
-
+	
+	/**
+	 * Tests a point if it lies outside of a given plane.
+	 * @param normal
+	 * @param onPlane
+	 * @param bs
+	 * @return
+	 */
 	public boolean isOutsideOf(Vector3f normal, Point3f onPlane, BoundingSphere bs) {
 		Vector3f dist = new Vector3f();
 		dist.sub(onPlane, bs.center);

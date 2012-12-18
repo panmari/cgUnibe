@@ -160,6 +160,7 @@ public class RotationBodiesDemo
 		t = new Matrix4f();
 		t.setIdentity();
 		t.setTranslation(new Vector3f(3,12,0));
+		t.setScale(.5f);
 		eggStuff.setTransformation(t);
 		
 		TransformGroup tableGroup = new TransformGroup();

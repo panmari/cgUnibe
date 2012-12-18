@@ -74,7 +74,7 @@ public class GraphSceneManager implements SceneManagerInterface {
 		
 		public RenderItem next()
 		{
-			while (sceneStack.peek().node.getChildren() != null) {
+			while (!sceneStack.isEmpty() && sceneStack.peek().node.getChildren() != null) {
 				StackWrapper current = sceneStack.pop();
 				for (Node node: current.node.getChildren()) {
 					Matrix4f t = new Matrix4f();
