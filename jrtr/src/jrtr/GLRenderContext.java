@@ -77,7 +77,7 @@ public class GLRenderContext implements RenderContext {
 		while(iterator.hasNext())
 		{
 			RenderItem r = iterator.next();
-			if(r.getShape()!=null) draw(r);
+			if(r != null && r.getShape()!=null) draw(r);
 		}		
 		
 		endFrame();

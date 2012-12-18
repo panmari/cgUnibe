@@ -98,7 +98,11 @@ public class GraphSceneManager implements SceneManagerInterface {
 					}
 				}
 			}
-			StackWrapper next = sceneStack.pop();
+			
+			StackWrapper next;
+			if (!sceneStack.isEmpty())
+				next = sceneStack.pop();
+			else return null;
 			Shape nextShape = ((ShapeNode) next.node).getShape();
 			return new RenderItem(nextShape, next.t);
 		}
