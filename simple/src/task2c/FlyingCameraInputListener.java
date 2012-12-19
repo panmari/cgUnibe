@@ -11,9 +11,12 @@ import java.awt.event.MouseWheelListener;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
 import jrtr.Camera;
+import jrtr.PointLight;
+import jrtr.graphSceneManager.LightNode;
 
 public class FlyingCameraInputListener implements KeyListener, MouseMotionListener, MouseListener, MouseWheelListener {
 
@@ -21,9 +24,16 @@ public class FlyingCameraInputListener implements KeyListener, MouseMotionListen
 	private Matrix4f rot;
 	private MouseEvent prevEvent;
 	private final float factor = 0.01f;
+	private PointLight light;
+	
 	public FlyingCameraInputListener(Camera c) {
 		this.c = c;
 		rot = new Matrix4f();
+	}
+	
+	public FlyingCameraInputListener(Camera c, PointLight l) {
+		this(c);
+		this.light = l;
 	}
 	
 	@Override
@@ -53,19 +63,31 @@ public class FlyingCameraInputListener implements KeyListener, MouseMotionListen
 		Vector3f rightStep = new Vector3f(c.getCameraXAxis());
 		switch (k.getKeyCode()) {
 			case KeyEvent.VK_UP:
+				if (light != null)
+					light.getPosition().add(new Vector3f(0,1,0));
+				break;
 			case KeyEvent.VK_W:
 				step(-1);
 				break;
 			case KeyEvent.VK_DOWN:
+				if (light != null)
+					light.getPosition().add(new Vector3f(0,-1,0));
+				break;
 			case KeyEvent.VK_S:
 				step(1);
 				break;
 			case KeyEvent.VK_LEFT:
+				if (light != null)
+					light.getPosition().sub(rightStep);
+				break;
 			case KeyEvent.VK_A:
 				c.getCenterOfProjection().sub(rightStep);
 				c.getLookAtPoint().sub(rightStep);
 				break;
 			case KeyEvent.VK_RIGHT:
+				if (light != null)
+					light.getPosition().add(rightStep);
+				break;
 			case KeyEvent.VK_D:
 				c.getCenterOfProjection().add(rightStep);
 				c.getLookAtPoint().add(rightStep);

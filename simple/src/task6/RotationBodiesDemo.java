@@ -197,7 +197,8 @@ public class RotationBodiesDemo
 		sceneManager.getCamera().setLookAtPoint(new Point3f(0, 15, 0));
 		
 		//LIGHT
-		root.addChild(new LightNode((new PointLight(new Color3f(1,0,0), 40, new Point3f(10,20,0)))));
+		PointLight light = new PointLight(new Color3f(1,0,0), 40, new Point3f(10,20,0));
+		root.addChild(new LightNode(light));
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.
 		renderPanel = new SimpleRenderPanel();
@@ -210,7 +211,7 @@ public class RotationBodiesDemo
 
 		// Add a mouse listener
 		// Add a mouse listener
-		FlyingCameraInputListener l = new FlyingCameraInputListener(sceneManager.getCamera());
+		FlyingCameraInputListener l = new FlyingCameraInputListener(sceneManager.getCamera(), light);
 	    renderPanel.getCanvas().addMouseListener(l);
 	    renderPanel.getCanvas().addMouseMotionListener(l);
 	    renderPanel.getCanvas().addMouseWheelListener(l);
