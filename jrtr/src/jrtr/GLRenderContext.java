@@ -26,6 +26,7 @@ public class GLRenderContext implements RenderContext {
 	private GLTexture shadowMap;
 	private PointLight light;
 	private boolean shadowDraw;
+	private IntBuffer shadowMapBuffer;
 	/**
 	 * This constructor is called by {@link GLRenderPanel}.
 	 * 
@@ -91,6 +92,18 @@ public class GLRenderContext implements RenderContext {
 			}
 		}
 		
+		shadowMapBuffer = IntBuffer.allocate(1);
+		gl.glGenTextures(1, shadowMapBuffer);
+		gl.glBindTexture(GL3.GL_TEXTURE_2D, shadowMapBuffer.get(0));
+		this.gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0,
+				GL3.GL_DEPTH_COMPONENT, 500, 500, 0,
+				GL3.GL_DEPTH_COMPONENT, GL3.GL_UNSIGNED_BYTE, null);
+
+		gl.glBindTexture(GL.GL_TEXTURE_2D, shadowMapBuffer.get(0));
+        gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, 0, 500, 500, 0);
+        int id = gl.glGetUniformLocation(activeShader.programId(), "shadowMap");
+		gl.glUniform1i(id, shadowMapBuffer.get(0));	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
+
 		shadowDraw = false;
 		beginFrame();
 		iterator = sceneManager.iterator();	
@@ -119,7 +132,8 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void endFrame()
 	{
-        gl.glFlush();		
+        if (!shadowDraw)
+        	gl.glFlush();		
 	}
 	
 	/**
@@ -237,14 +251,6 @@ public class GLRenderContext implements RenderContext {
 		gl.glDrawArrays(GL3.GL_TRIANGLES, 0, indices.length);
 		gl.glDeleteBuffers(vboBuffer.array().length, vboBuffer.array(), 0);		
 		// 4. Clean up
-		if (shadowDraw) {
-			gl.glActiveTexture(GL3.GL_TEXTURE0 + 2);
-	        gl.glBindTexture(GL.GL_TEXTURE_2D, shadowMap.getId());
-	        gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_DEPTH_COMPONENT24, 0, 0, 100, 100, 0);
-	        int id = gl.glGetUniformLocation(activeShader.programId(), "shadowMap");
-			gl.glUniform1i(id, 2);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
-
-		}
         cleanMaterial(renderItem.getShape().getMaterial());
 	}
 
