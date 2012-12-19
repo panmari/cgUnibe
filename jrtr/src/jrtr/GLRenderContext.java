@@ -132,8 +132,7 @@ public class GLRenderContext implements RenderContext {
 	 */
 	private void endFrame()
 	{
-        if (!shadowDraw)
-        	gl.glFlush();		
+        gl.glFlush();		
 	}
 	
 	/**
@@ -190,7 +189,7 @@ public class GLRenderContext implements RenderContext {
 		Matrix4f shadowMapT = new Matrix4f(1/2f,  0,  0,  1/2f,
 											0,  1/2f, 0, 1/2f,
 											0,    0,  1/2f, 1/2f,
-											0,    0,  0 ,   1/2f);
+											0,    0,  0 ,   1);
 		shadowMapT.mul(sceneManager.getFrustum().getProjectionMatrix());
 		shadowMapT.mul(lightCam.getCameraMatrix());
 		shadowMapT.mul(renderItem.getT());
