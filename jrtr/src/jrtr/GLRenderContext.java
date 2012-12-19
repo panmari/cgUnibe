@@ -102,7 +102,7 @@ public class GLRenderContext implements RenderContext {
 		gl.glBindTexture(GL.GL_TEXTURE_2D, shadowMapBuffer.get(0));
         gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, 0, 500, 500, 0);
         int id = gl.glGetUniformLocation(activeShader.programId(), "shadowMap");
-		gl.glUniform1i(id, shadowMapBuffer.get(0));	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
+		gl.glUniform1i(id, 0);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
 
 		shadowDraw = false;
 		beginFrame();
@@ -170,11 +170,12 @@ public class GLRenderContext implements RenderContext {
 		Matrix4f modelview;
 		Camera lightCam;
 		if (light != null)
-			lightCam = new Camera(light.getPosition(), sceneManager.getCamera().getLookAtPoint(), sceneManager.getCamera().getUpVector());
+			lightCam = new Camera(light.getPosition(), new Point3f(0,10,0), sceneManager.getCamera().getUpVector());
 		else lightCam = new Camera();
 		
 		if (shadowDraw) {
 			modelview = new Matrix4f(lightCam.getCameraMatrix());
+			setMaterial(renderItem.getShape().getMaterial());
 		}
 		else {
 			modelview = new Matrix4f(sceneManager.getCamera().getCameraMatrix());
@@ -185,13 +186,13 @@ public class GLRenderContext implements RenderContext {
 		// Set modelview and projection matrices in shader
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "modelview"), 1, false, matrix4fToFloat16(modelview), 0);
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "projection"), 1, false, matrix4fToFloat16(sceneManager.getFrustum().getProjectionMatrix()), 0);
-	     		
+	    
 		Matrix4f shadowMapT = new Matrix4f(1/2f,  0,  0,  1/2f,
 											0,  1/2f, 0, 1/2f,
 											0,    0,  1/2f, 1/2f,
 											0,    0,  0 ,   1/2f);
-		shadowMapT.mul(lightCam.getCameraMatrix());
 		shadowMapT.mul(sceneManager.getFrustum().getProjectionMatrix());
+		shadowMapT.mul(lightCam.getCameraMatrix());
 		shadowMapT.mul(renderItem.getT());
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "shadowMapT"), 1, false, matrix4fToFloat16(shadowMapT), 0);
 

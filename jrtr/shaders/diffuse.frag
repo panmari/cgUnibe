@@ -57,10 +57,9 @@ void main()
 	float shadowValue = textureProj(shadowMap, posLightSpace, 0);
 	vec4 finalColor = specColor + ambColor + diffColor;
 	finalColor = finalColor*shadowValue;
-	
-	if (shadowValue == 1) {
+
+	if (shadowValue == 0) {
 		finalColor = vec4(1,0,0,0);
 	}
-
 	frag_shaded = finalColor;
 }
