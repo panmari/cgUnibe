@@ -58,8 +58,5 @@ void main()
 	vec4 finalColor = specColor + ambColor + diffColor;
 	finalColor = finalColor*shadowValue;
 
-	if (shadowValue == 0) {
-		finalColor = vec4(1,0,0,0);
-	}
 	frag_shaded = finalColor;
 }

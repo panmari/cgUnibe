@@ -85,25 +85,42 @@ public class GLRenderContext implements RenderContext {
 		if (lightIter.hasNext()) {
 			this.light = lightIter.next();
 			shadowDraw = true;
-			while(iterator.hasNext())
-			{
-				RenderItem r = iterator.next();
-				if(r != null && r.getShape()!=null) draw(r);
-			}
+		
+            this.gl.glActiveTexture(GL3.GL_TEXTURE0 + 2);
+            this.shadowMapBuffer = IntBuffer.allocate(1);
+            this.gl.glGenTextures(1, this.shadowMapBuffer);
+            this.gl.glBindTexture(GL3.GL_TEXTURE_2D,
+                    this.shadowMapBuffer.get(0));
+            this.gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0, GL3.GL_DEPTH_COMPONENT,
+                    500, 500, 0, GL3.GL_DEPTH_COMPONENT, GL3.GL_UNSIGNED_BYTE,
+                    null);
+            this.gl.glTexParameteri(GL3.GL_TEXTURE_2D,
+                    GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_NEAREST);
+            this.gl.glTexParameteri(GL3.GL_TEXTURE_2D,
+                    GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_NEAREST);
+            this.gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_S,
+                    GL3.GL_CLAMP_TO_EDGE);
+            this.gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T,
+                    GL3.GL_CLAMP_TO_EDGE);
+
+            beginFrame();
+
+            this.gl.glViewport(0, 0, 500, 500);
+            while (iterator.hasNext()) {
+                RenderItem r = iterator.next();
+                if (r != null && r.getShape() != null)
+                    draw(r);
+            }
+
+            endFrame();
+
+            this.gl.glBindTexture(GL.GL_TEXTURE_2D, this.shadowMapBuffer.get(0));
+            this.gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, 0, 500, 500, 0);
+            int id = this.gl.glGetUniformLocation(
+                    this.activeShader.programId(), "shadowMap");
+            this.gl.glUniform1i(id, 2);
 		}
 		
-		shadowMapBuffer = IntBuffer.allocate(1);
-		gl.glGenTextures(1, shadowMapBuffer);
-		gl.glBindTexture(GL3.GL_TEXTURE_2D, shadowMapBuffer.get(0));
-		this.gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0,
-				GL3.GL_DEPTH_COMPONENT, 500, 500, 0,
-				GL3.GL_DEPTH_COMPONENT, GL3.GL_UNSIGNED_BYTE, null);
-
-		gl.glBindTexture(GL.GL_TEXTURE_2D, shadowMapBuffer.get(0));
-        gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, 0, 500, 500, 0);
-        int id = gl.glGetUniformLocation(activeShader.programId(), "shadowMap");
-		gl.glUniform1i(id, 0);	// The variable in the shader needs to be set to the desired texture unit, i.e., 0
-
 		shadowDraw = false;
 		beginFrame();
 		iterator = sceneManager.iterator();	
@@ -174,7 +191,6 @@ public class GLRenderContext implements RenderContext {
 		
 		if (shadowDraw) {
 			modelview = new Matrix4f(lightCam.getCameraMatrix());
-			setMaterial(renderItem.getShape().getMaterial());
 		}
 		else {
 			modelview = new Matrix4f(sceneManager.getCamera().getCameraMatrix());
