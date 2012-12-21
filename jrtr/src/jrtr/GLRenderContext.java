@@ -1,10 +1,7 @@
 package jrtr;
 
-import java.awt.image.BufferedImage;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
+import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -12,9 +9,9 @@ import java.util.ListIterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.TraceGL2;
-import javax.media.opengl.TraceGL3;
-import javax.vecmath.*;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
 
 import jogamp.graph.math.MathFloat;
 
@@ -207,11 +204,15 @@ public class GLRenderContext implements RenderContext {
 		if (shadowDraw) {
 			modelview = new Matrix4f(lightCam.getCameraMatrix());
 			projectionMatrix = shadowProjection;
+			int id = gl.glGetUniformLocation(activeShader.programId(), "shadowDraw");
+			gl.glUniform1f(id, 1);
 		}
 		else {
 			modelview = new Matrix4f(sceneManager.getCamera().getCameraMatrix());
 			setMaterial(renderItem.getShape().getMaterial());
 			projectionMatrix = sceneManager.getFrustum().getProjectionMatrix();
+			int id = gl.glGetUniformLocation(activeShader.programId(), "shadowDraw");
+			gl.glUniform1f(id, 0);
 		}
 		modelview.mul(renderItem.getT());
 		

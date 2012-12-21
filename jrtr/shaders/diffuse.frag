@@ -19,6 +19,7 @@ uniform float specularReflectionCoefficient;
 uniform float diffuseReflectionCoefficient;
 uniform float phongExponent;
 
+uniform float shadowDraw;
 // Variables passed in from the vertex shader
 in vec3 normalCameraSpace;
 in vec2 frag_texcoord;
@@ -65,6 +66,9 @@ void main()
 	 		
 	vec4 finalColor = specColor + ambColor + diffColor;
 	finalColor = finalColor*shadow;
-	
-	frag_shaded = finalColor;
+	if (shadowDraw == 1) {
+		frag_shaded = vec4(gl_FragCoord.z);
+	} else {
+		frag_shaded = finalColor;
+	}
 }
