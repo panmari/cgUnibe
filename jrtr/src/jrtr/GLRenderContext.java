@@ -107,7 +107,7 @@ public class GLRenderContext implements RenderContext {
                     GL3.GL_CLAMP_TO_EDGE);
             this.gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T,
                     GL3.GL_CLAMP_TO_EDGE);
-                    
+            
             //gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_MODE, GL3.GL_COMPARE_REF_TO_TEXTURE);
             //Shadow comparison should be true (ie not in shadow) if r<=texture^M
             //gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_FUNC, GL3.GL_LEQUAL);
@@ -123,7 +123,6 @@ public class GLRenderContext implements RenderContext {
             }
 
             //endFrame();
-
             this.gl.glBindTexture(GL.GL_TEXTURE_2D, this.shadowMapBuffer.get(0));
             this.gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, GL3.GL_DEPTH_COMPONENT, 0, 0, shadowMapSize, shadowMapSize, 0);
 

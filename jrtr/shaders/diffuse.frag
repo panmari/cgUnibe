@@ -6,7 +6,7 @@
 // Uniform variables passed in from host program
 uniform sampler2D myTexture;
 uniform sampler2D glossMap;
-uniform sampler2DShadow shadowMap;
+uniform sampler2D shadowMap;
 //uniform sampler2D shadowMap;
 
 uniform mat4 camera;
@@ -54,10 +54,17 @@ void main()
 		float specularLight = relativeRadiance * rfc * specular; //TODO use glossmap value
 		specColor += vec4(pointLightsCol[i], 0) * specularLight;
 	}
+	vec4 wDivide = posLightSpace / posLightSpace.w ;
+	float distanceFromLight = texture2D(shadowMap, wDivide.st).z;
 	
-	float shadowValue = textureProj(shadowMap, posLightSpace, 0);
+	wDivide.z -= 0.01;
+	
+	float shadow = 1.0;
+	 	if (posLightSpace.w > 0.0)
+	 		shadow = distanceFromLight < wDivide.z ? 0.5 : 1.0 ;
+	 		
 	vec4 finalColor = specColor + ambColor + diffColor;
-	finalColor = finalColor*shadowValue;
+	finalColor = finalColor*shadow;
 	
 	frag_shaded = finalColor;
 }
