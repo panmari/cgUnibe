@@ -42,7 +42,7 @@ public class GLRenderContext implements RenderContext {
 		gl = drawable.getGL().getGL3();
 		gl.glEnable(GL3.GL_DEPTH_TEST);
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        
+        this.shadowMapBuffer = IntBuffer.allocate(1);
         // Load and use default shader
         defaultShader = new GLShader(gl);
         defaultTexture = new GLTexture(gl);
@@ -91,7 +91,6 @@ public class GLRenderContext implements RenderContext {
 			shadowDraw = true;
 			int shadowMapSize = 200;
             this.gl.glActiveTexture(GL3.GL_TEXTURE0 + 2);
-            this.shadowMapBuffer = IntBuffer.allocate(1);
             this.gl.glGenTextures(1, this.shadowMapBuffer);
             this.gl.glBindTexture(GL3.GL_TEXTURE_2D,
                     this.shadowMapBuffer.get(0));
@@ -107,9 +106,10 @@ public class GLRenderContext implements RenderContext {
                     GL3.GL_CLAMP_TO_EDGE);
             this.gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T,
                     GL3.GL_CLAMP_TO_EDGE);
+                    
             //gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_MODE, GL3.GL_COMPARE_REF_TO_TEXTURE);
             //Shadow comparison should be true (ie not in shadow) if r<=texture^M
-            //gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_FUNC, GL3.GL_LEQUAL);
+           // gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_FUNC, GL3.GL_LEQUAL);
             //gl.glTexParameteri(GL3.GL_TEXTURE_2D, TraceGL2.GL_DEPTH_TEXTURE_MODE, TraceGL2.GL_INTENSITY);
 
             beginFrame();
@@ -121,7 +121,7 @@ public class GLRenderContext implements RenderContext {
                     draw(r);
             }
 
-            endFrame();
+            //endFrame();
 
             this.gl.glBindTexture(GL.GL_TEXTURE_2D, this.shadowMapBuffer.get(0));
             this.gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, GL3.GL_DEPTH_COMPONENT, 0, 0, shadowMapSize, shadowMapSize, 0);
@@ -132,9 +132,9 @@ public class GLRenderContext implements RenderContext {
                     this.activeShader.programId(), "shadowMap");
             this.gl.glUniform1i(id, 2);
 		}
-		
+
 		shadowDraw = false;
-		beginFrame();
+		//beginFrame();
 		this.gl.glViewport(0, 0, 500, 500);
 		iterator = sceneManager.iterator();	
 		while(iterator.hasNext())
