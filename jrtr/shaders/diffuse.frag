@@ -7,6 +7,7 @@
 uniform sampler2D myTexture;
 uniform sampler2D glossMap;
 uniform sampler2DShadow shadowMap;
+//uniform sampler2D shadowMap;
 
 uniform mat4 camera;
 
@@ -56,7 +57,11 @@ void main()
 	
 	float shadowValue = textureProj(shadowMap, posLightSpace, 0);
 	vec4 finalColor = specColor + ambColor + diffColor;
-	finalColor = finalColor*shadowValue;
+	finalColor = finalColor*(shadowValue*0.5);
 
+	if (shadowValue == 0) {
+		//finalColor = vec4(1,0,0,0);
+	}
+	
 	frag_shaded = finalColor;
 }

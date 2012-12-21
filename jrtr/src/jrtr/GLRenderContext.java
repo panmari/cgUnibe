@@ -12,6 +12,8 @@ import java.util.ListIterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.TraceGL2;
+import javax.media.opengl.TraceGL3;
 import javax.vecmath.*;
 
 /**
@@ -94,6 +96,7 @@ public class GLRenderContext implements RenderContext {
             this.gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0, GL3.GL_DEPTH_COMPONENT,
                     500, 500, 0, GL3.GL_DEPTH_COMPONENT, GL3.GL_UNSIGNED_BYTE,
                     null);
+            
             this.gl.glTexParameteri(GL3.GL_TEXTURE_2D,
                     GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_NEAREST);
             this.gl.glTexParameteri(GL3.GL_TEXTURE_2D,
@@ -102,6 +105,10 @@ public class GLRenderContext implements RenderContext {
                     GL3.GL_CLAMP_TO_EDGE);
             this.gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T,
                     GL3.GL_CLAMP_TO_EDGE);
+            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_MODE, GL3.GL_COMPARE_REF_TO_TEXTURE);
+            //Shadow comparison should be true (ie not in shadow) if r<=texture^M
+            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_FUNC, GL3.GL_LEQUAL);
+            gl.glTexParameteri(GL3.GL_TEXTURE_2D, TraceGL2.GL_DEPTH_TEXTURE_MODE, TraceGL2.GL_INTENSITY);
 
             beginFrame();
 
@@ -115,7 +122,10 @@ public class GLRenderContext implements RenderContext {
             endFrame();
 
             this.gl.glBindTexture(GL.GL_TEXTURE_2D, this.shadowMapBuffer.get(0));
-            this.gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, 0, 500, 500, 0);
+            this.gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, GL3.GL_DEPTH_COMPONENT, 0, 0, 500, 500, 0);
+
+  
+            
             int id = this.gl.glGetUniformLocation(
                     this.activeShader.programId(), "shadowMap");
             this.gl.glUniform1i(id, 2);

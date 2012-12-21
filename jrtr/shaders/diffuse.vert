@@ -36,7 +36,6 @@ void main()
 	normalCameraSpace = normalize((modelview * vec4(normal,0)).xyz);
 	posCameraSpace = modelview * position;
 	posLightSpace = shadowMapT * position;
-	// we're in camera space, cop is always (0,0,0) => just take the negative
 	
 	// Pass texture coordiantes to fragment shader, OpenGL automatically
 	// interpolates them to each pixel  (in a perspectively correct manner) 
