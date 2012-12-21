@@ -16,6 +16,8 @@ import javax.media.opengl.TraceGL2;
 import javax.media.opengl.TraceGL3;
 import javax.vecmath.*;
 
+import jogamp.graph.math.MathFloat;
+
 /**
  * This class implements a {@link RenderContext} (a renderer) using OpenGL version 3 (or later).
  */
@@ -87,14 +89,14 @@ public class GLRenderContext implements RenderContext {
 		if (lightIter.hasNext()) {
 			this.light = lightIter.next();
 			shadowDraw = true;
-		
+			int shadowMapSize = 200;
             this.gl.glActiveTexture(GL3.GL_TEXTURE0 + 2);
             this.shadowMapBuffer = IntBuffer.allocate(1);
             this.gl.glGenTextures(1, this.shadowMapBuffer);
             this.gl.glBindTexture(GL3.GL_TEXTURE_2D,
                     this.shadowMapBuffer.get(0));
             this.gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0, GL3.GL_DEPTH_COMPONENT,
-                    500, 500, 0, GL3.GL_DEPTH_COMPONENT, GL3.GL_UNSIGNED_BYTE,
+            		shadowMapSize, shadowMapSize, 0, GL3.GL_DEPTH_COMPONENT, GL3.GL_UNSIGNED_BYTE,
                     null);
             
             this.gl.glTexParameteri(GL3.GL_TEXTURE_2D,
@@ -105,14 +107,14 @@ public class GLRenderContext implements RenderContext {
                     GL3.GL_CLAMP_TO_EDGE);
             this.gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T,
                     GL3.GL_CLAMP_TO_EDGE);
-            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_MODE, GL3.GL_COMPARE_REF_TO_TEXTURE);
+            //gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_MODE, GL3.GL_COMPARE_REF_TO_TEXTURE);
             //Shadow comparison should be true (ie not in shadow) if r<=texture^M
-            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_FUNC, GL3.GL_LEQUAL);
-            gl.glTexParameteri(GL3.GL_TEXTURE_2D, TraceGL2.GL_DEPTH_TEXTURE_MODE, TraceGL2.GL_INTENSITY);
+            //gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_FUNC, GL3.GL_LEQUAL);
+            //gl.glTexParameteri(GL3.GL_TEXTURE_2D, TraceGL2.GL_DEPTH_TEXTURE_MODE, TraceGL2.GL_INTENSITY);
 
             beginFrame();
 
-            this.gl.glViewport(0, 0, 500, 500);
+            this.gl.glViewport(0, 0, shadowMapSize, shadowMapSize);
             while (iterator.hasNext()) {
                 RenderItem r = iterator.next();
                 if (r != null && r.getShape() != null)
@@ -122,7 +124,7 @@ public class GLRenderContext implements RenderContext {
             endFrame();
 
             this.gl.glBindTexture(GL.GL_TEXTURE_2D, this.shadowMapBuffer.get(0));
-            this.gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, GL3.GL_DEPTH_COMPONENT, 0, 0, 500, 500, 0);
+            this.gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, GL3.GL_DEPTH_COMPONENT, 0, 0, shadowMapSize, shadowMapSize, 0);
 
   
             
@@ -133,6 +135,7 @@ public class GLRenderContext implements RenderContext {
 		
 		shadowDraw = false;
 		beginFrame();
+		this.gl.glViewport(0, 0, 500, 500);
 		iterator = sceneManager.iterator();	
 		while(iterator.hasNext())
 		{
@@ -198,25 +201,28 @@ public class GLRenderContext implements RenderContext {
 		if (light != null)
 			lightCam = new Camera(light.getPosition(), new Point3f(0,10,0), sceneManager.getCamera().getUpVector());
 		else lightCam = new Camera();
-		
+		Matrix4f projectionMatrix = null;
+		Matrix4f shadowProjection = new Frustum(1,75,1,MathFloat.PI/2).getProjectionMatrix();
 		if (shadowDraw) {
 			modelview = new Matrix4f(lightCam.getCameraMatrix());
+			projectionMatrix = shadowProjection;
 		}
 		else {
 			modelview = new Matrix4f(sceneManager.getCamera().getCameraMatrix());
 			setMaterial(renderItem.getShape().getMaterial());
+			projectionMatrix = sceneManager.getFrustum().getProjectionMatrix();
 		}
 		modelview.mul(renderItem.getT());
 		
 		// Set modelview and projection matrices in shader
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "modelview"), 1, false, matrix4fToFloat16(modelview), 0);
-		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "projection"), 1, false, matrix4fToFloat16(sceneManager.getFrustum().getProjectionMatrix()), 0);
+		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "projection"), 1, false, matrix4fToFloat16(projectionMatrix), 0);
 	    
 		Matrix4f shadowMapT = new Matrix4f(1/2f,  0,  0,  1/2f,
 											0,  1/2f, 0, 1/2f,
 											0,    0,  1/2f, 1/2f,
 											0,    0,  0 ,   1);
-		shadowMapT.mul(sceneManager.getFrustum().getProjectionMatrix());
+		shadowMapT.mul(shadowProjection);
 		shadowMapT.mul(lightCam.getCameraMatrix());
 		shadowMapT.mul(renderItem.getT());
 		gl.glUniformMatrix4fv(gl.glGetUniformLocation(activeShader.programId(), "shadowMapT"), 1, false, matrix4fToFloat16(shadowMapT), 0);
