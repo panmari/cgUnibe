@@ -87,6 +87,7 @@ public class GLRenderContext implements RenderContext {
 		SceneManagerIterator iterator = sceneManager.iterator();
 
 		if (lightIter.hasNext()) {
+			gl.glCullFace(GL3.GL_FRONT);
 			this.light = lightIter.next();
 			shadowDraw = true;
 			int shadowMapSize = 200;
@@ -97,7 +98,7 @@ public class GLRenderContext implements RenderContext {
             this.gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0, GL3.GL_DEPTH_COMPONENT,
             		shadowMapSize, shadowMapSize, 0, GL3.GL_DEPTH_COMPONENT, GL3.GL_UNSIGNED_BYTE,
                     null);
-            
+           
             this.gl.glTexParameteri(GL3.GL_TEXTURE_2D,
                     GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_NEAREST);
             this.gl.glTexParameteri(GL3.GL_TEXTURE_2D,
@@ -109,7 +110,7 @@ public class GLRenderContext implements RenderContext {
                     
             //gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_MODE, GL3.GL_COMPARE_REF_TO_TEXTURE);
             //Shadow comparison should be true (ie not in shadow) if r<=texture^M
-           // gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_FUNC, GL3.GL_LEQUAL);
+            //gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_COMPARE_FUNC, GL3.GL_LEQUAL);
             //gl.glTexParameteri(GL3.GL_TEXTURE_2D, TraceGL2.GL_DEPTH_TEXTURE_MODE, TraceGL2.GL_INTENSITY);
 
             beginFrame();
@@ -136,6 +137,7 @@ public class GLRenderContext implements RenderContext {
 		shadowDraw = false;
 		//beginFrame();
 		this.gl.glViewport(0, 0, 500, 500);
+        gl.glCullFace(GL3.GL_BACK);
 		iterator = sceneManager.iterator();	
 		while(iterator.hasNext())
 		{
