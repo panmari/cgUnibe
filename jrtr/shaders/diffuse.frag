@@ -61,8 +61,8 @@ void main()
 	wDivide.z -= 0.01;
 	
 	float shadow = 1.0;
-	 	if (posLightSpace.w > 0.0)
-	 		shadow = distanceFromLight < wDivide.z ? 0.5 : 1.0 ;
+ 	if (posLightSpace.w > 0.0)
+ 		shadow = distanceFromLight < wDivide.z ? 0.5 : 1.0 ;
 	 		
 	vec4 finalColor = specColor + ambColor + diffColor;
 	finalColor = finalColor*shadow;
