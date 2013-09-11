@@ -92,19 +92,6 @@ public class RotationBodiesDemo
     		renderPanel.getCanvas().repaint(); 
 		}
 	}
-
-	/**
-	 * A mouse listener for the main window of this application. This can be
-	 * used to process mouse events.
-	 */
-	public static class SimpleMouseListener implements MouseListener
-	{
-    	public void mousePressed(MouseEvent e) {}
-    	public void mouseReleased(MouseEvent e) {}
-    	public void mouseEntered(MouseEvent e) {}
-    	public void mouseExited(MouseEvent e) {}
-    	public void mouseClicked(MouseEvent e) {}
-	}
 	
 	/**
 	 * The main function opens a 3D rendering window, constructs a simple 3D
@@ -112,8 +99,6 @@ public class RotationBodiesDemo
 	 */
 	public static void main(String[] args)
 	{		
-		
-		
 		Matrix4f t = new Matrix4f();
 
 		TransformGroup root = new TransformGroup();

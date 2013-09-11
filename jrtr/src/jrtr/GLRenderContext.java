@@ -24,7 +24,6 @@ public class GLRenderContext implements RenderContext {
 	private GL3 gl;
 	private GLShader activeShader, defaultShader;
 	private GLTexture defaultTexture;
-	private GLTexture shadowMap;
 	private PointLight light;
 	private boolean shadowDraw;
 	private IntBuffer shadowMapBuffer;
@@ -43,7 +42,6 @@ public class GLRenderContext implements RenderContext {
         // Load and use default shader
         defaultShader = new GLShader(gl);
         defaultTexture = new GLTexture(gl);
-        shadowMap = new GLTexture(gl);
         try {
         	defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
         	defaultTexture.load("../jrtr/textures/wood.jpg");

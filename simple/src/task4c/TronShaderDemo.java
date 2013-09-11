@@ -88,27 +88,14 @@ public class TronShaderDemo
     		Matrix4f rotY = new Matrix4f();
     		rotY.rotY(angle);
     	
-    		//t.mul(rotX);
-    		//t.mul(rotY);
+    		t.mul(rotX);
+    		t.mul(rotY);
     		
     		// Trigger redrawing of the render window
     		renderPanel.getCanvas().repaint(); 
 		}
 	}
 
-	/**
-	 * A mouse listener for the main window of this application. This can be
-	 * used to process mouse events.
-	 */
-	public static class SimpleMouseListener implements MouseListener
-	{
-    	public void mousePressed(MouseEvent e) {}
-    	public void mouseReleased(MouseEvent e) {}
-    	public void mouseEntered(MouseEvent e) {}
-    	public void mouseExited(MouseEvent e) {}
-    	public void mouseClicked(MouseEvent e) {}
-	}
-	
 	/**
 	 * The main function opens a 3D rendering window, constructs a simple 3D
 	 * scene, and starts a timer task to generate an animation.
