@@ -43,7 +43,8 @@ public class GLRenderContext implements RenderContext {
         defaultShader = new GLShader(gl);
         defaultTexture = new GLTexture(gl);
         try {
-        	defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
+        	defaultShader.load("../jrtr/shaders/default.vert","../jrtr/shaders/default.frag");
+        	//defaultShader.load("../jrtr/shaders/diffuse.vert","../jrtr/shaders/diffuse.frag");
         	defaultTexture.load("../jrtr/textures/wood.jpg");
         } catch(Exception e) {
 	    	System.out.print("Problem with shader:\n");
