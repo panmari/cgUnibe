@@ -5,8 +5,20 @@ is based on the jrtr framework, which is itself based on jogl.
 
 ## Requirements
 
-Needs at least OpenGL 3.1. On Linux, this would be Mesa drivers > 9.1 (as in not released yet). You are adviced to
-work on Windows.
+Needs at least OpenGL 3.1 and GLSL 1.50. Most likely your computer fulfills these requirements 
+if you have a modern nvidia, amd or intel graphics card. 
+On Linux, you can check your version by running `glxinfo | grep -i opengl`.
+
+
+### Intel graphics cards
+At the time of writing, there are no Intel drivers available that support these requirements on linux.
+You are adviced to work on Windows.
+
+If you want to live on the edge, you may add the Xorg-edgers repository (Ubuntu)
+```
+sudo add-apt-repository ppa:xorg-edgers/ppa
+```
+At some point in the future, it may fullfill all requirements.
 
 ## Tasks
 
