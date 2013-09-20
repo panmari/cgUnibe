@@ -221,7 +221,7 @@ public class SWRenderContext implements RenderContext {
 					if (betterZvalue(x, y, zvalue)) {
 						zBuffer[x][y] = zvalue;
 						int c;
-						if (material != null)
+						if (material != null && material.getTexture() != null)
 							c = interpolateColorFromTexture(vertexWeights, 
 									texCoords, material.getTexture());
 						else c = interpolateColor(vertexWeights, colors).getRGB();
