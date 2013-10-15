@@ -1,4 +1,4 @@
-#version 150
+#version 140
 #define MAX_LIGHTS 8
 // GLSL version 1.50
 // Fragment shader for diffuse shading in combination with a texture map

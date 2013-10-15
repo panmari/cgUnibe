@@ -1,4 +1,4 @@
-#version 150
+#version 140
 // Default fragment shader
 
 // Input variable, passed from vertex to fragment shader

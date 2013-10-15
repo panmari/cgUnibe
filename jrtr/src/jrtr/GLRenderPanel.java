@@ -1,9 +1,12 @@
 package jrtr;
 
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.awt.GLCanvas;
 import java.awt.Component;
+
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLProfile;
+import javax.media.opengl.awt.GLCanvas;
 
 /**
  * An implementation of the {@link RenderPanel} interface using
@@ -73,7 +76,7 @@ public abstract class GLRenderPanel implements RenderPanel {
 
 	public GLRenderPanel()
 	{
-	    canvas = new GLCanvas();
+		canvas = new GLCanvas(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
 	    
 		GLEventListener eventListener = new GLRenderContextEventListener(this);
 		canvas.addGLEventListener(eventListener);

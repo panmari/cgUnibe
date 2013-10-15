@@ -1,4 +1,4 @@
-#version 150
+#version 140
 #pragma optionNV unroll all
 #define MAX_LIGHTS 8
 // GLSL version 1.50 

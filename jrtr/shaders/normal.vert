@@ -1,4 +1,4 @@
-#version 150
+#version 140
 
 // Vertex shader for pseudo shading using the normal 
 
