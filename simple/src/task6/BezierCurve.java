@@ -5,7 +5,7 @@ import javax.vecmath.Point2f;
 import javax.vecmath.Point4f;
 import javax.vecmath.Vector4f;
 
-import jogamp.graph.math.MathFloat;
+import com.jogamp.opengl.math.FloatUtil;
 
 public class BezierCurve {
 
@@ -62,8 +62,8 @@ public class BezierCurve {
 		if (t % 3 == 0 && t != 0)
 			segmentBegin -= 1;
 		float x = (t - segmentBegin*3) / 3f;
-		Point4f resultingPoint = new Point4f(MathFloat.pow(x, 3),
-										MathFloat.pow(x, 2),
+		Point4f resultingPoint = new Point4f(FloatUtil.pow(x, 3),
+										FloatUtil.pow(x, 2),
 										x,
 										1);
 		segmentMatrices[segmentBegin].transform(resultingPoint);

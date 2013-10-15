@@ -7,7 +7,7 @@ import javax.vecmath.Point4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
-import jogamp.graph.math.MathFloat;
+import com.jogamp.opengl.math.FloatUtil;
 
 import task1.AbstractShape;
 
@@ -23,7 +23,7 @@ public class RotationBody extends AbstractShape {
 		int n = curve.getCurveMesh().length*rotationSteps;
 		int curveLength = curve.getCurveMesh().length;
 		Matrix4f stepRot = new Matrix4f();
-		stepRot.rotY(MathFloat.PI*2/rotationSteps);
+		stepRot.rotY(FloatUtil.PI*2/rotationSteps);
 		Matrix4f currentRot = new Matrix4f();
 		currentRot.setIdentity();
 		for (int i = 0; i < rotationSteps; i++) {

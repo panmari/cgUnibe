@@ -1,6 +1,6 @@
 package Task5;
 
-import jogamp.graph.math.MathFloat;
+import com.jogamp.opengl.math.FloatUtil;
 import jrtr.*;
 import jrtr.graphSceneManager.GraphSceneManager;
 import jrtr.graphSceneManager.LightNode;
@@ -202,7 +202,7 @@ public class GraphSceneDemo
 		ShapeNode torus = new ShapeNode(new Shape(new Cylinder(5, 1, 20)));
 		ShapeNode head = new ShapeNode(new Shape(new Torus(.5f, .2f, 20, 20)));
 		Matrix4f m = new Matrix4f();
-		m.rotX(MathFloat.PI/2);
+		m.rotX(FloatUtil.PI/2);
 		torus.getTransformation().mul(m);
 		head.getTransformation().setTranslation(new Vector3f(0, 3.5f, 0));
 		TransformGroup upperBody = new TransformGroup();
@@ -212,19 +212,19 @@ public class GraphSceneDemo
 		TransformGroup rightArm = makeExtremity(1.5f);
 
 		Matrix4f rot = new Matrix4f();
-		rot.rotX(MathFloat.PI/4);
+		rot.rotX(FloatUtil.PI/4);
 		leftArm.getTransformation().setTranslation(new Vector3f(-1, 2.5f, 0f));
-		rightArm.getTransformation().rotX(-MathFloat.PI/2);
+		rightArm.getTransformation().rotX(-FloatUtil.PI/2);
 		rightArm.getTransformation().setTranslation(new Vector3f(1, 2.5f, 0f));
 		leftLeg = makeExtremity(2f);
 		rightLeg = makeExtremity(2f);
 		Matrix4f rotX90 = new Matrix4f();
-		rotX90.rotX(-MathFloat.PI/2 + 60*0.01f);
+		rotX90.rotX(-FloatUtil.PI/2 + 60*0.01f);
 		leftLeg.getTransformation().setTranslation(new Vector3f(-1, -2, 0));
 		leftLeg.getTransformation().mul(rotX90);
 		leftLegLower = leftLeg.getChildren().get(1);
 		rightLeg.getTransformation().setTranslation(new Vector3f(1, -2, 0));
-		rotX90.rotX(-MathFloat.PI/2 - 60*0.01f);
+		rotX90.rotX(-FloatUtil.PI/2 - 60*0.01f);
 		rightLeg.getTransformation().mul(rotX90);
 		rightLegLower = rightLeg.getChildren().get(1);
 		PointLight light = new PointLight(new Color3f(1,0,0), 20f, new Point3f(0,0,-6));
@@ -269,7 +269,7 @@ public class GraphSceneDemo
 		upper.getTransformation().setTranslation(new Vector3f(0,0, -size));
 		TransformGroup lowerGroup = new TransformGroup();
 		ShapeNode lower = new ShapeNode(armPart);
-		//lower.getTransformation().rotX(MathFloat.PI);
+		//lower.getTransformation().rotX(FloatUtil.PI);
 		lowerGroup.getTransformation().setTranslation(new Vector3f(0,0, -size -1.5f ));
 		lower.getTransformation().setTranslation(new Vector3f(0,0, -size/2 ));
 		lowerGroup.addChild(lower);

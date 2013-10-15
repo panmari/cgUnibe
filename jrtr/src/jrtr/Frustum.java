@@ -4,7 +4,7 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
-import jogamp.graph.math.MathFloat;
+import com.jogamp.opengl.math.FloatUtil;
 import jrtr.BoundingSphere;
 
 /**
@@ -88,7 +88,7 @@ public class Frustum {
 	}
 
 	private float tan(float f) {
-		return MathFloat.sin(f)/MathFloat.cos(f);
+		return FloatUtil.sin(f)/FloatUtil.cos(f);
 	}
 	/**
 	 * Construct a default viewing frustum. The frustum is given by a 
@@ -96,7 +96,7 @@ public class Frustum {
 	 */
 	public Frustum()
 	{
-		this(1, 100, 1, MathFloat.PI/3);
+		this(1, 100, 1, FloatUtil.PI/3);
 	}
 	
 	/**

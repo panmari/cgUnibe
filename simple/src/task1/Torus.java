@@ -8,7 +8,7 @@ import javax.vecmath.Matrix3f;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector3f;
 
-import jogamp.graph.math.MathFloat;
+import com.jogamp.opengl.math.FloatUtil;
 import jrtr.VertexData;
 
 public class Torus extends AbstractShape {
@@ -39,7 +39,7 @@ public class Torus extends AbstractShape {
 		
 		//construct other cross-sections out of first
 		Matrix3f rotZ = new Matrix3f();
-		rotZ.rotZ(2*MathFloat.PI/bigResolution);
+		rotZ.rotZ(2*FloatUtil.PI/bigResolution);
 		for (int i = 1; i < bigResolution; i++) {
 			for (Vector3f fcsVector: firstCrossSection) {
 				rotZ.transform(fcsVector);
@@ -86,7 +86,7 @@ public class Torus extends AbstractShape {
 		Vector3f discCenter = new Vector3f(bigR, 0, 0);
 		Vector3f discRadialVector = new Vector3f(-smallR, 0, 0);
 		Matrix3f rotY = new Matrix3f();
-		rotY.rotY(2*MathFloat.PI/smallResolution);
+		rotY.rotY(2*FloatUtil.PI/smallResolution);
 		Vector3f[] firstCrossSection = new Vector3f[smallResolution];
 		for (int i = 0; i < smallResolution; i++) {
 			Vector3f discPoint = new Vector3f();

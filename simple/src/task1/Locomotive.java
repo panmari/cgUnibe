@@ -3,7 +3,7 @@ package task1;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
-import jogamp.graph.math.MathFloat;
+import com.jogamp.opengl.math.FloatUtil;
 import jrtr.Shape;
 
 public class Locomotive extends AssembledShape implements Actable {
@@ -26,7 +26,7 @@ public class Locomotive extends AssembledShape implements Actable {
 	private float speed;
 	
 	public Locomotive(Vector3f initialDirection, float initialSpeed) {
-		this.rotateStepLeft.rotY(MathFloat.PI/40);
+		this.rotateStepLeft.rotY(FloatUtil.PI/40);
 		rotateStepRight.invert(rotateStepLeft);
 		for (int i = 0; i < 4; i++) {
 			Wheel w = new Wheel(.4f, initialSpeed);
@@ -97,7 +97,7 @@ public class Locomotive extends AssembledShape implements Actable {
 		public LocomotiveBody() {
 			super(new Cylinder(2, .5f, 60));
 			Matrix4f m = getTransformation();
-			m.rotY(-MathFloat.PI/2);
+			m.rotY(-FloatUtil.PI/2);
 			Matrix4f helperMatrix = new Matrix4f();
 			helperMatrix.setIdentity();
 			helperMatrix.setTranslation(new Vector3f(0, .5f, 0));

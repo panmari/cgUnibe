@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import javax.vecmath.Vector3f;
 
-import jogamp.graph.math.MathFloat;
 import task1.AbstractShape;
 
 public class FractalLandscape extends AbstractShape {
@@ -19,7 +18,7 @@ public class FractalLandscape extends AbstractShape {
 	
 	public FractalLandscape(int n) {
 		super((int) Math.pow((Math.pow(2, n) + 1), 2));
-		edge = (int) MathFloat.pow(2, n) + 1;
+		edge = (int) Math.pow(2, n) + 1;
 		randomness = edge/2f;
 		this.map = new HeightMap(edge);
 		this.initialMaxHeight = edge/2;

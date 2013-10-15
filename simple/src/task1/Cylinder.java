@@ -5,7 +5,7 @@ import java.util.Arrays;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Vector3f;
 
-import jogamp.graph.math.MathFloat;
+import com.jogamp.opengl.math.FloatUtil;
 import jrtr.VertexData;
 
 public class Cylinder extends AbstractShape {
@@ -58,7 +58,7 @@ public class Cylinder extends AbstractShape {
 		Vector3f normal = new Vector3f(centerCircle);
 		normal.normalize();
 		Matrix3f rotationMatrix = new Matrix3f();
-		rotationMatrix.rotZ(2*MathFloat.PI/resolution);
+		rotationMatrix.rotZ(2*FloatUtil.PI/resolution);
 		normals.appendVector(normal);
 		vertices.appendVector(centerCircle); //center of circle is first point in mesh
 		colors.appendTuple(0, 0, 0);

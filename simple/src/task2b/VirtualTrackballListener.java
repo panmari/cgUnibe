@@ -10,7 +10,7 @@ import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
-import jogamp.graph.math.MathFloat;
+import com.jogamp.opengl.math.FloatUtil;
 import jrtr.RenderPanel;
 import jrtr.Shape;
 
@@ -55,7 +55,7 @@ public class VirtualTrackballListener implements MouseListener, MouseMotionListe
 		//TODO: use uniform scale
 		float x = (float) 2*e.getX()/uniformScale - uniformTranslationX;
 		float y = uniformTranslationY - (float)2*e.getY()/uniformScale;
-		float z = MathFloat.sqrt(1 - x*x - y*y);
+		float z = FloatUtil.sqrt(1 - x*x - y*y);
 		Vector3f p = new Vector3f(x, y, z);
 		p.normalize(); //is this really necessary?
 		return p;

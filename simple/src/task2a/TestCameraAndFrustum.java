@@ -1,6 +1,6 @@
 package task2a;
 
-import jogamp.graph.math.MathFloat;
+import com.jogamp.opengl.math.FloatUtil;
 import jrtr.*;
 
 import javax.swing.*;
@@ -35,7 +35,7 @@ public class TestCameraAndFrustum
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
 	 * provide a call-back function for initialization. 
 	 */ 
-	public final static class SimpleRenderPanel extends SWRenderPanel
+	public final static class SimpleRenderPanel extends GLRenderPanel
 	{
 		/**
 		 * Initialization call-back. We initialize our renderer here.
@@ -101,7 +101,7 @@ public class TestCameraAndFrustum
 		lap = new Point3f(-5, 0, 0);
 		up = new Vector3f(0, 1, 0);
 		c = new Camera(cop, lap, up);
-		Frustum f = new Frustum(1, 100, 1, MathFloat.PI/3);
+		Frustum f = new Frustum(1, 100, 1, FloatUtil.PI/3);
 		sceneManager = new SimpleSceneManager(c, f);
 		shape = makeHouse();
 		sceneManager.addShape(shape);

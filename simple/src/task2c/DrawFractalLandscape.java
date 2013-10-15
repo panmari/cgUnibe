@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
-import jogamp.graph.math.MathFloat;
 import jrtr.Camera;
 import jrtr.Frustum;
 import jrtr.GLRenderPanel;
@@ -72,7 +71,7 @@ public class DrawFractalLandscape
 	{		
 		int size = 8;
 		Camera c = new Camera(new Point3f(0, 200, 200), new Point3f(0,0,0), new Vector3f(0,1,0));
-		sceneManager = new SimpleSceneManager(c, new Frustum(1, 1000, 1,  MathFloat.PI/3));
+		sceneManager = new SimpleSceneManager(c, new Frustum(1, 1000, 1,  (float) (Math.PI/3)));
 		shape = new Shape(new FractalLandscape(size));
 		sceneManager.addShape(shape);
 
