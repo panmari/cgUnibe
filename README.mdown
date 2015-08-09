@@ -33,3 +33,7 @@ At some point in the future, it may fullfill all requirements.
 
 Before making ANYTHING, read through the existing classes. Lots of functionality is given by jrtr, j3d.
 Be aware that this course has a crazy workload. Nonetheless, every task is very rewarding. 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/panmari/cgunibe/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
